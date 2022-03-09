@@ -27,6 +27,19 @@ function logger(string|Stringable $message, string $channel = 'default', string 
     $logger->debug($message);
 }
 
+function response_empty(int $statusCode = 200): array
+{
+    return response(null, $statusCode);
+}
+
+function response(mixed $response = null, int $statusCode = 200): array
+{
+    return [
+        'data' => !empty($response) || !is_null($response) ? json_encode($response) : null,
+        'statusCode' => $statusCode,
+    ];
+}
+
 // Monitor memory
 function getMemoryStatus(): void
 {

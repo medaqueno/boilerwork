@@ -5,10 +5,14 @@ declare(strict_types=1);
 
 namespace Bootstrap;
 
+use App\Core\BC\Application\ExampleCommand;
+use App\Core\BC\Application\ExampleCommandHandler;
 use League\Container\Container;
 use League\Container\ReflectionContainer;
 use Swoole\Runtime;
 use App\Shared\Providers\BindContainerProvider;
+use Kernel\Application\CommandHandlerInterface;
+use Kernel\Application\CommandInterface;
 use Kernel\Helpers\Singleton;
 
 /**

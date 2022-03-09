@@ -5,42 +5,18 @@ declare(strict_types=1);
 
 namespace App\Core\BC\UI\Controllers;
 
+use App\Core\BC\Application\ExampleCommand;
+use Kernel\UI\AbstractController;
 use Swoole\Http\Request;
-use App\Core\Mailer;
 
-final class TestController
+final class TestController extends AbstractController
 {
-    public function __construct(public Mailer $mailer)
+    public function __invoke(Request $request, array $vars): mixed
     {
-    }
+        $this->command()->handle(
+            new ExampleCommand(email: 'un.correo@test.es', username: 'mdqn')
+        );
 
-    public function __invoke(Request $request, array $vars): array
-    {
-
-        return [
-            'message' => 'Invoke method',
-            'data' => [
-                // 'fromDependencyInjection' => $this->mailer->getTestString(),
-                // 'fromDependencyInjection2' => $this->response->response(),
-                'request' => $request->get['parameter1'] ?? null,
-                'vars' => $vars
-            ]
-
-        ];
-    }
-
-    public function customMethod(Request $request, array $vars): array
-    {
-        $result =  [
-            'message' => 'customMethod',
-            'data' => [
-                'fromDependencyInjection' => $this->mailer->getTestString(),
-                // 'fromDependencyInjection2' => $this->response->response(),
-                'request' => $request->get ?? null,
-                'vars' => $vars
-            ]
-        ];
-
-        return $result;
+        return response_empty();
     }
 }

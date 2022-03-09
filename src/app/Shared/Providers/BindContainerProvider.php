@@ -10,16 +10,18 @@ use League\Container\ServiceProvider\AbstractServiceProvider;
 final class BindContainerProvider extends AbstractServiceProvider
 {
     /**
-     * The provided array is a way to let the container
+     * The provides method is a way to let the container
      * know that a service is provided by this service
      * provider. Every service that is registered via
      * this service provider must have an alias added
      * to this array or it will be ignored.
      */
-    protected array $provides = [
-        // 'key',
-        // '\App\Core\BC\UI\Controllers\ConcreteClass::class',
-    ];
+    public function provides(string $id): bool
+    {
+        $services = [];
+
+        return in_array($id, $services);
+    }
 
     /**
      * This is where the magic happens, within the method you can
@@ -29,14 +31,7 @@ final class BindContainerProvider extends AbstractServiceProvider
      */
     public function register(): void
     {
-        /*
-       // Example
-        $this->getContainer()->add(\App\Core\BC\UI\Controllers\Interface::class, \App\Core\BC\UI\Controllers\ConcreteClass::class);
-        */
-    }
-
-    public function provides(string $id): bool
-    {
-        return in_array($id, $this->provides);
+        // Example
+        // $this->getContainer()->add(\App\Core\BC\UI\Controllers\Interface::class, \App\Core\BC\UI\Controllers\ConcreteClass::class);
     }
 }

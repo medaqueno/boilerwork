@@ -136,8 +136,9 @@ final class Http
         try {
             $result = $this->handleRequest($request);
         } catch (\Throwable $e) {
-
-            // https://jsonapi.org/examples/#error-objects
+            logger('ERROR: ' . $e->getCode());
+            logger($e->getMessage());
+            // // https://jsonapi.org/examples/#error-objects
             $response->setStatusCode($e->getCode());
             $result = [
                 "errors" => [
@@ -154,17 +155,31 @@ final class Http
 
         // global content type for our responses
         $response->header('Content-Type', 'application/json');
-
-        // write the JSON string out
-        $response->end(json_encode($result));
+        if (empty($result)) {
+            $response->end(null);
+        } else if ($result['statusCode'] === 204) {
+            $response->setStatusCode(204);
+            $response->end(null);
+        } else {
+            $response->setStatusCode($result['statusCode']);
+            $response->end($result['data']);
+        }
     }
 
-    private function handleRequest(Request $request): mixed
+    private function handleRequest(Request $request)
     {
         $request_method = $request->server['request_method'];
         $request_uri = $request->server['request_uri'];
 
-        list($code, $handler, $vars) = $this->httpDispatcher->dispatch($request_method, $request_uri);
+        $dispatched = $this->httpDispatcher->dispatch($request_method, $request_uri);
+
+        if (count($dispatched) === 1) {
+            return null;
+        }
+
+        $code = $dispatched[0];
+        $handler = $dispatched[1];
+        $vars = $dispatched[2];
 
         switch ($code) {
             case \FastRoute\Dispatcher::NOT_FOUND:
