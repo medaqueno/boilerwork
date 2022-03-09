@@ -12,19 +12,18 @@ use Swoole\Coroutine\Http\Client;
  * @desc Connect to a websocket server, receive and send data if proceedes
  *
  * @example
- * Init Connection:
- * $wsClient = new WebSocketClient(host: 'stream.exampleserver.com', path: '/stream');
- * Receive data continuously: (a Swoole\WebSocket\Frame is received)
-   foreach ($wsClient->receive() as $message) {
-            var_dump($message);
-    }
- *
- * Send example data to Websocket server
- * $wsClient->push(json_encode([
+    // Init Connection:
+    $wsClient = new WebSocketClient(host: 'stream.exampleserver.com', path: '/stream');
+    // Send example data to Websocket server
+    $wsClient->push(json_encode([
             'method' => 'SUBSCRIBE',
             'params' => ['param1'],
             'id' => 1,
         ]));
+    // Receive data continuously: (a Swoole\WebSocket\Frame is received)
+    foreach ($wsClient->receive() as $message) {
+        var_dump($message);
+    }
  */
 class WebSocketClient
 {
@@ -47,7 +46,7 @@ class WebSocketClient
      *
      * @see https://openswoole.com/docs/modules/swoole-coroutine-http-client-recv
      */
-    public function receive(float $timeout = 2): Generator
+    public function receive(float $timeout = 0): Generator
     {
         try {
             while ($frame = $this->client->recv(timeout: $timeout)) {
@@ -83,8 +82,13 @@ class WebSocketClient
         return $this->client->errCode;
     }
 
-    public function pingConnection(): mixed
+    public function ping(): mixed
     {
         return $this->client->push('', WEBSOCKET_OPCODE_PING);
+    }
+
+    public function pong(): mixed
+    {
+        return $this->client->push('', WEBSOCKET_OPCODE_PONG);
     }
 }
