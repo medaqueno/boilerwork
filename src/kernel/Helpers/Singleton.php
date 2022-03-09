@@ -7,13 +7,14 @@ namespace Kernel\Helpers;
 
 trait Singleton
 {
-    private static $instance;
+    private static self $instance;
 
-    public static function getInstance(...$args)
+    public static function getInstance(mixed ...$args): self
     {
         if (!isset(self::$instance)) {
             self::$instance = new static(...$args);
         }
+
         return self::$instance;
     }
 }

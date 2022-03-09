@@ -7,5 +7,5 @@ namespace App\Core\BC\UI\Controllers;
 
 interface TestServiceInterface
 {
-    public function debeEstar();
+    public function debeEstar(): void;
 }

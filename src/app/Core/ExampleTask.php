@@ -22,7 +22,7 @@ final class ExampleTask implements TaskInterface
     {
     }
 
-    public function handle()
+    public function handle(): void
     {
         $date = date('Y-m-d H:i:s', time());
         echo "\nESTAMOS EN EL TASK " . $date . " \n";

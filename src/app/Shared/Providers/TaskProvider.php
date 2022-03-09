@@ -9,6 +9,9 @@ use Kernel\Tasks\AbstractTaskScheduler;
 
 final class TaskProvider extends AbstractTaskScheduler
 {
+    /**
+     * @inheritDoc
+     */
     protected array $tasks = [
         [\App\Core\ExampleTask::class, [self::INTERVAL_EVERY_MINUTE, null]],
     ];

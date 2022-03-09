@@ -5,26 +5,21 @@ declare(strict_types=1);
 
 namespace Kernel;
 
+use Kernel\Helpers\Singleton;
 use \Swoole\Table;
 use \Swoole\Timer;
 
 final class RateLimiter
 {
-    public const MAX_REQUESTS = 5;
+    use Singleton;
+
+    public const MAX_REQUESTS = 2;
 
     public const MAX_TIME_SECONDS = 10;
 
-    private static $instance = null;
+    private static self $instance;
 
-    protected $table;
-
-    public static function getInstance(): self
-    {
-        if (self::$instance == null) {
-            self::$instance = new Ratelimiter();
-        }
-        return self::$instance;
-    }
+    protected Table $table;
 
     private function __construct()
     {
@@ -63,7 +58,7 @@ final class RateLimiter
         }
     }
 
-    public function getIpAddress()
+    public function getIpAddress(): ?string
     {
         // print_r($_SERVER);
         // print_r($request);
@@ -78,5 +73,6 @@ final class RateLimiter
                 }
             }
         }
+        return null;
     }
 }

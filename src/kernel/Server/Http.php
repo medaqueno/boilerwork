@@ -5,7 +5,6 @@ declare(strict_types=1);
 
 namespace Kernel\Server;
 
-use Kernel\RateLimiter;
 use Kernel\Tasks\TaskScheduler;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -16,7 +15,7 @@ use Swoole\Http\Server;
  **/
 final class Http
 {
-    private $httpDispatcher;
+    private \FastRoute\Dispatcher $httpDispatcher;
 
     public function __construct()
     {
@@ -67,19 +66,19 @@ final class Http
         $server->start();
     }
 
-    public function onStart($server)
+    public function onStart(Server $server): void
     {
         echo "\nHTTP SERVER STARTED\n";
         swoole_set_process_name('swoole_server');
     }
 
-    public function onTask($server, $taskId, $fromId, $data)
+    public function onTask(Server $server, int $taskId, int $fromId, mixed $data): void
     {
         swoole_set_process_name('swoole_task_' . $taskId);
         echo  '\nTask start swoole_task_' . $taskId;
     }
 
-    public function onWorkerStart($server, int $workerId)
+    public function onWorkerStart(Server $server, int $workerId): void
     {
         swoole_set_process_name('swoole_worker_' . $workerId);
         // echo "\nWorker start swoole_worker_" . $workerId;
@@ -89,12 +88,12 @@ final class Http
         }
     }
 
-    public function onWorkerStop($server, int $workerId)
+    public function onWorkerStop(Server $server, int $workerId): void
     {
         echo "\nWorker Stop " . $workerId, "\n";
     }
 
-    private function initRouting()
+    private function initRouting(): \FastRoute\Dispatcher
     {
         // Init Routing
         return \FastRoute\simpleDispatcher(
@@ -108,7 +107,7 @@ final class Http
         );
     }
 
-    public function onRequest(Request $request, Response $response)
+    public function onRequest(Request $request, Response $response): void
     {
         // Rate Limit
         // $Ratelimiter = RateLimiter::getInstance();
@@ -160,7 +159,7 @@ final class Http
         $response->end(json_encode($result));
     }
 
-    private function handleRequest(Request $request)
+    private function handleRequest(Request $request): mixed
     {
         $request_method = $request->server['request_method'];
         $request_uri = $request->server['request_uri'];
@@ -199,6 +198,13 @@ final class Http
                 }
 
                 break;
+            default:
+                $result = [
+                    'message' => 'Server Error',
+                    'errors' => [
+                        sprintf('Server Error')
+                    ]
+                ];
         }
 
         return $result;

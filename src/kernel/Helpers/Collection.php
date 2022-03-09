@@ -6,9 +6,7 @@ namespace Kernel\Helpers;
 
 class Collection implements \ArrayAccess
 {
-    protected $data;
-
-    public function __construct($data)
+    public function __construct(protected mixed $data)
     {
         if ($data instanceof Collection) {
             $this->data = $data->get();
@@ -17,7 +15,7 @@ class Collection implements \ArrayAccess
         }
     }
 
-    public function has($key): bool
+    public function has(mixed $key): bool
     {
         if (strpos($key, '.') !== false) {
             $keys = explode('.', $key);
@@ -34,7 +32,7 @@ class Collection implements \ArrayAccess
         return isset($this->data[$key]);
     }
 
-    public function get($key = null, $default = null): mixed
+    public function get(mixed $key = null, mixed $default = null): mixed
     {
         if ($key === null) {
             return $this->data;
@@ -57,7 +55,7 @@ class Collection implements \ArrayAccess
         return $default;
     }
 
-    public function set($key, $value): void
+    public function set(mixed $key, mixed $value): void
     {
         if (strpos($key, '.') !== false) {
             $keys = explode('.', $key);
@@ -75,7 +73,7 @@ class Collection implements \ArrayAccess
         }
     }
 
-    public function first(): ?mixed
+    public function first(): mixed
     {
         if (isset($this->data[0])) {
             return $this->data[0];
@@ -83,7 +81,7 @@ class Collection implements \ArrayAccess
         return null;
     }
 
-    public function filter($call): mixed
+    public function filter(callable $call): mixed
     {
         $result = [];
         foreach ($this->data as $k => $v) {
@@ -99,22 +97,22 @@ class Collection implements \ArrayAccess
         return $this->data;
     }
 
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->data[$offset]);
     }
 
-    public function offsetGet($offset): mixed
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->data[$offset];
     }
 
-    public function offsetSet($offset, $value): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->data[$offset] = $value;
     }
 
-    public function offsetUnset($offset): void
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->data[$offset]);
     }

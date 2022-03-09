@@ -17,7 +17,7 @@ if (file_exists(__DIR__ . '/../.env') === true) {
 }
 
 error_reporting(E_ALL);
-ini_set('display_errors', boolval($_ENV['APP_DEBUG']) ?? false);
+ini_set('display_errors', $_ENV['APP_DEBUG'] ?? false);
 
 /**
  * Set Timezone

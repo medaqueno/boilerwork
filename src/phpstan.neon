@@ -1,0 +1,9 @@
+parameters:
+    level: 8
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    excludePaths:
+        - %currentWorkingDirectory%/vendor
+        - %currentWorkingDirectory%/logs
+    ignoreErrors:
+        # Put false positives here

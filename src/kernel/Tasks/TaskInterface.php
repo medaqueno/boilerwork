@@ -7,5 +7,5 @@ namespace Kernel\Tasks;
 
 interface TaskInterface
 {
-    public function handle();
+    public function handle(): void;
 }

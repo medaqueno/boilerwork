@@ -9,6 +9,7 @@ use League\Container\Container;
 use League\Container\ReflectionContainer;
 use Swoole\Runtime;
 use App\Shared\Providers\BindContainerProvider;
+use Kernel\Helpers\Singleton;
 
 /**
  * Load basic dependencies in the App
@@ -16,7 +17,7 @@ use App\Shared\Providers\BindContainerProvider;
  **/
 final class Application
 {
-    static public $app;
+    use Singleton;
 
     public const VERSION = '0.1.0';
 
@@ -33,15 +34,6 @@ final class Application
         Runtime::enableCoroutine(true, \SWOOLE_HOOK_ALL);
 
         $this->launchDependencyInjectionContainer();
-    }
-
-    static function getInstance(): self
-    {
-        if (!self::$app) {
-            self::$app = new self();
-        }
-
-        return self::$app;
     }
 
     /**

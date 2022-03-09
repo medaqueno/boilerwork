@@ -22,7 +22,7 @@ final class RedisClient
 {
     use Singleton;
 
-    private $pool;
+    private RedisPool $pool;
 
     public function __construct()
     {
@@ -34,7 +34,7 @@ final class RedisClient
                 ->withAuth('')
                 // ->withDbIndex()
                 ->withTimeout((int)1),
-            (int)$_ENV['REDIS_SIZE_CONN'] ?? 64
+            $_ENV['REDIS_SIZE_CONN'] ? (int)$_ENV['REDIS_SIZE_CONN'] : 64
         );
     }
 

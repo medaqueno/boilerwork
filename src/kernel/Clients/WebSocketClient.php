@@ -11,7 +11,7 @@ use Swoole\Coroutine\Http\Client;
 /**
  * @desc Connect to a websocket server, receive and send data if proceedes
  *
- * @use
+ * @example
  * Init Connection:
  * $wsClient = new WebSocketClient(host: 'stream.exampleserver.com', path: '/stream');
  * Receive data continuously: (a Swoole\WebSocket\Frame is received)
@@ -33,17 +33,16 @@ class WebSocketClient
     public function __construct(string $host, string $path = '', int $port = 9443, bool $ssl = true)
     {
         $this->client = new Client(host: $host, port: $port, ssl: $ssl);
-
-        return $this->client->upgrade(path: $path);
+        $this->client->upgrade(path: $path);
     }
 
-    public function push(mixed $data, mixed $opcode = WEBSOCKET_OPCODE_TEXT, mixed $flags = null)
+    public function push(mixed $data, mixed $opcode = WEBSOCKET_OPCODE_TEXT, mixed $flags = null): mixed
     {
         return $this->client->push(data: $data, opcode: $opcode, flags: $flags);
     }
 
     /**
-     * @param timeout In seconds, the timeout of the request, 1.5 means 1.5 seconds.
+     * @param float    $timeout     In seconds, the timeout of the request, 1.5 means 1.5 seconds.
      * if operation fails or Generator of Swoole\WebSocket\Frame items if succeeds
      *
      * @see https://openswoole.com/docs/modules/swoole-coroutine-http-client-recv
@@ -52,10 +51,10 @@ class WebSocketClient
     {
         try {
             while ($frame = $this->client->recv(timeout: $timeout)) {
-                if ($frame === false) {
+                if ($frame == false) {
                     logger("WS Error : {$this->getErrMsg()}");
                     break;
-                } else if ($frame === '') {
+                } else if ($frame == '') {
                     logger("Disconnect from WS");
                     $this->close();
                     break;
@@ -69,22 +68,22 @@ class WebSocketClient
         }
     }
 
-    public function close()
+    public function close(): mixed
     {
         return $this->client->close();
     }
 
-    public function getErrMsg()
+    public function getErrMsg(): mixed
     {
         return $this->client->errMsg;
     }
 
-    public function getErrCode()
+    public function getErrCode(): mixed
     {
         return $this->client->errCode;
     }
 
-    public function pingConnection()
+    public function pingConnection(): mixed
     {
         return $this->client->push('', WEBSOCKET_OPCODE_PING);
     }

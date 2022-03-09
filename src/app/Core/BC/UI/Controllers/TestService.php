@@ -7,7 +7,7 @@ namespace App\Core\BC\UI\Controllers;
 
 final class TestService implements TestServiceInterface
 {
-    public function debeEstar()
+    public function debeEstar(): void
     {
         echo "\nDEBO ESTAR Y ESTOY\n";
     }
