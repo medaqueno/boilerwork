@@ -1,0 +1,9 @@
+parameters:
+    inferPrivatePropertyTypeFromConstructor: true
+    checkMissingIterableValueType: false
+    excludes_analyse:
+        - %currentWorkingDirectory%/src/vendor
+    autoload_directories:
+        - %currentWorkingDirectory%/src/vendor/openswoole/ide-helper/src/swoole/Swoole
+    ignoreErrors:
+        # Put false positives here

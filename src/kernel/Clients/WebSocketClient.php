@@ -1,0 +1,91 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+namespace Kernel\Clients;
+
+use Generator;
+use Swoole\Coroutine\Http\Client;
+
+/**
+ * @desc Connect to a websocket server, receive and send data if proceedes
+ *
+ * @use
+ * Init Connection:
+ * $wsClient = new WebSocketClient(host: 'stream.exampleserver.com', path: '/stream');
+ * Receive data continuously: (a Swoole\WebSocket\Frame is received)
+   foreach ($wsClient->receive() as $message) {
+            var_dump($message);
+    }
+ *
+ * Send example data to Websocket server
+ * $wsClient->push(json_encode([
+            'method' => 'SUBSCRIBE',
+            'params' => ['param1'],
+            'id' => 1,
+        ]));
+ */
+class WebSocketClient
+{
+    public readonly Client $client;
+
+    public function __construct(string $host, string $path = '', int $port = 9443, bool $ssl = true)
+    {
+        $this->client = new Client(host: $host, port: $port, ssl: $ssl);
+
+        return $this->client->upgrade(path: $path);
+    }
+
+    public function push(mixed $data, mixed $opcode = WEBSOCKET_OPCODE_TEXT, mixed $flags = null)
+    {
+        return $this->client->push(data: $data, opcode: $opcode, flags: $flags);
+    }
+
+    /**
+     * @param timeout In seconds, the timeout of the request, 1.5 means 1.5 seconds.
+     * if operation fails or Generator of Swoole\WebSocket\Frame items if succeeds
+     *
+     * @see https://openswoole.com/docs/modules/swoole-coroutine-http-client-recv
+     */
+    public function receive(float $timeout = 2): Generator
+    {
+        try {
+            while ($frame = $this->client->recv(timeout: $timeout)) {
+                if ($frame === false) {
+                    logger("WS Error : {$this->getErrMsg()}");
+                    break;
+                } else if ($frame === '') {
+                    logger("Disconnect from WS");
+                    $this->close();
+                    break;
+                }
+
+                yield $frame;
+            }
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+            $this->close();
+        }
+    }
+
+    public function close()
+    {
+        return $this->client->close();
+    }
+
+    public function getErrMsg()
+    {
+        return $this->client->errMsg;
+    }
+
+    public function getErrCode()
+    {
+        return $this->client->errCode;
+    }
+
+    public function pingConnection()
+    {
+        return $this->client->push('', WEBSOCKET_OPCODE_PING);
+    }
+}
