@@ -18,13 +18,13 @@ function base_path(string $path): string
 
 function logger(string|Stringable $message, string $channel = 'default', string $mode = 'debug'): void
 {
-    $logger = new \Monolog\Logger($channel);
+    // $logger = new \Monolog\Logger($channel);
 
-    $format = date('Y-m-d', time());
+    // $format = date('Y-m-d', time());
 
-    $logger->pushHandler(new \Monolog\Handler\StreamHandler(base_path('/logs/') . $format . '.log', \Monolog\Logger::DEBUG));
+    // $logger->pushHandler(new \Monolog\Handler\StreamHandler(base_path('/logs/') . $format . '.log', \Monolog\Logger::DEBUG));
 
-    $logger->debug($message);
+    // $logger->debug($message);
 }
 
 function response_empty(int $statusCode = 200): array

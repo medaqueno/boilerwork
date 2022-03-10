@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install vim -y && \
     apt-get install procps -y && \
     apt-get install libz-dev -y && \
     apt-get install libmpdec-dev -y && \
+    apt-get install libpq-dev -y && \
     apt-get install htop -y
 
 RUN set -ex \

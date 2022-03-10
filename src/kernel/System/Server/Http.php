@@ -10,6 +10,8 @@ use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Http\Server;
 
+use function GuzzleHttp\json_encode;
+
 /**
  *
  **/
@@ -164,6 +166,8 @@ final class Http
             $response->setStatusCode($result['statusCode']);
             $response->end($result['data']);
         }
+
+        // $response->end(json_encode($result));
     }
 
     private function handleRequest(Request $request)

@@ -5,18 +5,14 @@ declare(strict_types=1);
 
 namespace Bootstrap;
 
-use App\Core\BC\Application\ExampleCommand;
-use App\Core\BC\Application\ExampleCommandHandler;
 use League\Container\Container;
 use League\Container\ReflectionContainer;
 use Swoole\Runtime;
 use App\Shared\Providers\BindContainerProvider;
-use Kernel\Application\CommandHandlerInterface;
-use Kernel\Application\CommandInterface;
 use Kernel\Helpers\Singleton;
 
 /**
- * Load basic dependencies in the App
+ * Load basic dependencies and configs in the App
  *
  **/
 final class Application
@@ -35,6 +31,7 @@ final class Application
 
         // Enable Hooks to allow Courotines to work automatically
         // https://openswoole.com/docs/modules/swoole-runtime-flags
+        !defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);
         Runtime::enableCoroutine(true, \SWOOLE_HOOK_ALL);
 
         $this->launchDependencyInjectionContainer();

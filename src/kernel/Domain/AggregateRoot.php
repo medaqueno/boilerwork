@@ -7,22 +7,23 @@ namespace Kernel\Domain;
 
 abstract class AggregateRoot
 {
-    private int $id;
+    protected int $version = 0;
 
-    private int $version;
+    protected int $id;
 
-    protected function id(): int
+    public function id(): int
     {
         return $this->id;
     }
 
-    protected function getVersion(): int
+    protected function getCurrentVersion(): int
     {
         return $this->version;
     }
 
     protected function increaseVersion(): void
     {
-        $this->version = ++$this->getVersion();
+        $version = $this->getCurrentVersion();
+        $this->version = ++$version;
     }
 }

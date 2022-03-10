@@ -1,1 +1,1 @@
-Contain Aggregates, VOs, Entities and DTOs
+Contain Aggregates, VOs, Entities, DTOs, Domain Repository Interfaces

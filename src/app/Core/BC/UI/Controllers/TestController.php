@@ -14,7 +14,7 @@ final class TestController extends AbstractController
     public function __invoke(Request $request, array $vars): mixed
     {
         $this->command()->handle(
-            new ExampleCommand(email: 'un.correo@test.es', username: 'mdqn')
+            new ExampleCommand(email: 'laotracosa@test.es', username: 'mdqn')
         );
 
         return response_empty();

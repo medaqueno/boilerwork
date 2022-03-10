@@ -7,16 +7,18 @@ namespace Kernel\System\Clients;
 
 use Kernel\Helpers\Singleton;
 use Redis;
-use Swoole\Coroutine;
 use Swoole\Database\RedisConfig;
 use Swoole\Database\RedisPool;
 
 /**
- * @example [] $redisPool = RedisClient::getInstance();
- *          $redis = $redisPool->getConn();
- *          $redis->set('SetOneKey', 'some value set');
- *          var_dump($redis->get('SetOneKey'));
- *          $redisPool->putConn($redis);  // Connection must be released
+ * Open a pool of connections to Redis server, so we can use them when needed.
+ *
+ * @example []
+        $redisPool = RedisClient::getInstance();
+        $redis = $redisPool->getConn();
+        $redis->set('SetOneKey', 'some value set');
+        var_dump($redis->get('SetOneKey'));
+        $redisPool->putConn($redis);  // Connection must be released
  **/
 final class RedisClient
 {
@@ -24,15 +26,21 @@ final class RedisClient
 
     private RedisPool $pool;
 
-    public function __construct()
+    public function __construct(int $dbIndex = 0)
     {
-        Coroutine::set(['hook_flags' => SWOOLE_HOOK_TCP]);
+        if (boolval($_ENV['REDIS_ENABLED']) === false) {
+            throw new \Exception("REDIS IS NOT ENABLED", 500);
+
+            return;
+        }
+
+        // Coroutine::set(['hook_flags' => SWOOLE_HOOK_TCP]); // Enabled Globally in Application init
 
         $this->pool = new RedisPool((new RedisConfig)
                 ->withHost($_ENV['REDIS_HOST'])
                 ->withPort((int)$_ENV['REDIS_PORT'])
                 ->withAuth('')
-                // ->withDbIndex()
+                ->withDbIndex($dbIndex)
                 ->withTimeout((int)1),
             $_ENV['REDIS_SIZE_CONN'] ? (int)$_ENV['REDIS_SIZE_CONN'] : 64
         );
@@ -47,4 +55,20 @@ final class RedisClient
     {
         $this->pool->put($connection);
     }
+
+    /* public function save(mixed $object)
+    {
+        $this->client->hset('posts', (string) $object->id(), serialize($object));
+    }
+    public function remove(Post $aPost)
+    {
+        $this->client->hdel('posts', (string) $aPost->id());
+    }
+    public function get(PostId $anId)
+    {
+        if ($data = $this->client->hget('posts', (string) $anId)) {
+            return unserialize($data);
+        }
+        return null;
+    }*/
 }

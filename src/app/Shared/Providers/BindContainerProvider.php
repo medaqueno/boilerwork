@@ -5,6 +5,8 @@ declare(strict_types=1);
 
 namespace App\Shared\Providers;
 
+use App\Core\BC\Domain\UserRepository;
+use App\Core\BC\Infra\Persistence\UserRedisRepository;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 
 final class BindContainerProvider extends AbstractServiceProvider
@@ -18,7 +20,10 @@ final class BindContainerProvider extends AbstractServiceProvider
      */
     public function provides(string $id): bool
     {
-        $services = [];
+        // Interfaces
+        $services = [
+            // UserRepository::class,
+        ];
 
         return in_array($id, $services);
     }
@@ -33,5 +38,7 @@ final class BindContainerProvider extends AbstractServiceProvider
     {
         // Example
         // $this->getContainer()->add(\App\Core\BC\UI\Controllers\Interface::class, \App\Core\BC\UI\Controllers\ConcreteClass::class);
+
+        // $this->getContainer()->addShared(UserRepository::class, UserRedisRepository::class);
     }
 }
