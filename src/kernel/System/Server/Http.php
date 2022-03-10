@@ -3,9 +3,9 @@
 
 declare(strict_types=1);
 
-namespace Kernel\Server;
+namespace Kernel\System\Server;
 
-use Kernel\Tasks\TaskScheduler;
+use Kernel\System\Tasks\TaskScheduler;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Http\Server;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Providers;
 
-use Kernel\Tasks\AbstractTaskScheduler;
+use Kernel\System\Tasks\AbstractTaskScheduler;
 
 final class TaskProvider extends AbstractTaskScheduler
 {

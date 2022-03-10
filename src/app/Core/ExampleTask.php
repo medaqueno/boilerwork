@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace App\Core;
 
-use Kernel\Tasks\TaskInterface;
+use Kernel\System\Tasks\TaskInterface;
 use  App\Core\Mailer;
 
 final class ExampleTask implements TaskInterface

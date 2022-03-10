@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-namespace Kernel\Tasks;
+namespace Kernel\System\Tasks;
 
 interface TaskInterface
 {

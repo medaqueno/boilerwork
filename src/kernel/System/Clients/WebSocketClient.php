@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-namespace Kernel\Clients;
+namespace Kernel\System\Clients;
 
 use Generator;
 use Swoole\Coroutine\Http\Client;

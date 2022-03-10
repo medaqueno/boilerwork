@@ -28,4 +28,4 @@ require_once __DIR__  . '/../kernel/Helpers/functions.php';
 
 $app = Application::getInstance();
 
-new \Kernel\RunServer('http');
+new \Kernel\System\RunServer('http');
