@@ -33,8 +33,6 @@ final class User extends AggregateRoot
     {
     }
 
-
-
     public function toArray(): array
     {
         return [

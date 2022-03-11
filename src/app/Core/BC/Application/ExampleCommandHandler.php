@@ -10,6 +10,7 @@ use App\Core\BC\Domain\User;
 use App\Core\BC\Infra\Persistence\UserRedisRepository;
 use Kernel\Application\CommandHandlerInterface;
 use Kernel\Application\CommandInterface;
+use stdClass;
 
 final class ExampleCommandHandler implements CommandHandlerInterface
 {
@@ -20,6 +21,10 @@ final class ExampleCommandHandler implements CommandHandlerInterface
 
     public function handle(CommandInterface $command): void
     {
+
+        logger("PETAZETAS");
+
+
 
         $aggregate = User::register(
             email: $command->email,

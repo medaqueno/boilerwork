@@ -16,15 +16,21 @@ function base_path(string $path): string
     return __DIR__ . '/../..' . $path;
 }
 
-function logger(string|Stringable $message, string $channel = 'default', string $mode = 'debug'): void
+function logger(string|Stringable|array $message, string $mode = 'DEBUG', string $channel = 'default'): void
 {
-    // $logger = new \Monolog\Logger($channel);
+    $d = new DateTimeImmutable();
 
-    // $format = date('Y-m-d', time());
+    $message = is_array($message) ? json_encode($message) : ((method_exists($message, '__toString')) ? $message->__toString() : $message);
+    $message = '[' . $d->format(DateTime::ATOM) . '] ' . strtoupper($mode) . ' ' . $message . PHP_EOL;
 
-    // $logger->pushHandler(new \Monolog\Handler\StreamHandler(base_path('/logs/') . $format . '.log', \Monolog\Logger::DEBUG));
+    $fp = fopen(base_path('/logs/') . $channel . '_' . $d->format('Y-m-d') . '.log', 'a');
+    stream_set_blocking($fp, false);
 
-    // $logger->debug($message);
+    if (flock($fp, LOCK_EX)) {
+        fwrite($fp, $message);
+    }
+    flock($fp, LOCK_UN);
+    fclose($fp);
 }
 
 function response_empty(int $statusCode = 200): array

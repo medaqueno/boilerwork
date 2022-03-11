@@ -43,15 +43,15 @@ final class CommandBus
                 call_user_func([$commandHandler, 'handle'], $command);
 
                 // Log all mutations in data made with commands
-                logger(json_encode(
+                /*logger(json_encode(
                     [
                         'commandName' => $commandName,
                         'payload' => $command,
                         'time' => $this->time,
                     ]
-                ));
+                ));*/
             } catch (\Exception $e) {
-                logger(json_encode(
+                /*logger(json_encode(
                     [
                         'commandName' => $commandName,
                         'payload' => $command,
@@ -59,7 +59,7 @@ final class CommandBus
                         'exception' => $e,
                     ]
                 ));
-
+*/
                 throw $e;
             }
         });

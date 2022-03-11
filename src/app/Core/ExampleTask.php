@@ -26,6 +26,5 @@ final class ExampleTask implements TaskInterface
     {
         $date = date('Y-m-d H:i:s', time());
         echo "\nESTAMOS EN EL TASK " . $date . " \n";
-        logger("ESTAMOS EN EL TASK " . $this->mailer->getTestString());
     }
 }
