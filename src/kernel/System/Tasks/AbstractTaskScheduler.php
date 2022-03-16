@@ -83,7 +83,7 @@ abstract class AbstractTaskScheduler
 
                 go(function () use ($taskToExecute) {
 
-                    $task = app()->containerBuilder->get($taskToExecute);
+                    $task = app()->container()->get($taskToExecute);
 
                     if ($task instanceof TaskInterface) {
                         $task->handle();

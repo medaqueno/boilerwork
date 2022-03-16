@@ -34,7 +34,7 @@ final class RedisClient
             return;
         }
 
-        // Coroutine::set(['hook_flags' => SWOOLE_HOOK_TCP]); // Enabled Globally in Application init
+        // \Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_TCP]); // Enabled Globally in Application init
 
         $this->pool = new RedisPool((new RedisConfig)
                 ->withHost($_ENV['REDIS_HOST'])

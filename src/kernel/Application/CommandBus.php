@@ -33,25 +33,28 @@ final class CommandBus
      */
     public function handle(CommandInterface $command): void
     {
-        go(function () use ($command) {
+        // go(function () use ($command, $args) {
 
-            $commandHandler = app()->containerBuilder->get(get_class($command) . 'Handler');
-            $commandName = $this->getCommandName($command);
+        $commandHandler = app()->container()->get(get_class($command) . 'Handler');
+        // $commandName = $this->getCommandName($command); // Used for logging
 
-            // Execute commandHandler
-            try {
-                call_user_func([$commandHandler, 'handle'], $command);
+        // Execute commandHandler
+        try {
+            call_user_func([$commandHandler, 'handle'], $command);
 
-                // Log all mutations in data made with commands
-                /*logger(json_encode(
+            // Log all mutations in data made with commands
+            /*
+                logger(json_encode(
                     [
                         'commandName' => $commandName,
                         'payload' => $command,
                         'time' => $this->time,
                     ]
-                ));*/
-            } catch (\Exception $e) {
-                /*logger(json_encode(
+                ));
+                */
+        } catch (\Exception $e) {
+            /*
+                logger(json_encode(
                     [
                         'commandName' => $commandName,
                         'payload' => $command,
@@ -59,10 +62,10 @@ final class CommandBus
                         'exception' => $e,
                     ]
                 ));
-*/
-                throw $e;
-            }
-        });
+                */
+            throw $e;
+        }
+        // });
     }
 
     private function getCommandName(CommandInterface $command): string

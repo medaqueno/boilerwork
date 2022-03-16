@@ -88,7 +88,7 @@ final class Http
         // echo "\nWorker start swoole_worker_" . $workerId;
 
         if ($workerId === 0) {
-            app()->containerBuilder->get(TaskScheduler::class);
+            // app()->container()Builder->get(TaskScheduler::class);
         }
     }
 
@@ -168,6 +168,10 @@ final class Http
             $response->setStatusCode($result['statusCode']);
             $response->end($result['data']);
         }
+        go(function () {
+            getMemoryStatus();
+        });
+
 
         // $response->end(json_encode($result));
     }
@@ -211,11 +215,11 @@ final class Http
                     // Custom method in class
                     $className = $handler[0];
                     $method = $handler[1];
-                    $class = app()->containerBuilder->get($className);
+                    $class = app()->container()->get($className);
                     $result = $class->$method($request, $vars);
                 } else {
                     // invokable class  __invoke
-                    $result = (app()->containerBuilder->get($handler))($request, $vars);
+                    $result = (app()->container()->get($handler))($request, $vars);
                 }
 
                 break;

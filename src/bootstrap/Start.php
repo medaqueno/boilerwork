@@ -26,6 +26,6 @@ date_default_timezone_set($_ENV['APP_TIMEZONE']);
 
 require_once __DIR__  . '/../kernel/Helpers/functions.php';
 
-$app = Application::getInstance();
+Application::getInstance();
 
 new \Kernel\System\RunServer('http');

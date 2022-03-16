@@ -5,11 +5,10 @@ declare(strict_types=1);
 
 namespace Bootstrap;
 
-use League\Container\Container;
-use League\Container\ReflectionContainer;
 use Swoole\Runtime;
-use App\Shared\Providers\BindContainerProvider;
 use Kernel\Helpers\Singleton;
+use Kernel\System\Container\Container;
+use Psr\Container\ContainerInterface;
 
 /**
  * Load basic dependencies and configs in the App
@@ -21,9 +20,9 @@ final class Application
 
     public const VERSION = '0.1.0';
 
-    protected readonly string $environment;
+    private string $environment;
 
-    public Container $containerBuilder;
+    private ContainerInterface $container;
 
     private function __construct()
     {
@@ -31,30 +30,24 @@ final class Application
 
         // Enable Hooks to allow Courotines to work automatically
         // https://openswoole.com/docs/modules/swoole-runtime-flags
-        !defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);
+        !defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', \SWOOLE_HOOK_ALL);
         Runtime::enableCoroutine(true, \SWOOLE_HOOK_ALL);
 
         $this->launchDependencyInjectionContainer();
     }
 
-    /**
-     * Dependency Injection Container
-     * https://container.thephpleague.com/
-     */
-    private function launchDependencyInjectionContainer(): void
-    {
-        // Autowire
-        $this->containerBuilder = new Container;
-
-        $this->containerBuilder
-            // register the reflection container as a delegate to enable auto wiring
-            ->delegate(new ReflectionContainer)
-            // Add service Provider
-            ->addServiceProvider(new BindContainerProvider);
-    }
-
     public function getEnvironment(): string
     {
         return $this->environment;
+    }
+
+    private function launchDependencyInjectionContainer(): void
+    {
+        $this->container = new Container;
+    }
+
+    public function container(): ContainerInterface
+    {
+        return $this->container;
     }
 }

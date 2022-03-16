@@ -9,6 +9,10 @@ use App\Core\BC\Domain\UserRepository;
 use App\Core\BC\Infra\Persistence\UserRedisRepository;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 
+/*
+For PHP LEAGUE DEPENDENCY INJECTION. Still thinking about to use it or not
+*/
+
 final class BindContainerProvider extends AbstractServiceProvider
 {
     /**
