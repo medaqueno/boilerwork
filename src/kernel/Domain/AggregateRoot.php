@@ -5,6 +5,8 @@ declare(strict_types=1);
 
 namespace Kernel\Domain;
 
+use Kernel\Events\EventPublisher;
+
 abstract class AggregateRoot
 {
     protected int $version = 0;
@@ -26,4 +28,11 @@ abstract class AggregateRoot
         $version = $this->getCurrentVersion();
         $this->version = ++$version;
     }
+
+    protected function publish($event)
+    {
+        EventPublisher::getInstance()->publish(event: $event);
+    }
+
+    abstract public function toArray(): array;
 }

@@ -5,8 +5,12 @@ declare(strict_types=1);
 
 namespace App\Core\BC\Domain\Events;
 
-use Kernel\Domain\AbstractEvent;
+use Kernel\Events\EventInterface;
 
-final class UserRegistered extends AbstractEvent
+final class UserRegistered implements EventInterface
 {
+    public function __construct(
+        public readonly array $payload
+    ) {
+    }
 }

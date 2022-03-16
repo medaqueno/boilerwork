@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace App\Core\BC\Domain;
 
+use App\Core\BC\Domain\Events\UserRegistered;
 use Kernel\Domain\AggregateRoot;
 
 final class User extends AggregateRoot
@@ -25,6 +26,8 @@ final class User extends AggregateRoot
             username: $username,
             status: 1,
         );
+
+        $entity->publish(new UserRegistered($entity->toArray()));
 
         return $entity;
     }

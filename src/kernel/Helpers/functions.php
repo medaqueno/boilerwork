@@ -16,23 +16,42 @@ function base_path(string $path): string
     return __DIR__ . '/../..' . $path;
 }
 
+function error(string|Stringable|array $message, string $exception = \Exception::class, ?string $channel = 'error'): void
+{
+    if (boolval($_ENV['APP_DEBUG']) === true) {
+        $d = new DateTimeImmutable();
+
+        $message = is_array($message) ? json_encode($message) : ((method_exists($message, '__toString')) ? $message->__toString() : $message);
+        $message = '[' . $d->format(DateTime::ATOM) . '] ' . strtoupper($exception) . ' ' . $message . PHP_EOL;
+
+        $fp = fopen(base_path('/logs/') . $channel . '_' . $d->format('Y-m-d') . '.log', 'a');
+        stream_set_blocking($fp, false);
+
+        if (flock($fp, LOCK_EX)) {
+            fwrite($fp, $message);
+        }
+        flock($fp, LOCK_UN);
+        fclose($fp);
+    }
+}
+
 function logger(string|Stringable|array $message, string $mode = 'DEBUG', string $channel = 'default'): void
 {
-    // if (boolval($_ENV['APP_DEBUG']) === true) {
-    //     $d = new DateTimeImmutable();
+    if (boolval($_ENV['APP_DEBUG']) === true) {
+        $d = new DateTimeImmutable();
 
-    //     $message = is_array($message) ? json_encode($message) : ((method_exists($message, '__toString')) ? $message->__toString() : $message);
-    //     $message = '[' . $d->format(DateTime::ATOM) . '] ' . strtoupper($mode) . ' ' . $message . PHP_EOL;
+        $message = is_array($message) ? json_encode($message) : ((method_exists($message, '__toString')) ? $message->__toString() : $message);
+        $message = '[' . $d->format(DateTime::ATOM) . '] ' . strtoupper($mode) . ' ' . $message . PHP_EOL;
 
-    //     $fp = fopen(base_path('/logs/') . $channel . '_' . $d->format('Y-m-d') . '.log', 'a');
-    //     stream_set_blocking($fp, false);
+        $fp = fopen(base_path('/logs/') . $channel . '_' . $d->format('Y-m-d') . '.log', 'a');
+        stream_set_blocking($fp, false);
 
-    //     if (flock($fp, LOCK_EX)) {
-    //         fwrite($fp, $message);
-    //     }
-    //     flock($fp, LOCK_UN);
-    //     fclose($fp);
-    // }
+        if (flock($fp, LOCK_EX)) {
+            fwrite($fp, $message);
+        }
+        flock($fp, LOCK_UN);
+        fclose($fp);
+    }
 }
 
 function response_empty(int $statusCode = 200): array

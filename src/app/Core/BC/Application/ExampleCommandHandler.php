@@ -24,13 +24,12 @@ final class ExampleCommandHandler implements CommandHandlerInterface
         );
 
         // var_dump($aggregate->toArray());
-        go(function () {
+        go(function () use ($aggregate) {
+
+            // $this->userRepository->add($aggregate);
+
             $exists = $this->userRepository->ofId(10);
-
-
             var_dump($exists);
         });
-
-        // $this->userRepository->add($aggregate);
     }
 }

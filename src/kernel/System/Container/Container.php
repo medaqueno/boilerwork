@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace Kernel\System\Container;
 
+use App\Core\BC\Domain\Events\UserRegistered;
 use Psr\Container\ContainerInterface;
 // use League\Container\Container as ContainerImplementation;
 // use League\Container\ReflectionContainer;
@@ -12,7 +13,7 @@ use Psr\Container\ContainerInterface;
 use Illuminate\Container\Container as ContainerImplementation;
 use App\Core\BC\Domain\UserRepository;
 use App\Core\BC\Infra\Persistence\UserRedisRepository;
-
+use Kernel\Events\EventInterface;
 
 /**
  * Dependency Injection Container

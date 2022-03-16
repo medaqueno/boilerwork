@@ -5,6 +5,8 @@ declare(strict_types=1);
 
 namespace Bootstrap;
 
+use App\Shared\Providers\EventsSubscribeProvider;
+use Kernel\Events\EventPublisher;
 use Swoole\Runtime;
 use Kernel\Helpers\Singleton;
 use Kernel\System\Container\Container;
@@ -34,6 +36,8 @@ final class Application
         Runtime::enableCoroutine(true, \SWOOLE_HOOK_ALL);
 
         $this->launchDependencyInjectionContainer();
+
+        new EventsSubscribeProvider(EventPublisher::getInstance());
     }
 
     public function getEnvironment(): string

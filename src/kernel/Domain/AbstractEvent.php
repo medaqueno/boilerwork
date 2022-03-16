@@ -17,11 +17,11 @@ abstract class AbstractEvent
         private array $payload = [],
         private ?AggregateRoot $aggregate = null,
     ) {
-        $this->time = new DateTimeImmutable();
-        $this->type = static::class;
+        // $this->time = new DateTimeImmutable();
+        // $this->type = static::class;
     }
 
-    public function toArray(): array
+    /* public function toArray(): array
     {
         return [
             'aggregate' => [
@@ -46,5 +46,5 @@ abstract class AbstractEvent
         }
 
         return $eventName;
-    }
+    }*/
 }
