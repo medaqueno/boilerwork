@@ -5,96 +5,20 @@ declare(strict_types=1);
 
 namespace Kernel\System\Server;
 
-use Kernel\System\Tasks\TaskScheduler;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
-use Swoole\Http\Server;
-
-use function GuzzleHttp\json_encode;
 
 /**
  *
  **/
-final class Http
+final class HandleHttp
 {
     private \FastRoute\Dispatcher $httpDispatcher;
 
     public function __construct()
     {
-        $server = new Server($_ENV['HTTP_SERVER_IP'], intval($_ENV['HTTP_SERVER_PORT']));
-
-        // https://openswoole.com/docs/modules/swoole-server/configuration
-        $server->set([
-            'worker_num' => swoole_cpu_num() * 2,
-            'task_worker_num' => swoole_cpu_num(),
-            'task_enable_coroutine' => true,
-            // 'enable_preemptive_scheduler' => 1,
-            // 'dispatch_mode' => 3, // in preemptive mode, the main process will select delivery according to the worker's free and busy state, and will only deliver to the worker in idle state
-            // 'max_conn' => CONFIGURE IF NEEDED AS DOCS RECOMMENDS,
-            'open_http2_protocol' => true,
-            'debug_mode' => boolval($_ENV['APP_DEBUG']),
-            'log_level' => boolval($_ENV['APP_DEBUG']) ? 0 : 5,
-            'log_file' => base_path('/logs/swoole_http_server.log'),
-            'log_rotation' => SWOOLE_LOG_ROTATION_DAILY,
-            'log_date_format' => '%Y-%m-%dT%H:%M:%S%z',
-        ]);
-
-        $server->on(
-            "start",
-            [$this, 'onStart']
-        );
-
         // Init Routing
         $this->httpDispatcher = $this->initRouting();
-
-        $server->on(
-            "request",
-            [$this, 'onRequest']
-        );
-
-        $server->on(
-            "WorkerStart",
-            [$this, 'onWorkerStart']
-        );
-
-        $server->on(
-            "task",
-            [$this, 'onTask']
-        );
-
-        $server->on(
-            "WorkerStop",
-            [$this, 'onWorkerStop']
-        );
-
-        $server->start();
-    }
-
-    public function onStart(Server $server): void
-    {
-        echo "\nHTTP SERVER STARTED\n";
-        swoole_set_process_name('swoole_server');
-    }
-
-    public function onTask(Server $server, int $taskId, int $fromId, mixed $data): void
-    {
-        swoole_set_process_name('swoole_task_' . $taskId);
-        echo  '\nTask start swoole_task_' . $taskId;
-    }
-
-    public function onWorkerStart(Server $server, int $workerId): void
-    {
-        swoole_set_process_name('swoole_worker_' . $workerId);
-        // echo "\nWorker start swoole_worker_" . $workerId;
-
-        if ($workerId === 0) {
-            // app()->container()Builder->get(TaskScheduler::class);
-        }
-    }
-
-    public function onWorkerStop(Server $server, int $workerId): void
-    {
-        echo "\nWorker Stop " . $workerId, "\n";
     }
 
     private function initRouting(): \FastRoute\Dispatcher

@@ -7,7 +7,6 @@ namespace Bootstrap;
 
 use App\Shared\Providers\EventsSubscribeProvider;
 use Kernel\Events\EventPublisher;
-use Swoole\Runtime;
 use Kernel\Helpers\Singleton;
 use Kernel\System\Container\Container;
 use Psr\Container\ContainerInterface;
@@ -30,12 +29,8 @@ final class Application
     {
         $this->environment = $_ENV['APP_ENV'] ?? 'DEV';
 
-        // Enable Hooks to allow Courotines to work automatically
-        // https://openswoole.com/docs/modules/swoole-runtime-flags
-        !defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', \SWOOLE_HOOK_ALL);
-        Runtime::enableCoroutine(true, \SWOOLE_HOOK_ALL);
-
-        $this->launchDependencyInjectionContainer();
+        // Init Dependency Injection Container
+        $this->container = new Container;
 
         new EventsSubscribeProvider(EventPublisher::getInstance());
     }
@@ -43,11 +38,6 @@ final class Application
     public function getEnvironment(): string
     {
         return $this->environment;
-    }
-
-    private function launchDependencyInjectionContainer(): void
-    {
-        $this->container = new Container;
     }
 
     public function container(): ContainerInterface

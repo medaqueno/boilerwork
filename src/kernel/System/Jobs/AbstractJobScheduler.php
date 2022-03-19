@@ -3,98 +3,98 @@
 
 declare(strict_types=1);
 
-namespace Kernel\System\Tasks;
+namespace Kernel\System\Jobs;
 
 use Carbon\Carbon;
-use Swoole\Coroutine;
 
-abstract class AbstractTaskScheduler
+abstract class AbstractJobScheduler
 {
     /**
      * @description Runs every minute
-     * Ex: [ExampleTask::class, [self::INTERVAL_EVERY_MINUTE, null]]
+     * Ex: [ExampleJob::class, [self::INTERVAL_EVERY_MINUTE, null]]
      **/
     public const INTERVAL_EVERY_MINUTE = 'everyMinute';
 
     /**
      * @description Runs every hour at the specified minute
-     * Ex: 01 or 56 [ExampleTask::class, [self::INTERVAL_HOURLY_AT_MINUTE, '08']]
+     * Ex: 01 or 56 [ExampleJob::class, [self::INTERVAL_HOURLY_AT_MINUTE, '08']]
      **/
     public const INTERVAL_HOURLY_AT_MINUTE = 'hourlyAtMinute';
 
     /**
      * @description Runs every hour
-     * Ex: [ExampleTask::class, [self::INTERVAL_EVERY_HOUR, null]]
+     * Ex: [ExampleJob::class, [self::INTERVAL_EVERY_HOUR, null]]
      **/
     public const INTERVAL_EVERY_HOUR = 'everyHour';
 
     /**
      * @description Runs every day at the specified hour
-     * Ex: 03 or 21 [ExampleTask::class, [self::INTERVAL_DAILY_AT_HOUR, '04']]
+     * Ex: 03 or 21 [ExampleJob::class, [self::INTERVAL_DAILY_AT_HOUR, '04']]
      **/
     public const INTERVAL_DAILY_AT_HOUR = 'dailyAtHour';
 
     /**
      * @description Runs every day at the specified Time HH:ss
-     * Ex: 23:03 or 2:23 [ExampleTask::class, [self::INTERVAL_DAILY_AT_TIME, '8:04']]
+     * Ex: 23:03 or 2:23 [ExampleJob::class, [self::INTERVAL_DAILY_AT_TIME, '8:04']]
      **/
     public const INTERVAL_DAILY_AT_TIME = 'dailyAtTime';
 
     /**
      * @description Runs every week at specified day by its correlative number
-     * Ex: between 1 (monday) and 7 (sunday) [ExampleTask::class, [self::INTERVAL_EVERY_DAY_OF_WEEK_ISO, '2']]
+     * Ex: between 1 (monday) and 7 (sunday) [ExampleJob::class, [self::INTERVAL_EVERY_DAY_OF_WEEK_ISO, '2']]
      **/
     public const INTERVAL_EVERY_DAY_OF_WEEK_ISO = 'everyDayOfWeekIso';
 
-    protected array $tasks = [];
+    protected array $jobs = [];
 
-    private array $tasksToBeExecuted = [];
+    private array $jobsToBeExecuted = [];
 
     public function run(): void
     {
-        $this->checkTasks();
+        $this->checkJobs();
     }
 
-    protected function checkTasks(): void
+    protected function checkJobs(): void
     {
-        // Add to tasksToBeExecuted array if proceeds
-        foreach ($this->tasks as $task) {
 
+        // Add to tasksToBeExecuted array if proceeds
+        foreach ($this->jobs as $job) {
             // Check if Task if in time to be executed
-            if ($this->shouldTrigger($task) === true) {
+            if ($this->shouldTrigger($job) === true) {
                 // If it is not in task to be executed, add it
-                if (!isset($this->tasksToBeExecuted[$task[0]])) {
-                    $this->tasksToBeExecuted[$task[0]] = $task[0];
+                if (!isset($this->jobsToBeExecuted[$job[0]])) {
+                    $this->jobsToBeExecuted[$job[0]] = $job[0];
                 }
             } else {
                 // It is not time, if still exists in task to be executed, remove it
-                if (array_key_exists($task[0], $this->tasksToBeExecuted) === true) {
-                    unset($this->tasksToBeExecuted[$task[0]]);
-                    reset($this->tasksToBeExecuted);
+                if (array_key_exists($job[0], $this->jobsToBeExecuted) === true) {
+                    unset($this->jobsToBeExecuted[$job[0]]);
+                    reset($this->jobsToBeExecuted);
                 }
             }
         }
 
         // Execute tasks in tasksToBeExecuted array
-        foreach ($this->tasksToBeExecuted as $taskToExecute) {
+        foreach ($this->jobsToBeExecuted as $jobToExecute) {
 
             // Task is in time but has not been executed yet
-            if ($taskToExecute !== 'executed') {
+            if ($jobToExecute !== 'executed') {
 
-                go(function () use ($taskToExecute) {
+                go(function () use ($jobToExecute) {
+                    $job = app()->container()->get($jobToExecute);
 
-                    $task = app()->container()->get($taskToExecute);
-
-                    if ($task instanceof TaskInterface) {
-                        $task->handle();
+                    if ($job instanceof JobInterface) {
+                        $job->handle();
                     } else {
-                        $message = 'Task ' . $taskToExecute . ' should implement TaskInterface';
-                        logger($message);
+                        $message = 'Task ' . $jobToExecute . ' should implement JobInterface';
+
+                        error($message, RuntimeException::class);
+
                         throw new \RuntimeException($message);
                     }
-                });
 
-                $this->tasksToBeExecuted[$taskToExecute] = 'executed';
+                    $this->jobsToBeExecuted[$jobToExecute] = 'executed';
+                });
             }
         }
     }
@@ -102,12 +102,12 @@ abstract class AbstractTaskScheduler
     /**
      * Checks if it is the moment to execute a task.
      **/
-    private function shouldTrigger(array $task): bool
+    private function shouldTrigger(array $job): bool
     {
         $now = Carbon::now();
 
-        $period = $task[1][0];
-        $moment = $task[1][1] ?? null;
+        $period = $job[1][0];
+        $moment = $job[1][1] ?? null;
 
         return match ($period) {
             self::INTERVAL_HOURLY_AT_MINUTE => ($now->minute == $moment),

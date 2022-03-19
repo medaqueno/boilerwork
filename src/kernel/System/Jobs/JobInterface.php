@@ -3,9 +3,9 @@
 
 declare(strict_types=1);
 
-namespace Kernel\System\Tasks;
+namespace Kernel\System\Jobs;
 
-interface TaskInterface
+interface JobInterface
 {
     public function handle(): void;
 }

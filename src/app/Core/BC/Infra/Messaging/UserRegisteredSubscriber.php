@@ -18,7 +18,10 @@ final class UserRegisteredSubscriber implements EventSubscriberInterface
             throw new RuntimeException(sprintf('%s only accepts %s event type, %s received instead', __class__, UserRegistered::class, $event::class));
         }
 
-        echo "\nHANDLE EVENT IN " . __CLASS__ . " : " . $event::class .  "\n";
+        // Simulate heavy load
+        sleep(3);
+
+        echo "\nHANDLE EVENT WITH SLEEP IN " . __CLASS__ . " : " . $event::class .  "\n";
     }
 
     public function isSubscribedTo(): string
