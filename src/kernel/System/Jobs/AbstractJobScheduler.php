@@ -102,7 +102,7 @@ abstract class AbstractJobScheduler
     /**
      * Checks if it is the moment to execute a task.
      **/
-    final private function shouldTrigger(array $job): bool
+    private function shouldTrigger(array $job): bool
     {
         $now = Carbon::now();
 
