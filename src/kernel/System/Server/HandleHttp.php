@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace Kernel\System\Server;
 
+use Psr\Http\Message\ResponseInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
@@ -38,14 +39,16 @@ final class HandleHttp
     public function onRequest(Request $request, Response $response): void
     {
         // Rate Limit
-        // $Ratelimiter = RateLimiter::getInstance();
-        // $count = $Ratelimiter->access($request->server['remote_addr']);
-        // if ($count > $Ratelimiter::MAX_REQUESTS) {
-        //     $response->setStatusCode(429);
-        //     $response->header("Content-Type", "text/plain");
-        //     $response->end("Blocked");
-        //     return;
-        // }
+        /*
+        $Ratelimiter = RateLimiter::getInstance();
+        $count = $Ratelimiter->access($request->server['remote_addr']);
+        if ($count > $Ratelimiter::MAX_REQUESTS) {
+            $response->setStatusCode(429);
+            $response->header("Content-Type", "text/plain");
+            $response->end("Blocked");
+            return;
+        }
+        */
 
         // populate the global state with the request info
         // $_SERVER['REQUEST_URI'] = $request->server['request_uri'];
@@ -64,11 +67,10 @@ final class HandleHttp
         try {
             $result = $this->handleRequest($request);
         } catch (\Throwable $e) {
-            logger('ERROR: ' . $e->getCode());
-            logger($e->getMessage());
+            error($e->getMessage());
             // // https://jsonapi.org/examples/#error-objects
             $response->setStatusCode($e->getCode());
-            $result = [
+            $result = json_encode([
                 "errors" => [
                     [
                         "status" => $e->getCode(),
@@ -78,29 +80,21 @@ final class HandleHttp
                         "detail" => ""
                     ]
                 ]
-            ];
+            ]);
+        }
+        foreach ($result->getHeaders() as $key => $value) {
+            $response->setHeader($key, $value[0]);
         }
 
-        // global content type for our responses
-        $response->header('Content-Type', 'application/json');
-        if (empty($result)) {
-            $response->end(null);
-        } else if ($result['statusCode'] === 204) {
-            $response->setStatusCode(204);
-            $response->end(null);
-        } else {
-            $response->setStatusCode($result['statusCode']);
-            $response->end($result['data']);
-        }
+        $response->setStatusCode($result->getStatusCode(), $result->getReasonPhrase());
+        $response->end($result->getBody()->__toString());
+
         go(function () {
             getMemoryStatus();
         });
-
-
-        // $response->end(json_encode($result));
     }
 
-    private function handleRequest(Request $request)
+    private function handleRequest(Request $request): ResponseInterface
     {
         $request_method = $request->server['request_method'];
         $request_uri = $request->server['request_uri'];

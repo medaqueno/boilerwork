@@ -8,15 +8,18 @@ namespace App\Core\BC\UI\Controllers;
 use App\Core\BC\Application\ExampleCommand;
 use Kernel\UI\AbstractController;
 use Swoole\Http\Request;
+use Psr\Http\Message\ResponseInterface;
 
-final class TestController extends AbstractController
+final class ExampleController extends AbstractController
 {
-    public function __invoke(Request $request, array $vars): mixed
+    public function __invoke(Request $request, array $vars): ResponseInterface
     {
         $this->command()->handle(
             new ExampleCommand(email: 'laotracosa@test.es', username: 'mdqn')
         );
 
-        return response_empty();
+        return responseJson(
+            data: ['pelota' => 'botando']
+        );
     }
 }

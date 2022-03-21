@@ -19,7 +19,7 @@ final class UserRegisteredSubscriber implements EventSubscriberInterface
         }
 
         // Simulate heavy load
-        sleep(3);
+        // sleep(3);
 
         echo "\nHANDLE EVENT WITH SLEEP IN " . __CLASS__ . " : " . $event::class .  "\n";
     }

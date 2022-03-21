@@ -45,6 +45,22 @@ $jobScheduler = new JobScheduler(new JobProvider());
  *  Pass needed server class as parameter
  */
 $server = new RunServer(
-    server: \Swoole\Http\Server::class,
-    processes: [$jobScheduler]
+    serverType: \Swoole\Http\Server::class,
+    config: [
+        'worker_num' => swoole_cpu_num() * 2,
+        'task_worker_num' => swoole_cpu_num(),
+        'task_enable_coroutine' => true,
+        // 'enable_preemptive_scheduler' => 1,
+        // 'dispatch_mode' => 3, // in preemptive mode, the main process will select delivery according to the worker's free and busy state, and will only deliver to the worker in idle state
+        // 'max_conn' => CONFIGURE IF NEEDED AS DOCS RECOMMENDS,
+        'open_http2_protocol' => true,
+        'debug_mode' => boolval($_ENV['APP_DEBUG']),
+        'log_level' => boolval($_ENV['APP_DEBUG']) ? 0 : 5,
+        'log_file' => base_path('/logs/swoole_http_server.log'),
+        'log_rotation' => SWOOLE_LOG_ROTATION_DAILY,
+        'log_date_format' => '%Y-%m-%dT%H:%M:%S%z',
+    ],
+    processes: [
+        $jobScheduler
+    ],
 );

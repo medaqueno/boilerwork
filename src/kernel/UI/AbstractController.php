@@ -6,11 +6,12 @@ declare(strict_types=1);
 namespace Kernel\UI;
 
 use Kernel\Application\CommandBus;
+use Psr\Http\Message\ResponseInterface;
 use Swoole\Http\Request;
 
 abstract class AbstractController
 {
-    abstract public function __invoke(Request $request, array $vars): mixed;
+    abstract public function __invoke(Request $request, array $vars): ResponseInterface;
 
     public function command(): CommandBus
     {

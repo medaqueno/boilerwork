@@ -10,6 +10,9 @@ use App\Core\BC\Domain\UserRepository;
 use Kernel\Application\CommandHandlerInterface;
 use Kernel\Application\CommandInterface;
 
+/**
+ * @uses App\Core\BC\Application\ExampleCommand
+ **/
 final class ExampleCommandHandler implements CommandHandlerInterface
 {
     public function __construct(private UserRepository $userRepository)
@@ -23,13 +26,12 @@ final class ExampleCommandHandler implements CommandHandlerInterface
             username: $command->username,
         );
 
-        // var_dump($aggregate->toArray());
         go(function () use ($aggregate) {
 
             // $this->userRepository->add($aggregate);
 
             $exists = $this->userRepository->ofId(10);
-            var_dump($exists);
+            // var_dump($exists);
         });
     }
 }

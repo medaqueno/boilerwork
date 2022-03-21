@@ -8,7 +8,7 @@ namespace App\Core\BC\Application;
 use Kernel\Application\CommandInterface;
 
 /**
- * @see ExampleCommandHandler
+ * @used-by \App\Core\BC\Application\ExampleCommandHandler
  */
 final class ExampleCommand implements CommandInterface
 {

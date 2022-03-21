@@ -7,30 +7,16 @@ namespace Kernel\System\Server;
 
 final class RunServer
 {
-    // private \Swoole\Server $server;
-
     public function __construct(
-        private $server = \Swoole\Server::class,
-        private array $processes = []
+        private $serverType = \Swoole\Server::class,
+        private array $config = [],
+        private array $processes = [],
     ) {
 
-        $this->server = new $server($_ENV['SERVER_IP'], intval($_ENV['SERVER_PORT']));
+        $this->server = new $serverType($_ENV['SERVER_IP'], intval($_ENV['SERVER_PORT']));
 
         // https://openswoole.com/docs/modules/swoole-server/configuration
-        $this->server->set([
-            'worker_num' => swoole_cpu_num() * 2,
-            'task_worker_num' => swoole_cpu_num(),
-            'task_enable_coroutine' => true,
-            // 'enable_preemptive_scheduler' => 1,
-            // 'dispatch_mode' => 3, // in preemptive mode, the main process will select delivery according to the worker's free and busy state, and will only deliver to the worker in idle state
-            // 'max_conn' => CONFIGURE IF NEEDED AS DOCS RECOMMENDS,
-            'open_http2_protocol' => true,
-            'debug_mode' => boolval($_ENV['APP_DEBUG']),
-            'log_level' => boolval($_ENV['APP_DEBUG']) ? 0 : 5,
-            'log_file' => base_path('/logs/swoole_http_server.log'),
-            'log_rotation' => SWOOLE_LOG_ROTATION_DAILY,
-            'log_date_format' => '%Y-%m-%dT%H:%M:%S%z',
-        ]);
+        $this->server->set($config);
 
         // Set server event handlers
 

@@ -3,8 +3,8 @@
 
 declare(strict_types=1);
 
-use App\Core\BC\UI\Controllers\TestController;
+use App\Core\BC\UI\Controllers\ExampleController;
 
 return [
-    ['GET', '/invoke/{var1}/{var2}', TestController::class],
+    ['GET', '/invoke/{var1}/{var2}', ExampleController::class],
 ];

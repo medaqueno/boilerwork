@@ -3,6 +3,10 @@
 
 declare(strict_types=1);
 
+use Kernel\System\Response\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
+
 function app(): \Bootstrap\Application
 {
     return \Bootstrap\Application::getInstance();
@@ -54,17 +58,19 @@ function logger(string|Stringable|array $message, string $mode = 'DEBUG', string
     }
 }
 
-function response_empty(int $statusCode = 200): array
+function responseEmpty(int $status = 204, array $headers = []): ResponseInterface
 {
-    return response(null, $statusCode);
+    return Response::empty(status: $status, headers: $headers);
 }
 
-function response(mixed $response = null, int $statusCode = 200): array
+function responseJson(mixed $data = '', int $status = 200, array $headers = []): ResponseInterface
 {
-    return [
-        'data' => !empty($response) || !is_null($response) ? json_encode($response) : null,
-        'statusCode' => $statusCode,
-    ];
+    return Response::json(data: $data, status: $status, headers: $headers);
+}
+
+function responseText(string|StreamInterface $text = '', int $status = 200, array $headers = []): ResponseInterface
+{
+    return Response::text(text: $text, status: $status, headers: $headers);
 }
 
 // Monitor memory
