@@ -13,7 +13,7 @@ abstract class AbstractController
 {
     abstract public function __invoke(Request $request, array $vars): ResponseInterface;
 
-    public function command(): CommandBus
+    final public function command(): CommandBus
     {
         return new CommandBus();
     }

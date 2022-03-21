@@ -49,12 +49,12 @@ abstract class AbstractJobScheduler
 
     private array $jobsToBeExecuted = [];
 
-    public function run(): void
+    final public function run(): void
     {
         $this->checkJobs();
     }
 
-    protected function checkJobs(): void
+    final protected function checkJobs(): void
     {
 
         // Add to tasksToBeExecuted array if proceeds
@@ -102,7 +102,7 @@ abstract class AbstractJobScheduler
     /**
      * Checks if it is the moment to execute a task.
      **/
-    private function shouldTrigger(array $job): bool
+    final private function shouldTrigger(array $job): bool
     {
         $now = Carbon::now();
 
