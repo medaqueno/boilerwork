@@ -14,8 +14,9 @@ use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
- * @desc Simple Wrapper for https://docs.guzzlephp.org/en/7.0/overview.html
- * Requests and response follow PSR guides
+ * Client Requests and response following PSR guides
+ *
+ * Simple Wrapper for https://docs.guzzlephp.org/en/7.0/overview.html
  */
 class HttpClient implements ClientInterface
 {
@@ -24,7 +25,8 @@ class HttpClient implements ClientInterface
     }
 
     /**
-     * @desc Send request and return response
+     * Send request and return response
+     *
      * @example $response = $this->client->request(method: 'GET', uri: 'http://httpbin.org/anything?foo=bar');
      */
     public function request(string $method, string|UriInterface $uri = 'GET', array $options = []): ResponseInterface
@@ -33,7 +35,7 @@ class HttpClient implements ClientInterface
     }
 
     /**
-     * @desc Create Request to be sent with sendRequest method
+     * Create Request to be sent with sendRequest method
      *
      * @param string                               $method  HTTP method
      * @param string|UriInterface                  $uri     URI
@@ -49,7 +51,8 @@ class HttpClient implements ClientInterface
     }
 
     /**
-     * @desc Send created request and return response
+     * Send created request and return response
+     *
      * @example $this->client->sendRequest(request: $request);
      */
     public function sendRequest(RequestInterface $request, array $options = []): ResponseInterface

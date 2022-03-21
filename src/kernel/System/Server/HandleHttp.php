@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace Kernel\System\Server;
 
+use Kernel\System\Http\Request as HttpRequest;
 use Psr\Http\Message\ResponseInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -38,7 +39,7 @@ final class HandleHttp
 
     public function onRequest(Request $request, Response $response): void
     {
-        // Rate Limit
+        // Rate Limit -> It should be a middleware
         /*
         $Ratelimiter = RateLimiter::getInstance();
         $count = $Ratelimiter->access($request->server['remote_addr']);
@@ -49,20 +50,6 @@ final class HandleHttp
             return;
         }
         */
-
-        // populate the global state with the request info
-        // $_SERVER['REQUEST_URI'] = $request->server['request_uri'];
-        // $_SERVER['REQUEST_METHOD'] = $request->server['request_method'];
-        // $_SERVER['REMOTE_ADDR'] = $request->server['remote_addr'];
-        // $_GET = $request->get ?? [];
-        // $_FILES = $request->files ?? [];
-        // form-data and x-www-form-urlencoded work out of the box so we handle JSON POST here
-        if ($request->server['request_method'] === 'POST' && $request->header['content-type'] === 'application/json') {
-            $body = $request->rawContent();
-            // $_POST = empty($body) ? [] : json_decode($body);
-        } else {
-            // $_POST = $request->post ?? [];
-        }
 
         try {
             $result = $this->handleRequest($request);
@@ -82,6 +69,7 @@ final class HandleHttp
                 ]
             ]);
         }
+
         foreach ($result->getHeaders() as $key => $value) {
             $response->setHeader($key, $value[0]);
         }
@@ -89,15 +77,18 @@ final class HandleHttp
         $response->setStatusCode($result->getStatusCode(), $result->getReasonPhrase());
         $response->end($result->getBody()->__toString());
 
-        go(function () {
-            getMemoryStatus();
-        });
+        // go(function () {
+        //     getMemoryStatus();
+        // });
     }
 
-    private function handleRequest(Request $request): ResponseInterface
+    private function handleRequest(Request $swooleRequest): ResponseInterface
     {
-        $request_method = $request->server['request_method'];
-        $request_uri = $request->server['request_uri'];
+        // Convert Swoole Request to Psr\Http\Message\ServerRequestInterface
+        $request = HttpRequest::createFromSwoole($swooleRequest);
+
+        $request_method = $request->getMethod();
+        $request_uri = $request->getServerParams()['request_uri'];
 
         $dispatched = $this->httpDispatcher->dispatch($request_method, $request_uri);
 
@@ -119,7 +110,6 @@ final class HandleHttp
                 ];
                 break;
             case \FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
-
                 $result = [
                     'message' => 'Method Not Allowed',
                     'errors' => [
@@ -128,7 +118,6 @@ final class HandleHttp
                 ];
                 break;
             case \FastRoute\Dispatcher::FOUND:
-
                 if (is_array($handler)) {
                     // Custom method in class
                     $className = $handler[0];
@@ -138,6 +127,7 @@ final class HandleHttp
                 } else {
                     // invokable class  __invoke
                     $result = (app()->container()->get($handler))($request, $vars);
+                    // $result = (new $handler)($request, $vars);
                 }
 
                 break;

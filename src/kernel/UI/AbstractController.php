@@ -7,7 +7,7 @@ namespace Kernel\UI;
 
 use Kernel\Application\CommandBus;
 use Psr\Http\Message\ResponseInterface;
-use Swoole\Http\Request;
+use Kernel\System\Http\Request;
 
 abstract class AbstractController
 {

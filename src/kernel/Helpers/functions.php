@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-use Kernel\System\Response\Response;
+use Kernel\System\Http\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -60,7 +60,7 @@ function logger(string|Stringable|array $message, string $mode = 'DEBUG', string
 
 function responseEmpty(int $status = 204, array $headers = []): ResponseInterface
 {
-    return Response::empty(status: $status, headers: $headers);
+    return Response::empty(status: $status, headers: $headers)->withHeader('Content-type', 'text/plain');
 }
 
 function responseJson(mixed $data = '', int $status = 200, array $headers = []): ResponseInterface

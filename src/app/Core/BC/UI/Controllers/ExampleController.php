@@ -7,19 +7,17 @@ namespace App\Core\BC\UI\Controllers;
 
 use App\Core\BC\Application\ExampleCommand;
 use Kernel\UI\AbstractController;
-use Swoole\Http\Request;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 final class ExampleController extends AbstractController
 {
-    public function __invoke(Request $request, array $vars): ResponseInterface
+    public function __invoke(ServerRequestInterface $request, array $vars): ResponseInterface
     {
         $this->command()->handle(
             new ExampleCommand(email: 'laotracosa@test.es', username: 'mdqn')
         );
 
-        return responseJson(
-            data: ['pelota' => 'botando']
-        );
+        return responseEmpty()->withStatus(200);
     }
 }
