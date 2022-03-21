@@ -6,7 +6,6 @@ declare(strict_types=1);
 namespace App\Core\BC\UI\Controllers;
 
 use App\Core\BC\Application\ExampleCommand;
-use Kernel\Application\CommandBus;
 use Kernel\UI\AbstractController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

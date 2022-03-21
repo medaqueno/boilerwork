@@ -6,7 +6,6 @@ declare(strict_types=1);
 namespace Kernel\System\Http;
 
 use Laminas\Diactoros\ServerRequest;
-use Laminas\Diactoros\ServerRequestFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Request as SwooleRequest;
 
@@ -16,15 +15,20 @@ use Swoole\Http\Request as SwooleRequest;
  **/
 class Request extends ServerRequest
 {
-    public static function createFromSwoole($request): ServerRequestInterface
+    public static function createFromSwoole(SwooleRequest $swooleRequest): ServerRequestInterface
     {
-        return ServerRequestFactory::fromGlobals(
-            server: $request->server,
-            query: $request->get,
-            body: self::parseBody($request),
-            cookies: $request->cookie,
-            files: $request->files,
-        );
+        return (new ServerRequest(
+            serverParams: $swooleRequest->server ?? [],
+            uploadedFiles: $swooleRequest->files ?? [],
+            uri: $swooleRequest->server['request_uri'],
+            method: $swooleRequest->server['request_method'],
+            body: 'php://input',
+            headers: $swooleRequest->header ?? [],
+            cookies: $swooleRequest->cookie ?? [],
+            queryParams: $swooleRequest->get ?? [],
+            parsedBody: self::parseBody($swooleRequest),
+            protocol: '1.1'
+        ));
     }
 
     private static function parseBody(SwooleRequest $request): array
