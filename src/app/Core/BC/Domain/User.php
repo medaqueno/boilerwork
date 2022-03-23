@@ -7,24 +7,32 @@ namespace App\Core\BC\Domain;
 
 use App\Core\BC\Domain\Events\UserRegistered;
 use Kernel\Domain\AggregateRoot;
+use Kernel\Domain\ValueObjects\Identity;
 
 final class User extends AggregateRoot
 {
+    const USER_STATUS_INITIAL = 1;
+
     private function __construct(
-        protected int $id,
+        protected Identity $id,
         private string $email,
         private string $username,
         private int $status
     ) {
+        $this->increaseVersion();
+        $this->initializeTimestamps();
     }
 
-    public static function register(string $email, string $username): self
-    {
+    public static function register(
+        string $id,
+        string $email,
+        string $username
+    ): static {
         $entity = new static(
-            id: 10,
+            id: (new Identity($id)),
             email: $email,
             username: $username,
-            status: 1,
+            status: self::USER_STATUS_INITIAL,
         );
 
         $entity->publish(new UserRegistered($entity->toArray()));
@@ -39,7 +47,7 @@ final class User extends AggregateRoot
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
+            'id' => $this->id()->__toString(),
             'email' => $this->email,
             'username' => $this->username,
             'status' => $this->status,

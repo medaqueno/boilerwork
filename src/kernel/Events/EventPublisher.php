@@ -33,7 +33,6 @@ final class EventPublisher
         foreach ($this->subscribers as $subscriber) {
             $class = new $subscriber;
             if ($class->isSubscribedTo() === $event::class) {
-
                 go(function () use ($class, $event) {
                     try {
                         $class->handle($event);

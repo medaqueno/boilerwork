@@ -3,8 +3,9 @@
 
 declare(strict_types=1);
 
-use App\Core\BC\UI\Controllers\ExampleController;
+use App\Core\BC\UI\Controllers\RegisterUserController;
 
 return [
-    ['GET', '/invoke/{var1}/{var2}', ExampleController::class],
+    ['POST', '/registerUser', RegisterUserController::class],
+    // ['GET', '/invoke', RegisterUserController::class],
 ];

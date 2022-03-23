@@ -5,10 +5,11 @@ declare(strict_types=1);
 
 namespace Kernel\System\Server;
 
-use Kernel\System\Http\Request as HttpRequest;
+use Kernel\Domain\CustomAssertionFailedException;
+use Kernel\System\Http\Request;
 use Psr\Http\Message\ResponseInterface;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Swoole\Http\Request as SwooleRequest;
+use Swoole\Http\Response as SwooleResponse;
 
 /**
  *
@@ -37,7 +38,7 @@ final class HandleHttp
         );
     }
 
-    public function onRequest(Request $request, Response $response): void
+    public function onRequest(SwooleRequest $request, SwooleResponse $response): void
     {
         // Rate Limit -> It should be a middleware
         /*
@@ -53,39 +54,62 @@ final class HandleHttp
 
         try {
             $result = $this->handleRequest($request);
+
+
+            foreach ($result->getHeaders() as $key => $value) {
+                $response->setHeader($key, $value[0]);
+            }
+
+            $response->setStatusCode($result->getStatusCode(), $result->getReasonPhrase());
+            $result = $result->getBody()->__toString();
         } catch (\Throwable $e) {
-            error($e->getMessage());
-            // // https://jsonapi.org/examples/#error-objects
-            $response->setStatusCode($e->getCode());
-            $result = json_encode([
-                "errors" => [
+
+            error($e);
+
+            if ($e instanceof CustomAssertionFailedException) {
+                // var_dump($e->getErrorExceptions());
+                $response->setStatusCode(400);
+                $result = [
+                    "error" =>
                     [
-                        "status" => $e->getCode(),
-                        // "code" => "226",
-                        // "source" => ["pointer" => "/data/attributes/firstName"],
-                        "title" =>  $e->getMessage(),
-                        "detail" => ""
+                        "code" => 400,
+                        "message" => "validation_error",
+                        "errors" => json_decode($e->getMessage())
                     ]
-                ]
-            ]);
+                ];
+            } else {
+                // // https://jsonapi.org/examples/#error-objects
+                $response->setStatusCode($e->getCode());
+                $result = [
+                    "error" =>
+                    [
+                        "code" => $e->getCode(),
+                        "message" => "server_error",
+                        "errors" => [
+                            "message" =>  $e->getMessage(),
+                            "file" => $e->getFile(),
+                            "line" => $e->getLine(),
+                            "trace" => $e->getTraceAsString(),
+                        ]
+                    ]
+                ];
+            }
+
+            $result = json_encode($result, JSON_PRETTY_PRINT);
         }
 
-        foreach ($result->getHeaders() as $key => $value) {
-            $response->setHeader($key, $value[0]);
-        }
-
-        $response->setStatusCode($result->getStatusCode(), $result->getReasonPhrase());
-        $response->end($result->getBody()->__toString());
-
+        $response->end($result);
         // go(function () {
         //     getMemoryStatus();
         // });
     }
 
-    private function handleRequest(Request $swooleRequest): ResponseInterface
+    private function handleRequest(SwooleRequest $swooleRequest): ResponseInterface
     {
+
         // Convert Swoole Request to Psr\Http\Message\ServerRequestInterface
-        $request = HttpRequest::createFromSwoole($swooleRequest);
+        // $request = HttpRequest::createFromSwoole($swooleRequest);
+        $request = new Request($swooleRequest);
 
         $request_method = $request->getMethod();
         $request_uri = $request->getServerParams()['request_uri'];
@@ -98,7 +122,7 @@ final class HandleHttp
 
         $code = $dispatched[0];
         $handler = $dispatched[1];
-        $vars = $dispatched[2];
+        $vars = empty($dispatched[2]) ? [] : $dispatched[2];
 
         switch ($code) {
             case \FastRoute\Dispatcher::NOT_FOUND:
@@ -118,6 +142,7 @@ final class HandleHttp
                 ];
                 break;
             case \FastRoute\Dispatcher::FOUND:
+
                 if (is_array($handler)) {
                     // Custom method in class
                     $className = $handler[0];

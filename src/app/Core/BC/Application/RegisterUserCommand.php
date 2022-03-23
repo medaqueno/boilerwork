@@ -8,11 +8,12 @@ namespace App\Core\BC\Application;
 use Kernel\Application\CommandInterface;
 
 /**
- * @used-by \App\Core\BC\Application\ExampleCommandHandler
+ * @see \App\Core\BC\Application\RegisterUserCommandHandler
  */
-final class ExampleCommand implements CommandInterface
+final class RegisterUserCommand implements CommandInterface
 {
     public function __construct(
+        public readonly string $id,
         public readonly string $email,
         public readonly string $username,
     ) {
