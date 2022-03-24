@@ -5,24 +5,31 @@ declare(strict_types=1);
 
 namespace Kernel\Infra\Persistence;
 
-class InMemoryEventStore implements EventStoreInterface
-{
-    /** @var array<string,iterable<Event>> */
-    protected array $events = [];
+use Kernel\Domain\AggregateHistory;
+use Kernel\Domain\DomainEvent;
+use Kernel\Domain\ValueObjects\Identity;
 
-    /**
-     * @return StoredEvent[]|iterable<Event>
-     */
-    public function retrieveAll(AggregateId $id): iterable
+final class InMemoryEventStore implements EventStore
+{
+    private array $events = [];
+
+    public function commit(array $events): void
     {
-        return $this->events[(string) $id];
+        foreach ($events as $event) {
+            $this->events[] = $event;
+        }
     }
 
-    /**
-     * Stores all recorded events of the given aggregate.
-     */
-    public function persist(AggregateRoot $aggregate): void
+    public function getAggregateHistoryFor(Identity $id): AggregateHistory
     {
-        $this->events[(string) $aggregate->getId()] = new LazyCollection($aggregate->flushEvents());
+        return new AggregateHistory(
+            $id,
+            array_filter(
+                $this->events,
+                function (DomainEvent $event) use ($id) {
+                    return $event->getAggregateId()->equals($id);
+                }
+            )
+        );
     }
 }

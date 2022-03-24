@@ -7,7 +7,8 @@ namespace Kernel\Domain;
 
 use Assert\Assert as BaseAssertion;
 
-class Assertion extends BaseAssertion
+class Assert extends BaseAssertion
 {
     protected static $lazyAssertionExceptionClass = '\Kernel\Domain\CustomAssertionFailedException';
+    // protected static $exceptionClass = '\Kernel\Domain\CustomAssertionFailedException';
 }

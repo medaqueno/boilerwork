@@ -66,7 +66,7 @@ final class HandleHttp
 
             error($e);
 
-            if ($e instanceof CustomAssertionFailedException) {
+            if ($e instanceof CustomAssertionFailedException || $e instanceof \Assert\InvalidArgumentException) {
                 // var_dump($e->getErrorExceptions());
                 $response->setStatusCode(400);
                 $result = [

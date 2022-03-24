@@ -5,52 +5,81 @@ declare(strict_types=1);
 
 namespace App\Core\BC\Domain;
 
-use App\Core\BC\Domain\Events\UserRegistered;
+use App\Core\BC\Domain\Events\UserHasBeenApproved;
+use App\Core\BC\Domain\Events\UserHasRegistered;
+use App\Core\BC\Domain\ValueObjects\UserEmail;
+use App\Core\BC\Domain\ValueObjects\UserName;
+use Kernel\Domain\Assert;
 use Kernel\Domain\AggregateRoot;
+use Kernel\Domain\IsEventSourced;
+use Kernel\Domain\RecordsEvents;
 use Kernel\Domain\ValueObjects\Identity;
 
-final class User extends AggregateRoot
+final class User extends AggregateRoot implements RecordsEvents, IsEventSourced
 {
     const USER_STATUS_INITIAL = 1;
+    const USER_STATUS_APPROVED = 2;
 
-    private function __construct(
-        protected Identity $id,
-        private string $email,
-        private string $username,
-        private int $status
+    protected int $status;
+
+    protected function __construct(
+        protected readonly Identity $userId,
     ) {
-        $this->increaseVersion();
-        $this->initializeTimestamps();
+        $this->status = 0;
     }
 
     public static function register(
-        string $id,
+        string $userId,
         string $email,
         string $username
-    ): static {
-        $entity = new static(
-            id: (new Identity($id)),
-            email: $email,
-            username: $username,
-            status: self::USER_STATUS_INITIAL,
+    ): self {
+
+        // Check Invariants
+        // Check email uniqueness in persistence
+        // Check username uniqueness in persistence
+
+        $user = new static(
+            userId: new Identity($userId),
         );
 
-        $entity->publish(new UserRegistered($entity->toArray()));
+        $user->recordThat(
+            new UserHasRegistered(
+                userId: new Identity($userId),
+                email: new UserEmail($email),
+                username: new UserName($username),
+            )
+        );
 
-        return $entity;
+        return $user;
     }
 
-    public function approveUser(): void
+    protected function applyUserHasRegistered(UserHasRegistered $event): void
     {
+        $this->email = $event->email;
+        $this->username = $event->username;
+        $this->status = self::USER_STATUS_INITIAL;
     }
 
-    public function toArray(): array
+    public function approveUser(
+        string $userId,
+    ): void {
+
+        // Check Invariants
+        // Check if current status is ok to be promoted
+        Assert::lazy()->tryAll()
+            ->that($this->status)
+            ->eq(self::USER_STATUS_INITIAL, 'User should be in initial state to be approved', 'invalid_state')
+            ->verifyNow();
+
+        $this->recordThat(
+            new UserHasBeenApproved(
+                userId: new Identity($userId),
+            )
+        );
+    }
+
+    protected function applyUserHasBeenApproved(UserHasBeenApproved $event): void
     {
-        return [
-            'id' => $this->id()->__toString(),
-            'email' => $this->email,
-            'username' => $this->username,
-            'status' => $this->status,
-        ];
+        $this->status = self::USER_STATUS_APPROVED;
     }
 }

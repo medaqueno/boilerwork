@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace Kernel\Domain\ValueObjects;
 
 use Kernel\Domain\ValueObjects\ValueObject;
-use Kernel\Domain\Assertion as Assert;
+use Kernel\Domain\Assert;
 use Symfony\Polyfill\Uuid\Uuid as UuidImplementation;
 
 /**

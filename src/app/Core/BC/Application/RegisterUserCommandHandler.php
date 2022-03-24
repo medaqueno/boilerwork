@@ -9,30 +9,36 @@ use App\Core\BC\Domain\User;
 use App\Core\BC\Domain\UserRepository;
 use Kernel\Application\CommandHandlerInterface;
 use Kernel\Application\CommandInterface;
+use Kernel\Domain\ValueObjects\Identity;
+use Kernel\Infra\Persistence\InMemoryEventStore;
 
 /**
  * @see App\Core\BC\Application\RegisterUserCommand
  **/
 final class RegisterUserCommandHandler implements CommandHandlerInterface
 {
-    public function __construct(private UserRepository $userRepository)
-    {
-    }
+    // public function __construct(private UserRepository $userRepository)
+    // {
+    // }
 
     public function handle(CommandInterface $command): void
     {
         $aggregate = User::register(
-            id: $command->id,
+            userId: $command->id,
             email: $command->email,
             username: $command->username,
         );
 
-        var_dump($aggregate->id());
+        $aggregate->approveUser(userId: $command->id);
 
-        go(function () use ($aggregate) {
-            // $this->userRepository->add($aggregate);
-            $exists = $this->userRepository->ofId(10);
-            // var_dump($exists);
-        });
+        // echo "\nRegisterUserCommandHandler:\n";
+        // print_r($aggregate);
+
+        $userRepo = new UserRepository(new InMemoryEventStore());
+        $userRepo->add($aggregate);
+
+        $reconstitutedUser = $userRepo->get(new Identity($command->id));
+
+        eventsPublisher()->releaseEvents();
     }
 }

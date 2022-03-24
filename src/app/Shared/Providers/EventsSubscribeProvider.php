@@ -11,7 +11,7 @@ final class EventsSubscribeProvider
 {
     private array $subscribers = [
         // \App\Core\BC\Infra\Messaging\ExampleSubscriber::class,
-        \App\Core\BC\Infra\Messaging\UserRegisteredSubscriber::class,
+        \App\Core\BC\Infra\Messaging\UserHasRegisteredSubscriber::class,
     ];
 
     public function __construct(private EventPublisher $eventPublisher)

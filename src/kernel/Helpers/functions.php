@@ -3,6 +3,7 @@
 
 declare(strict_types=1);
 
+use Kernel\Events\EventPublisher;
 use Kernel\System\Http\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -71,6 +72,11 @@ function responseJson(mixed $data = '', int $status = 200, array $headers = []):
 function responseText(string|StreamInterface $text = '', int $status = 200, array $headers = []): ResponseInterface
 {
     return Response::text(text: $text, status: $status, headers: $headers);
+}
+
+function eventsPublisher()
+{
+    return EventPublisher::getInstance();
 }
 
 // Monitor memory

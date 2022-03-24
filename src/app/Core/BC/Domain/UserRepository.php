@@ -5,11 +5,30 @@ declare(strict_types=1);
 
 namespace App\Core\BC\Domain;
 
-interface UserRepository
+use Kernel\Domain\RecordsEvents;
+use Kernel\Domain\ValueObjects\Identity;
+use Kernel\Infra\Persistence\EventStore;
+
+final class UserRepository
 {
-    public function add(User $user): void;
+    private $eventStore;
 
-    public function remove(User $user): void;
+    public function __construct(EventStore $eventStore)
+    {
+        $this->eventStore = $eventStore;
+    }
 
-    public function ofId(int $userId): mixed;
+    public function add(RecordsEvents $aggregate): void
+    {
+        $events = $aggregate->getRecordedEvents();
+        $this->eventStore->commit($events);
+        $aggregate->clearRecordedEvents();
+    }
+
+    public function get(Identity $aggregateId)
+    {
+        $aggregateHistory = $this->eventStore->getAggregateHistoryFor($aggregateId);
+
+        return User::reconstituteFrom($aggregateHistory);
+    }
 }

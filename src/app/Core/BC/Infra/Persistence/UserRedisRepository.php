@@ -5,12 +5,13 @@ declare(strict_types=1);
 
 namespace App\Core\BC\Infra\Persistence;
 
-use App\Core\BC\Domain\User;
 use App\Core\BC\Domain\UserRepository;
+use Kernel\Domain\AggregateRootInterface;
+use Kernel\Domain\ValueObjects\Identity;
 use Kernel\System\Clients\RedisClient;
 use Redis;
 
-final class UserRedisRepository implements UserRepository
+final class UserRedisRepository // implements UserRepository
 {
     private Redis $redis;
     private $client;
@@ -21,21 +22,16 @@ final class UserRedisRepository implements UserRepository
         $this->redis = $this->client->getConn();
     }
 
-    public function add(User $user): void
+    public function append(AggregateRootInterface $aggregate): void
     {
-        $this->redis->set('user' . $user->id(), json_encode($user->toArray()));
-        $this->client->putConn($this->redis);
+        var_dump($aggregate);
+        logger($aggregate->toArray());
+        // $this->redis->set('user' . $aggregate->id(), json_encode($aggregate->toArray()));
+        // $this->client->putConn($this->redis);
     }
 
-    public function remove(User $user): void
+    public function getEventsFor(Identity $aggregateId): iterable
     {
-    }
-
-    public function ofId(int $userId): mixed
-    {
-        $response = $this->redis->get('user' . $userId);
-        $this->client->putConn($this->redis);
-
-        return $response;
+        return [];
     }
 }

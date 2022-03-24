@@ -18,7 +18,7 @@ class CustomAssertionFailedException extends \Assert\LazyAssertionException
         foreach ($errors as $item) {
             $parsedErrors[] = [
                 'code' => $item->getPropertyPath(),
-                'value' => $item->getValue(),
+                'valueReceived' => $item->getValue(),
                 'message' => $item->getMessage(),
             ];
         }
