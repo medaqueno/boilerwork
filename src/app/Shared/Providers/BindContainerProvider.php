@@ -6,11 +6,15 @@ declare(strict_types=1);
 namespace App\Shared\Providers;
 
 use App\Core\BC\Domain\UserRepository;
-use App\Core\BC\Infra\Persistence\UserRedisRepository;
+use App\Core\BC\Infra\Persistence\UserInMemoryRepository;
+use Kernel\Infra\Persistence\EventStore;
+use Kernel\Infra\Persistence\InMemoryEventStore;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 
 /*
-For PHP LEAGUE DEPENDENCY INJECTION. Still thinking about to use it or not
+* For PHP LEAGUE DEPENDENCY INJECTION. Still thinking about to use it or not
+
+NOW IT IS NOT IN USE
 */
 
 final class BindContainerProvider extends AbstractServiceProvider
@@ -26,7 +30,7 @@ final class BindContainerProvider extends AbstractServiceProvider
     {
         // Interfaces
         $services = [
-            UserRepository::class,
+            // UserRepository::class,
         ];
 
         return in_array($id, $services);
@@ -44,5 +48,7 @@ final class BindContainerProvider extends AbstractServiceProvider
         // $this->getContainer()->add(\App\Core\BC\UI\Controllers\Interface::class, \App\Core\BC\UI\Controllers\ConcreteClass::class);
 
         // $this->getContainer()->add(UserRepository::class, UserRedisRepository::class);
+        // $this->getContainer()->add(EventStore::class, InMemoryEventStore::class);
+        // $this->getContainer()->add(UserRepository::class, UserInMemoryRepository::class);
     }
 }

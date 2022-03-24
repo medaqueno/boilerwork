@@ -22,9 +22,9 @@ class Email extends ValueObject
             ->verifyNow();
     }
 
-    public function equals(Email $value): bool
+    public function equals(ValueObject $object): bool
     {
-        return $this->value == $value->value;
+        return $this->value === $object->value && $object instanceof self;
     }
 
     public function __toString(): string

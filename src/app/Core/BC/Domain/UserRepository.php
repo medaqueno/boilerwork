@@ -7,28 +7,16 @@ namespace App\Core\BC\Domain;
 
 use Kernel\Domain\RecordsEvents;
 use Kernel\Domain\ValueObjects\Identity;
-use Kernel\Infra\Persistence\EventStore;
 
-final class UserRepository
+interface UserRepository
 {
-    private $eventStore;
+    /**
+     *  Add Events to Persistence from Aggregate
+     **/
+    public function add(RecordsEvents $aggregate): void;
 
-    public function __construct(EventStore $eventStore)
-    {
-        $this->eventStore = $eventStore;
-    }
-
-    public function add(RecordsEvents $aggregate): void
-    {
-        $events = $aggregate->getRecordedEvents();
-        $this->eventStore->commit($events);
-        $aggregate->clearRecordedEvents();
-    }
-
-    public function get(Identity $aggregateId)
-    {
-        $aggregateHistory = $this->eventStore->getAggregateHistoryFor($aggregateId);
-
-        return User::reconstituteFrom($aggregateHistory);
-    }
+    /**
+     *  Retrieve Reconstituted Aggregate by its Event Stream in persistence where aggregateId = X
+     **/
+    public function get(Identity $aggregateId): RecordsEvents;
 }

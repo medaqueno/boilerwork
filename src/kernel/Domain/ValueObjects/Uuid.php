@@ -32,9 +32,9 @@ class Uuid extends ValueObject
         return new static(UuidImplementation::uuid_create(UUID_TYPE_RANDOM));
     }
 
-    public function equals(Uuid $uuid): bool
+    public function equals(ValueObject $object): bool
     {
-        return $this->value == $uuid->value;
+        return $this->value === $object->value && $object instanceof self;
     }
 
     public function __toString(): string

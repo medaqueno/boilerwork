@@ -5,8 +5,8 @@ declare(strict_types=1);
 
 namespace App\Core\BC\Domain\ValueObjects;
 
-use Assert\Assert;
 use Kernel\Domain\ValueObjects\ValueObject;
+use Kernel\Domain\Assert;
 
 /**
  * @internal
@@ -23,9 +23,9 @@ class UserName extends ValueObject
             ->verifyNow();
     }
 
-    public function equals(UserName $value): bool
+    public function equals(ValueObject $object): bool
     {
-        return $this->value == $value->value;
+        return $this->value === $object->value && $object instanceof self;
     }
 
     public function __toString(): string

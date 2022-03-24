@@ -11,15 +11,24 @@ use Kernel\Domain\ValueObjects\Identity;
 
 final class InMemoryEventStore implements EventStore
 {
+    /**
+     *  Store events in memory
+     **/
     private array $events = [];
 
-    public function commit(array $events): void
+    /**
+     *  @inheritDoc
+     **/
+    public function append($events): void
     {
         foreach ($events as $event) {
             $this->events[] = $event;
         }
     }
 
+    /**
+     *  @inheritDoc
+     **/
     public function getAggregateHistoryFor(Identity $id): AggregateHistory
     {
         return new AggregateHistory(

@@ -18,13 +18,12 @@ final class AggregateHistory
 
     public function __construct(Identity $aggregateId, array $events)
     {
-        /** @var $event DomainEvent */
-        foreach ($events as $domainEvent) {
-            if (!$domainEvent->getAggregateId()->equals($aggregateId)) {
+        foreach ($events as $event) {
+            if (!$event->getAggregateId()->equals($aggregateId)) {
                 throw new \Exception('Aggregate History Corrupted');
             }
 
-            $this->append($domainEvent);
+            $this->append(event: $event);
         }
 
         $this->aggregateId = $aggregateId;
@@ -40,8 +39,8 @@ final class AggregateHistory
         return $this->history;
     }
 
-    private function append(DomainEvent $domainEvent)
+    private function append(DomainEvent $event)
     {
-        $this->history[] = $domainEvent;
+        $this->history[] = $event;
     }
 }

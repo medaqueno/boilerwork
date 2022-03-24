@@ -8,9 +8,10 @@ namespace App\Core\BC\Infra\Persistence;
 use App\Core\BC\Domain\User;
 use App\Core\BC\Domain\UserRepository;
 use Kernel\Domain\RecordsEvents;
+use Kernel\Domain\ValueObjects\Identity;
 use Kernel\Infra\Persistence\EventStore;
 
-final class UserRedisRepository implements UserRepository
+final class UserInMemoryRepository implements UserRepository
 {
     /**
      *  Inject Client Repository in Infrastructure by its interface
@@ -32,7 +33,7 @@ final class UserRedisRepository implements UserRepository
     /**
      *  @inheritDoc
      **/
-    public function get($aggregateId): RecordsEvents
+    public function get(Identity $aggregateId): RecordsEvents
     {
         return User::reconstituteFrom(
             $this->eventStore->getAggregateHistoryFor($aggregateId)

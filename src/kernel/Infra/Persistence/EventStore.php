@@ -10,7 +10,13 @@ use Kernel\Domain\ValueObjects\Identity;
 
 interface EventStore
 {
-    public function commit(array $events): void;
+    /**
+     *  Add Events to Persistence
+     **/
+    public function append(array $events): void;
 
+    /**
+     *  Get Event Stream in persistence where id = X
+     **/
     public function getAggregateHistoryFor(Identity $id): AggregateHistory;
 }

@@ -10,16 +10,15 @@ use App\Core\BC\Domain\UserRepository;
 use Kernel\Application\CommandHandlerInterface;
 use Kernel\Application\CommandInterface;
 use Kernel\Domain\ValueObjects\Identity;
-use Kernel\Infra\Persistence\InMemoryEventStore;
 
 /**
  * @see App\Core\BC\Application\RegisterUserCommand
  **/
 final class RegisterUserCommandHandler implements CommandHandlerInterface
 {
-    // public function __construct(private UserRepository $userRepository)
-    // {
-    // }
+    public function __construct(private UserRepository $userRepository)
+    {
+    }
 
     public function handle(CommandInterface $command): void
     {
@@ -31,13 +30,12 @@ final class RegisterUserCommandHandler implements CommandHandlerInterface
 
         $aggregate->approveUser(userId: $command->id);
 
-        // echo "\nRegisterUserCommandHandler:\n";
-        // print_r($aggregate);
+        $this->userRepository->add($aggregate);
 
-        $userRepo = new UserRepository(new InMemoryEventStore());
-        $userRepo->add($aggregate);
+        $reconstitutedAggregate = $this->userRepository->get(new Identity($command->id));
 
-        $reconstitutedUser = $userRepo->get(new Identity($command->id));
+        // echo "\nRegisterUserCommandHandler reconstitutedAggregate\n";
+        // var_dump($reconstitutedAggregate);
 
         eventsPublisher()->releaseEvents();
     }
