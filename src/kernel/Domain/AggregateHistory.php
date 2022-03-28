@@ -8,22 +8,23 @@ namespace Kernel\Domain;
 use Kernel\Domain\ValueObjects\Identity;
 
 /**
- * An AggregateRoot, that can be reconstituted from an AggregateHistory.
+ * Receive Events from persistence, check events belong to their owner aggregate and convert them to an array of DomainEvents
  */
 final class AggregateHistory
 {
-    private $aggregateId;
-
     private array $history = [];
 
-    public function __construct(Identity $aggregateId, array $events)
-    {
+    public function __construct(
+        private Identity $aggregateId,
+        private array $events
+    ) {
         foreach ($events as $event) {
-            if (!$event->getAggregateId()->equals($aggregateId)) {
-                throw new \Exception('Aggregate History Corrupted');
+            $event = $event['event']['type']::unserialize($event);
+            if ($event->getAggregateId() !== $aggregateId->toPrimitive()) {
+                throw new \Exception('Aggregate history is corrupted');
             }
 
-            $this->append(event: $event);
+            $this->history[] = $event;
         }
 
         $this->aggregateId = $aggregateId;
@@ -37,10 +38,5 @@ final class AggregateHistory
     public function getAggregateHistory(): array
     {
         return $this->history;
-    }
-
-    private function append(DomainEvent $event)
-    {
-        $this->history[] = $event;
     }
 }

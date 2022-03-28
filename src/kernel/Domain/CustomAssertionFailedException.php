@@ -18,8 +18,8 @@ class CustomAssertionFailedException extends \Assert\LazyAssertionException
         foreach ($errors as $item) {
             $parsedErrors[] = [
                 'code' => $item->getPropertyPath(),
-                'valueReceived' => $item->getValue(),
                 'message' => $item->getMessage(),
+                'valueReceived' => $item->getValue(),
             ];
         }
         $message = json_encode($parsedErrors);

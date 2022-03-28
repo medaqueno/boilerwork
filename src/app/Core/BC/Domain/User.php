@@ -9,6 +9,7 @@ use App\Core\BC\Domain\Events\UserHasBeenApproved;
 use App\Core\BC\Domain\Events\UserHasRegistered;
 use App\Core\BC\Domain\ValueObjects\UserEmail;
 use App\Core\BC\Domain\ValueObjects\UserName;
+use App\Core\BC\Domain\ValueObjects\UserStatus;
 use Kernel\Domain\Assert;
 use Kernel\Domain\AggregateRoot;
 use Kernel\Domain\IsEventSourced;
@@ -17,15 +18,11 @@ use Kernel\Domain\ValueObjects\Identity;
 
 final class User extends AggregateRoot implements RecordsEvents, IsEventSourced
 {
-    const USER_STATUS_INITIAL = 1;
-    const USER_STATUS_APPROVED = 2;
-
-    protected int $status;
+    protected UserStatus $status;
 
     protected function __construct(
         protected readonly Identity $userId,
     ) {
-        $this->status = 0;
     }
 
     public static function register(
@@ -35,8 +32,8 @@ final class User extends AggregateRoot implements RecordsEvents, IsEventSourced
     ): self {
 
         // Check Invariants
-        // Check email uniqueness in persistence
-        // Check username uniqueness in persistence
+        // TODO: Check email uniqueness in persistence
+        // TODO:Check username uniqueness in persistence
 
         $user = new static(
             userId: new Identity($userId),
@@ -44,9 +41,9 @@ final class User extends AggregateRoot implements RecordsEvents, IsEventSourced
 
         $user->recordThat(
             new UserHasRegistered(
-                userId: new Identity($userId),
-                email: new UserEmail($email),
-                username: new UserName($username),
+                userId: (new Identity($userId))->toPrimitive(),
+                email: (new UserEmail($email))->toPrimitive(),
+                username: (new UserName($username))->toPrimitive(),
             )
         );
 
@@ -55,9 +52,9 @@ final class User extends AggregateRoot implements RecordsEvents, IsEventSourced
 
     protected function applyUserHasRegistered(UserHasRegistered $event): void
     {
-        $this->email = $event->email;
-        $this->username = $event->username;
-        $this->status = self::USER_STATUS_INITIAL;
+        $this->email = new UserEmail($event->email);
+        $this->username = new UserName($event->username);
+        $this->status = new UserStatus(UserStatus::USER_STATUS_INITIAL);
     }
 
     public function approveUser(
@@ -67,19 +64,19 @@ final class User extends AggregateRoot implements RecordsEvents, IsEventSourced
         // Check Invariants
         // Check if current status is ok to be promoted
         Assert::lazy()->tryAll()
-            ->that($this->status)
-            ->eq(self::USER_STATUS_INITIAL, 'User should be in initial state to be approved', 'invalid_state')
+            ->that($this->status->toPrimitive())
+            ->eq(UserStatus::USER_STATUS_INITIAL, 'User should be in initial status to be approved', 'user.invalidStatusCondition')
             ->verifyNow();
 
         $this->recordThat(
             new UserHasBeenApproved(
-                userId: new Identity($userId),
+                userId: (new Identity($userId))->toPrimitive(),
             )
         );
     }
 
     protected function applyUserHasBeenApproved(UserHasBeenApproved $event): void
     {
-        $this->status = self::USER_STATUS_APPROVED;
+        $this->status = new UserStatus(UserStatus::USER_STATUS_APPROVED);
     }
 }

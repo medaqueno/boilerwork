@@ -1,4 +1,4 @@
-FROM openswoole/swoole:4.10-php8.1
+FROM openswoole/swoole:4.11-php8.1
 
 RUN apt-get update && apt-get install vim -y && \
     apt-get install openssl -y && \

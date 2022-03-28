@@ -7,36 +7,46 @@ namespace App\Core\BC\Infra\Persistence;
 
 use App\Core\BC\Domain\User;
 use App\Core\BC\Domain\UserRepository;
+use Kernel\Domain\AggregateHistory;
 use Kernel\Domain\RecordsEvents;
 use Kernel\Domain\ValueObjects\Identity;
-use Kernel\Infra\Persistence\EventStore;
 
 final class UserInMemoryRepository implements UserRepository
 {
     /**
-     *  Inject Client Repository in Infrastructure by its interface
+     *  Store events in memory
      **/
-    public function __construct(private EventStore $eventStore)
-    {
-    }
+    private array $events = [];
 
     /**
      *  @inheritDoc
      **/
-    public function add(RecordsEvents $aggregate): void
+    public function append(RecordsEvents $aggregate): void
     {
         $events = $aggregate->getRecordedEvents();
-        $this->eventStore->append($events);
+
+        foreach ($events as $event) {
+            $this->events[] = $event->serialize();
+        }
+
         $aggregate->clearRecordedEvents();
     }
 
     /**
      *  @inheritDoc
      **/
-    public function get(Identity $aggregateId): RecordsEvents
+    public function getAggregateHistoryFor(Identity $aggregateId): RecordsEvents
     {
         return User::reconstituteFrom(
-            $this->eventStore->getAggregateHistoryFor($aggregateId)
+            new AggregateHistory(
+                $aggregateId,
+                array_filter( // Retrieve events by aggregateId. Same as select <fields> where aggregateId = <aggregateId>;
+                    $this->events,
+                    function (array $event) use ($aggregateId) {
+                        return $event['aggregateId'] === $aggregateId->toPrimitive();
+                    }
+                )
+            )
         );
     }
 }

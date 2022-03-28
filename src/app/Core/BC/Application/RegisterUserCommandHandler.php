@@ -30,12 +30,11 @@ final class RegisterUserCommandHandler implements CommandHandlerInterface
 
         $aggregate->approveUser(userId: $command->id);
 
-        $this->userRepository->add($aggregate);
+        $this->userRepository->append($aggregate);
 
-        $reconstitutedAggregate = $this->userRepository->get(new Identity($command->id));
-
-        // echo "\nRegisterUserCommandHandler reconstitutedAggregate\n";
-        // var_dump($reconstitutedAggregate);
+        $reconstitutedAggregate = $this->userRepository->getAggregateHistoryFor(new Identity($command->id));
+        echo "\nRegisterUserCommandHandler reconstitutedAggregate\n";
+        var_dump($reconstitutedAggregate);
 
         eventsPublisher()->releaseEvents();
     }

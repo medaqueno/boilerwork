@@ -7,7 +7,7 @@ namespace Kernel\Domain\ValueObjects;
 
 abstract class ValueObject
 {
-    abstract public function __toString();
+    abstract public function toPrimitive(): mixed;
 
     abstract public function equals(ValueObject $object): bool;
 }

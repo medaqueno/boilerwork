@@ -27,7 +27,7 @@ final class RedisEventStore implements EventStore
     public function append($events): void
     {
         foreach ($events as $event) {
-            $this->redis->set($event->getAggregateId()->__toString(), json_encode($event));
+            $this->redis->set($event->getAggregateId()->toPrimitive(), json_encode($event));
         }
         $this->client->putConn($this->redis);
     }
@@ -39,7 +39,7 @@ final class RedisEventStore implements EventStore
     {
         var_dump($id);
         // Query events by ID
-        $events = $this->redis->get($id->__toString());
+        $events = $this->redis->get($id->toPrimitive());
         var_dump($events);
         return new AggregateHistory(
             $id,

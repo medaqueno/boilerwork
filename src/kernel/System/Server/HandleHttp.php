@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace Kernel\System\Server;
 
 use Kernel\Domain\CustomAssertionFailedException;
+use Kernel\Helpers\Environments;
 use Kernel\System\Http\Request;
 use Psr\Http\Message\ResponseInterface;
 use Swoole\Http\Request as SwooleRequest;
@@ -72,8 +73,8 @@ final class HandleHttp
                 $result = [
                     "error" =>
                     [
-                        "code" => 400,
-                        "message" => "validation_error",
+                        "code" => "validationError",
+                        "message" => "Request is invalid or malformed",
                         "errors" => json_decode($e->getMessage())
                     ]
                 ];
@@ -83,22 +84,26 @@ final class HandleHttp
                 $result = [
                     "error" =>
                     [
-                        "code" => $e->getCode(),
-                        "message" => "server_error",
-                        "errors" => [
-                            "message" =>  $e->getMessage(),
-                            "file" => $e->getFile(),
-                            "line" => $e->getLine(),
-                            "trace" => $e->getTraceAsString(),
-                        ]
+                        "code" => "serverError",
+                        "message" => "Unexpected server error. Request may not be fullfilled.",
+                        "errors" => []
                     ]
                 ];
+                if (app()->getEnvironment() !== Environments::PRODUCTION) {
+                    array_push($result['error']['errors'], [
+                        "message" =>  $e->getMessage(),
+                        "file" => $e->getFile(),
+                        "line" => $e->getLine(),
+                        "trace" => $e->getTraceAsString(),
+                    ]);
+                }
             }
 
-            $result = json_encode($result, JSON_PRETTY_PRINT);
+            $result = json_encode($result, \JSON_PRETTY_PRINT);
         }
 
         $response->end($result);
+
         // go(function () {
         //     getMemoryStatus();
         // });

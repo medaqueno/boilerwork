@@ -42,10 +42,7 @@ final class Container implements ContainerInterface
 
         // Illuminate Implementation
         $this->container->bind(UserRepository::class, UserInMemoryRepository::class);
-        $this->container->bind(EventStore::class, InMemoryEventStore::class);
-
         // $this->container->bind(UserRepository::class, UserRedisRepository::class);
-        // $this->container->bind(EventStore::class, RedisEventStore::class);
     }
 
     public function get(string $id): mixed

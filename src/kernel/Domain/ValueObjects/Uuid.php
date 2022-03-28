@@ -10,17 +10,17 @@ use Kernel\Domain\Assert;
 use Symfony\Polyfill\Uuid\Uuid as UuidImplementation;
 
 /**
- * @internal Creates UUID of different type using Symfony\Polyfill implementation, which results to be faster than pecl extension.
+ * @internal Creates UUID using Symfony\Polyfill implementation, which turns out to be faster than pecl extension.
  **/
-class Uuid extends ValueObject
+abstract class Uuid extends ValueObject
 {
     public function __construct(
         public readonly string $value
     ) {
         Assert::lazy()->tryAll()
             ->that($value)
-            ->notEmpty('Value must not be empty', 'uuid_not_empty')
-            ->uuid('Value must be a valid UUID', 'uuid_invalid_format')
+            ->notEmpty('Value must not be empty', 'uuid.notEmpty')
+            ->uuid('Value must be a valid UUID', 'uuid.invalidFormat')
             ->verifyNow();
     }
 
@@ -29,7 +29,7 @@ class Uuid extends ValueObject
      **/
     public static function create(): static
     {
-        return new static(UuidImplementation::uuid_create(UUID_TYPE_RANDOM));
+        return new static(UuidImplementation::uuid_create(\UUID_TYPE_RANDOM));
     }
 
     public function equals(ValueObject $object): bool
@@ -37,7 +37,7 @@ class Uuid extends ValueObject
         return $this->value === $object->value && $object instanceof self;
     }
 
-    public function __toString(): string
+    public function toPrimitive(): string
     {
         return $this->value;
     }

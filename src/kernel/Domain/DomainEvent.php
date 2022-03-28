@@ -5,9 +5,11 @@ declare(strict_types=1);
 
 namespace Kernel\Domain;
 
-use Kernel\Domain\ValueObjects\Identity;
-
 interface DomainEvent
 {
-    public function getAggregateId(): Identity;
+    public function getAggregateId(): string;
+
+    public function serialize(): array;
+
+    public static function unserialize(array $event): self;
 }

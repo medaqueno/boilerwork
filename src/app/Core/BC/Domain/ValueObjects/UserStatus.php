@@ -11,15 +11,20 @@ use Kernel\Domain\Assert;
 /**
  * @internal
  **/
-class UserName extends ValueObject
+class UserStatus extends ValueObject
 {
+    // Possible values
+    const USER_STATUS_INITIAL = 1;
+
+    const USER_STATUS_APPROVED = 2;
+
     public function __construct(
-        public readonly string $value
+        public readonly int $value = self::USER_STATUS_INITIAL
     ) {
         Assert::lazy()->tryAll()
             ->that($value)
-            ->string('Value must be a string', 'userName.invalidType')
-            ->betweenLength(4, 20, 'Value must be between 4 and 20 characters, both included', 'userName.invalidLength')
+            ->integer('Value must be an integer', 'userStatus.invalidType')
+            ->between(1, 2, 'Value must be between 1 and 2, both included', 'userStatus.invalidValue')
             ->verifyNow();
     }
 
@@ -28,7 +33,7 @@ class UserName extends ValueObject
         return $this->value === $object->value && $object instanceof self;
     }
 
-    public function toPrimitive(): string
+    public function toPrimitive(): int
     {
         return $this->value;
     }

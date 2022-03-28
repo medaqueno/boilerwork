@@ -11,14 +11,14 @@ use Kernel\Domain\Assert;
 /**
  * @internal
  **/
-class Email extends ValueObject
+abstract class Email extends ValueObject
 {
     public function __construct(
         public readonly string $value
     ) {
         Assert::lazy()->tryAll()
             ->that($value)
-            ->email('Value must be a valid email', 'email_invalid')
+            ->email('Value must be a valid email', 'email.invalidFormat')
             ->verifyNow();
     }
 
@@ -27,7 +27,7 @@ class Email extends ValueObject
         return $this->value === $object->value && $object instanceof self;
     }
 
-    public function __toString(): string
+    public function toPrimitive(): string
     {
         return $this->value;
     }

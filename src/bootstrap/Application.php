@@ -7,6 +7,7 @@ namespace Bootstrap;
 
 use App\Shared\Providers\EventsSubscribeProvider;
 use Kernel\Events\EventPublisher;
+use Kernel\Helpers\Environments;
 use Kernel\Helpers\Singleton;
 use Kernel\System\Container\Container;
 use Psr\Container\ContainerInterface;
@@ -27,7 +28,7 @@ final class Application
 
     private function __construct()
     {
-        $this->environment = $_ENV['APP_ENV'] ?? 'DEV';
+        $this->environment = $_ENV['APP_ENV'] ?? Environments::DEVELOPMENT;
 
         // Init Dependency Injection Container
         $this->container = new Container;

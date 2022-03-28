@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace kernel\Helpers;
+namespace Kernel\Helpers;
 
 use Swoole\Coroutine;
 
