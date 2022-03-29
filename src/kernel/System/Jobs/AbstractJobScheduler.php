@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace Kernel\System\Jobs;
 
-use Carbon\Carbon;
+use DateTimeImmutable;
 
 abstract class AbstractJobScheduler
 {
@@ -104,18 +104,24 @@ abstract class AbstractJobScheduler
      **/
     private function shouldTrigger(array $job): bool
     {
-        $now = Carbon::now();
+        $now = new DateTimeImmutable('now');
+
+        $currentSeconds = (int)$now->format('s');
+        $currentMinute = (int)$now->format('i');
+        $currentHour = (int)$now->format('H');
+        $currentTime = $now->format('H:i');
+        $currentDayOfWeekIso = (int)$now->format('N');
 
         $period = $job[1][0];
         $moment = $job[1][1] ?? null;
 
         return match ($period) {
-            self::INTERVAL_HOURLY_AT_MINUTE => ($now->minute == $moment),
-            self::INTERVAL_EVERY_MINUTE => ($now->second <= 30),
-            self::INTERVAL_EVERY_HOUR => ($now->minute == 0),
-            self::INTERVAL_DAILY_AT_HOUR => ($now->hour == $moment),
-            self::INTERVAL_DAILY_AT_TIME => ($now->hour . ':' . $now->minute == $moment),
-            self::INTERVAL_EVERY_DAY_OF_WEEK_ISO => ($now->dayOfWeekIso == $moment),
+            self::INTERVAL_HOURLY_AT_MINUTE => ($currentMinute == $moment),
+            self::INTERVAL_EVERY_MINUTE => ($currentSeconds <= 30),
+            self::INTERVAL_EVERY_HOUR => ($currentMinute == 0),
+            self::INTERVAL_DAILY_AT_HOUR => ($currentHour == $moment),
+            self::INTERVAL_DAILY_AT_TIME => ($currentTime == $moment),
+            self::INTERVAL_EVERY_DAY_OF_WEEK_ISO => ($currentDayOfWeekIso == $moment),
             default => false,
         };
     }

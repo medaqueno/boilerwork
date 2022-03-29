@@ -13,7 +13,7 @@ final class JobScheduler implements IsProcessInterface
 {
     private Process $process;
 
-    private const LOOP_INTERVAL = 10; // Set Maximum each 30 seconds or task set to be repeated each minute may not be executed
+    private const LOOP_INTERVAL = 5; // Set Maximum each 30 seconds or task set to be repeated each minute may not be executed
 
     public function __construct(private JobProvider $jobProvider)
     {
