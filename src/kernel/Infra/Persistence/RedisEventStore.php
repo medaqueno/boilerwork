@@ -37,10 +37,8 @@ final class RedisEventStore implements EventStore
      **/
     public function getAggregateHistoryFor(Identity $id): AggregateHistory
     {
-        var_dump($id);
         // Query events by ID
         $events = $this->redis->get($id->toPrimitive());
-        var_dump($events);
         return new AggregateHistory(
             $id,
             $events

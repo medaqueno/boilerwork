@@ -10,9 +10,9 @@ use Kernel\Domain\DomainEvent;
 trait ApplyEvent
 {
     /**
-     * Execute when<eventClassName> methods automatically
+     * Execute apply<eventClassName> methods automatically
      **/
-    protected function apply(DomainEvent $event)
+    final protected function apply(DomainEvent $event)
     {
         $method = 'apply' .  $this->getName($event::class);
         $this->$method($event);

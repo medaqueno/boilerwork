@@ -15,8 +15,9 @@ abstract class AggregateRoot implements RecordsEvents, IsEventSourced
 
     protected function recordThat(DomainEvent $event): void
     {
-        $this->latestRecordedEvents[] = $event;
         $this->increaseVersion();
+
+        $this->latestRecordedEvents[] = $event;
         $this->apply($event);
 
         eventsPublisher()->recordThat(event: $event);
@@ -41,6 +42,9 @@ abstract class AggregateRoot implements RecordsEvents, IsEventSourced
         $aggregate = new static($aggregateId);
 
         foreach ($aggregateHistory->getAggregateHistory() as $event) {
+            $aggregate->increaseVersion();
+            $aggregate->version = $aggregate->currentVersion();
+
             $aggregate->apply($event);
         }
 

@@ -5,10 +5,10 @@ declare(strict_types=1);
 
 namespace App\Core\BC\Domain\Events;
 
-use DateTimeImmutable;
+use Kernel\Domain\AbstractEvent;
 use Kernel\Domain\DomainEvent;
 
-final class UserHasRegistered implements DomainEvent
+final class UserHasRegistered extends AbstractEvent implements DomainEvent
 {
     public function __construct(
         public readonly string $userId,
@@ -24,19 +24,13 @@ final class UserHasRegistered implements DomainEvent
 
     public function serialize(): array
     {
-        return [
-            'aggregateId' => $this->getAggregateId(),
-            'event' => [
-                'type' => static::class,
-                'ocurredOn' => (new DateTimeImmutable())->format(DateTimeImmutable::ATOM),
-            ],
-            'data' => [
+        return $this->wrapSerialize(
+            data: [
                 'userId' => $this->userId,
                 'email' => $this->email,
                 'username' => $this->username,
-            ],
-            'version' => 0,
-        ];
+            ]
+        );
     }
 
     public static function unserialize(array $event): self
