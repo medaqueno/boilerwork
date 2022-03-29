@@ -22,6 +22,23 @@ services:
       - ./src:/var/www
     networks:
       public:
+  # redis-local:
+  #   container_name: redis-local
+  #   image: redis:5.0.6-alpine3.10
+  #   restart: always
+  #   ports:
+  #     - 6380:6379
+  #   networks:
+  #     public:
+  # environment:
+  # - ALLOW_EMPTY_PASSWORD=yes
+  # - SYSLOG-ENABLED=yes
+  # command: redis-server --save 20 1 --loglevel warning
+  # command: redis-server /usr/local/etc/redis/redis.conf --loglevel warning
+  # volumes:
+  #   - ./tmp/redis/data:/data
+  #   - ./tmp/redis/log:/var/log/redis
+  #   - ./rootfilesystem/redis/config/redis.conf:/usr/local/etc/redis/redis.conf
 
 networks:
   public:

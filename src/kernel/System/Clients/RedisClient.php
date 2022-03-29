@@ -26,7 +26,7 @@ final class RedisClient
 
     private RedisPool $pool;
 
-    public function __construct(int $dbIndex = 0)
+    protected function __construct()
     {
         if (boolval($_ENV['REDIS_ENABLED']) === false) {
             throw new \Exception("REDIS IS NOT ENABLED", 500);
@@ -40,7 +40,7 @@ final class RedisClient
                 ->withHost($_ENV['REDIS_HOST'])
                 ->withPort((int)$_ENV['REDIS_PORT'])
                 ->withAuth('')
-                ->withDbIndex($dbIndex)
+                // ->withDbIndex(0)
                 ->withTimeout((int)1),
             $_ENV['REDIS_SIZE_CONN'] ? (int)$_ENV['REDIS_SIZE_CONN'] : 64
         );

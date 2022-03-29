@@ -104,7 +104,7 @@ abstract class AbstractJobScheduler
      **/
     private function shouldTrigger(array $job): bool
     {
-        $now = new DateTimeImmutable('now');
+        $now = new \DateTimeImmutable('now');
 
         $currentSeconds = (int)$now->format('s');
         $currentMinute = (int)$now->format('i');

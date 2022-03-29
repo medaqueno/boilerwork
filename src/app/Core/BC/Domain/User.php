@@ -33,7 +33,7 @@ final class User extends AggregateRoot implements RecordsEvents, IsEventSourced
 
         // Check Invariants
         // TODO: Check email uniqueness in persistence
-        // TODO:Check username uniqueness in persistence
+        // TODO: Check username uniqueness in persistence
 
         $user = new static(
             userId: new Identity($userId),
