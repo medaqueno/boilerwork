@@ -28,9 +28,9 @@ final class RegisterUserCommandHandler implements CommandHandlerInterface
             username: $command->username,
         );
 
-        $aggregate->approveUser(userId: $command->id);
-
         $this->userRepository->append($aggregate);
+
+        // var_dump($aggregate->getRecordedEvents());
 
         eventsPublisher()->releaseEvents();
 

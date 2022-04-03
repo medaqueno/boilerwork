@@ -21,4 +21,6 @@ interface RecordsEvents
      * Clears the record of new Domain Events. This doesn't clear the history of the object.
      */
     public function clearRecordedEvents(): void;
+
+    public function currentVersion(): int;
 }

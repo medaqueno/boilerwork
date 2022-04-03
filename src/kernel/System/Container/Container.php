@@ -41,6 +41,13 @@ final class Container implements ContainerInterface
             ->addServiceProvider(new BindContainerProvider);*/
 
         // Illuminate Implementation
+
+        /*
+        // Hay que estudiar esta versión para añadir singletons al contenedor en cuanto a rendimiento y problemas de datos
+        $UserInMemoryRepository = UserInMemoryRepository::getInstance();
+        $this->container->instance(UserRepository::class, $UserInMemoryRepository);
+        */
+
         $this->container->bind(UserRepository::class, UserInMemoryRepository::class);
         // $this->container->bind(UserRepository::class, UserRedisRepository::class);
     }

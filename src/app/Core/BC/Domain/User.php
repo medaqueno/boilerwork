@@ -7,6 +7,8 @@ namespace App\Core\BC\Domain;
 
 use App\Core\BC\Domain\Events\UserHasBeenApproved;
 use App\Core\BC\Domain\Events\UserHasRegistered;
+use App\Core\BC\Domain\Services\EmailUniqueness;
+use App\Core\BC\Domain\Services\UsernameUniqueness;
 use App\Core\BC\Domain\ValueObjects\UserEmail;
 use App\Core\BC\Domain\ValueObjects\UserName;
 use App\Core\BC\Domain\ValueObjects\UserStatus;
@@ -32,8 +34,18 @@ final class User extends AggregateRoot implements RecordsEvents, IsEventSourced
     ): self {
 
         // Check Invariants
+
         // TODO: Check email uniqueness in persistence
+        $emailUniqueness = app()->container()->get(EmailUniqueness::class);
         // TODO: Check username uniqueness in persistence
+        $usernameUniqueness = app()->container()->get(UsernameUniqueness::class);
+
+        Assert::lazy()->tryAll()
+            ->that($emailUniqueness->isSatisfiedBy(email: $email))
+            ->true('Email already exists', 'user.emailAlreadyExists')
+            ->that($usernameUniqueness->isSatisfiedBy(username: $username))
+            ->true('User Name already exists', 'user.usernameAlreadyExists')
+            ->verifyNow();
 
         $user = new static(
             userId: new Identity($userId),
