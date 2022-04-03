@@ -26,6 +26,7 @@ The objective of this repository is to provide a project start point applying so
 - Value Objects
 - Invariants validation/protection through assertion in Domain layer
 - Repositories
+- Specification Pattern
 
 ### Features included
 - Swoole blazing fast performance and concurrency through Coroutines [Open Swoole](https://openswoole.com)
