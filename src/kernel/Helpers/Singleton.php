@@ -17,4 +17,9 @@ trait Singleton
 
         return self::$instance;
     }
+
+    public function __clone()
+    {
+        throw new \Exception("Can't clone a singleton");
+    }
 }
