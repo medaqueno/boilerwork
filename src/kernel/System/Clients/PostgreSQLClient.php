@@ -13,6 +13,9 @@ use Swoole\Coroutine\PostgreSQL;
  * Get a connection from connection pool in order to work with.
  * Don't forget to put the connection back to the pool
  *
+ * @see https://openswoole.com/docs/modules/swoole-coroutine-postgres
+ * Official documentation with all existing methods.
+ *
  * @example
         $pgClient = new PostgreSQLClient();
         $query = $pgClient->run('select * from events where "aggregateId" = $1', ["1e1ec9be-2c19-48c5-9580-5de4088cbcf6"]);
