@@ -20,6 +20,7 @@ final class AggregateHistory
     ) {
         foreach ($events as $event) {
             $event = $event['type']::unserialize($event);
+
             if ($event->getAggregateId() !== $aggregateId->toPrimitive()) {
                 throw new \Exception('Aggregate history is corrupted');
             }

@@ -13,6 +13,7 @@ use Illuminate\Container\Container as ContainerImplementation;
 use App\Core\BC\Domain\UserRepository;
 use Kernel\Infra\Persistence\EventStore;
 use App\Core\BC\Infra\Persistence\UserInMemoryRepository;
+use App\Core\BC\Infra\Persistence\UserPostgreSQLRepository;
 use Kernel\Infra\Persistence\InMemoryEventStore;
 use App\Core\BC\Infra\Persistence\UserRedisRepository;
 use Kernel\Infra\Persistence\RedisEventStore;
@@ -48,8 +49,7 @@ final class Container implements ContainerInterface
         $this->container->instance(UserRepository::class, $UserInMemoryRepository);
         */
 
-        $this->container->bind(UserRepository::class, UserInMemoryRepository::class);
-        // $this->container->bind(UserRepository::class, UserRedisRepository::class);
+        $this->container->bind(UserRepository::class, UserPostgreSQLRepository::class);
     }
 
     public function get(string $id): mixed

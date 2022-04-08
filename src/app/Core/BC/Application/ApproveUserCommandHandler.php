@@ -22,17 +22,13 @@ final class ApproveUserCommandHandler implements CommandHandlerInterface
     public function handle(CommandInterface $command): void
     {
         // Only testing. Another command
-        $reconstitutedAggregate = $this->userRepository->getAggregateHistoryFor(new Identity($command->id));
-        // echo "\nApproveUserCommandHandler reconstitutedAggregate\n";
-        var_dump($reconstitutedAggregate->getRecordedEvents());
+        // Reconstitute Aggregate
+        $user = $this->userRepository->getAggregateHistoryFor(new Identity($command->id));
 
-        // $reconstitutedAggregate->approveUser(userId: $command->id);
+        $user->approveUser(userId: $command->id);
 
-        // $this->userRepository->append($reconstitutedAggregate);
+        $this->userRepository->append($user);
 
         eventsPublisher()->releaseEvents();
-
-
-        // var_dump($reconstitutedAggregate);
     }
 }
