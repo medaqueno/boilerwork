@@ -61,7 +61,7 @@ class PostgreSQLClient
             $result = $this->execute($queryName, $args);
         }
 
-        if ($this->conn->resultStatus !== 1 && $this->conn->resultDiag !== null) {
+        if ($this->conn->resultDiag !== null) {
             $this->checkError($result);
         }
 
@@ -72,7 +72,7 @@ class PostgreSQLClient
     {
         $result = $this->conn->query($query);
 
-        if ($this->conn->resultStatus !== 1 && $this->conn->resultDiag !== null) {
+        if ($this->conn->resultDiag !== null) {
             $this->checkError($result);
         }
 
@@ -91,7 +91,7 @@ class PostgreSQLClient
 
     private function prepare(string $query): string
     {
-        $queryName = base64_encode($query);
+        $queryName = (string)(uniqid());
         $this->conn->prepare($queryName, $query);
 
         return $queryName;
@@ -124,14 +124,16 @@ class PostgreSQLClient
         $resultDiag = $this->conn->resultDiag;
         $resultStatus = $this->conn->resultStatus;
 
+        var_dump($resultDiag);
+
         // May be a handled error
         error(
             sprintf('DB error/warning: severity: %s, sqlstate: %s, table_name: %s, message_primary: %s, message_detail: %s, constraint_name: %s', $resultDiag['severity'], $resultDiag['sqlstate'], $resultDiag['table_name'], $resultDiag['message_primary'], $resultDiag['message_detail'], $resultDiag['constraint_name'])
         );
 
-        match ($resultDiag['sqlstate']) {
-            '23505' => throw new PersistenceException('Duplicate key value violates unique constraint', 409),
-            default => throw new PersistenceException('Error committing db query', 500),
-        };
+        // match ($resultDiag['sqlstate']) {
+        //     '23505' => throw new PersistenceException('Duplicate key value violates unique constraint', 409),
+        //     default => throw new PersistenceException('Error committing db query', 500),
+        // };
     }
 }

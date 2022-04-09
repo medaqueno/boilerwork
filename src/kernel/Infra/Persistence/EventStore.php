@@ -12,6 +12,7 @@ interface EventStore
 {
     /**
      *  Add Events to Persistence
+     *
      **/
     public function append(RecordsEvents $events): void;
 

@@ -44,8 +44,8 @@ The objective of this repository is to provide a project start point applying so
 - PSR Request and Response Wrappers
 - Projections (pending)
 - Read models (pending)
-- Adapters to Persistence (pending): InMemory, Redis, PostgreSQL, Mongo, MySQL.
-- Transactions (pending)
+- Adapters to Persistence (pending): InMemory (completed), Redis, PostgreSQL (completed), Mongo, MySQL.
+- Transactions (completed where apply)
 - Opentelemetry (pending)
 - Database Migrations (pending)
 - Middleware (pending, maybe will not be included)

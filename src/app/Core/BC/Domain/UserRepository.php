@@ -12,12 +12,12 @@ use Kernel\Infra\Persistence\EventStore;
 interface UserRepository extends EventStore
 {
     /**
-     *  @inheritDoc
+     *  {@inheritDoc}
      **/
     public function append(RecordsEvents $events): void;
 
     /**
-     *  @inheritDoc
+     *  {@inheritDoc}
      **/
     public function getAggregateHistoryFor(Identity $id): User;
 }

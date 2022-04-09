@@ -5,50 +5,31 @@ declare(strict_types=1);
 
 namespace Kernel\Domain;
 
+use Kernel\Domain\ValueObjects\Identity;
+
 abstract class AggregateRoot implements RecordsEvents, IsEventSourced
 {
     use ApplyEvent;
+
+    protected readonly Identity $aggregateId;
 
     protected int $version = 0;
 
     private array $latestRecordedEvents = [];
 
-    protected function recordThat(DomainEvent $event): void
+    final public function getAggregateId(): string
     {
-        $this->increaseVersion();
-
-        $this->latestRecordedEvents[] = $event;
-        $this->apply($event);
-
-        eventsPublisher()->recordThat(event: $event);
+        return $this->aggregateId->toPrimitive();
     }
 
-    public function getRecordedEvents(): array
+    final public function getRecordedEvents(): array
     {
         return $this->latestRecordedEvents;
     }
 
-    public function clearRecordedEvents(): void
+    final public function clearRecordedEvents(): void
     {
         $this->latestRecordedEvents = [];
-    }
-
-    /**
-     * Apply DomainEvents to Aggregate to reconstitute its current state
-     **/
-    public static function reconstituteFrom(AggregateHistory $aggregateHistory): RecordsEvents
-    {
-        $aggregateId = $aggregateHistory->getAggregateId();
-        $aggregate = new static($aggregateId);
-
-        foreach ($aggregateHistory->getAggregateHistory() as $event) {
-            $aggregate->increaseVersion();
-            $aggregate->version = $aggregate->currentVersion();
-
-            $aggregate->apply($event);
-        }
-
-        return $aggregate;
     }
 
     final public function currentVersion(): int
@@ -60,5 +41,34 @@ abstract class AggregateRoot implements RecordsEvents, IsEventSourced
     {
         $version = $this->currentVersion();
         $this->version = ++$version;
+    }
+
+    protected function recordThat(DomainEvent $event): void
+    {
+        $this->increaseVersion();
+
+        $this->latestRecordedEvents[] = $event;
+        $this->apply($event);
+
+        eventsPublisher()->recordThat(event: $event);
+    }
+
+    /**
+     * Apply DomainEvents to Aggregate to reconstitute its current state
+     **/
+    public static function reconstituteFrom(AggregateHistory $aggregateHistory): RecordsEvents
+    {
+        $aggregate = new static(
+            aggregateId: $aggregateHistory->getAggregateId()
+        );
+
+        foreach ($aggregateHistory->getAggregateHistory() as $event) {
+            $aggregate->increaseVersion();
+            $aggregate->version = $aggregate->currentVersion();
+
+            $aggregate->apply($event);
+        }
+
+        return $aggregate;
     }
 }

@@ -23,7 +23,7 @@ final class User extends AggregateRoot implements RecordsEvents, IsEventSourced
     protected UserStatus $status;
 
     protected function __construct(
-        protected readonly Identity $userId,
+        protected readonly Identity $aggregateId,
     ) {
     }
 
@@ -48,7 +48,7 @@ final class User extends AggregateRoot implements RecordsEvents, IsEventSourced
             ->verifyNow();
 
         $user = new static(
-            userId: new Identity($userId),
+            aggregateId: new Identity($userId),
         );
 
         $user->recordThat(

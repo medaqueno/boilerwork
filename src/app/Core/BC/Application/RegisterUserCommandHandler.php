@@ -22,13 +22,13 @@ final class RegisterUserCommandHandler implements CommandHandlerInterface
 
     public function handle(CommandInterface $command): void
     {
-        $aggregate = User::register(
+        $user = User::register(
             userId: $command->id,
             email: $command->email,
             username: $command->username,
         );
 
-        $this->userRepository->append($aggregate);
+        $this->userRepository->append($user);
 
         eventsPublisher()->releaseEvents();
     }

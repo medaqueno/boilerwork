@@ -22,5 +22,7 @@ interface RecordsEvents
      */
     public function clearRecordedEvents(): void;
 
+    public function getAggregateId(): string;
+
     public function currentVersion(): int;
 }
