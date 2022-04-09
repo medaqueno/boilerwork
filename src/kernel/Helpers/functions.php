@@ -23,7 +23,8 @@ function base_path(string $path): string
 
 function error(string|Stringable|array $message, string $exception = \Exception::class, ?string $channel = 'error'): void
 {
-    if (boolval($_ENV['APP_DEBUG']) === true) {
+    $debug = $_ENV['APP_DEBUG'] ?? false;
+    if (boolval($debug) === true) {
         $d = new DateTimeImmutable();
 
         $message = is_array($message) ? json_encode($message) : ((method_exists($message, '__toString')) ? $message->__toString() : $message);
@@ -42,7 +43,8 @@ function error(string|Stringable|array $message, string $exception = \Exception:
 
 function logger(string|Stringable|array $message, string $mode = 'DEBUG', string $channel = 'default'): void
 {
-    if (boolval($_ENV['APP_DEBUG']) === true) {
+    $debug = $_ENV['APP_DEBUG'] ?? false;
+    if (boolval($debug) === true) {
         $d = new DateTimeImmutable();
 
         $message = is_array($message) ? json_encode($message) : ((method_exists($message, '__toString')) ? $message->__toString() : $message);

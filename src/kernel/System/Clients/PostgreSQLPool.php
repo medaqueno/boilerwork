@@ -22,14 +22,21 @@ final class PostgreSQLPool
      */
     private function __construct()
     {
-        $size = (int)$_ENV['POSTGRESQL_SIZE_CONN'];
+        $host = $_ENV['POSTGRESQL_HOST'] ?? 'postgres';
+        $port = $_ENV['POSTGRESQL_PORT'] ?? 5432;
+        $dbname = $_ENV['POSTGRESQL_DBNAME'] ?? 'test_event_sourcing';
+        $username = $_ENV['POSTGRESQL_USERNAME'] ?? 'postgres';
+        $password = $_ENV['POSTGRESQL_PASSWORD'] ?? 'postgres';
+
+        $size = $_ENV['POSTGRESQL_SIZE_CONN'] ?? 2;
+
         $this->pool = new Channel($size);
 
         for ($i = 0; $i < $size; $i++) {
 
             $postgresql = new PostgreSQL();
 
-            $res = $postgresql->connect(sprintf("host=%s;port=%s;dbname=%s;user=%s;password=%s", $_ENV['POSTGRESQL_HOST'], $_ENV['POSTGRESQL_PORT'], $_ENV['POSTGRESQL_DBNAME'], $_ENV['POSTGRESQL_USERNAME'], $_ENV['POSTGRESQL_PASSWORD']));
+            $res = $postgresql->connect(sprintf("host=%s;port=%s;dbname=%s;user=%s;password=%s", $host, $port, $dbname, $username, $password));
 
             if ($res === false) {
                 error('failed to connect PostgreSQL server.');

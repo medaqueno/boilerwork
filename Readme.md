@@ -73,3 +73,10 @@ Client -> request endpoint (GET) -> Routing -> UI Controller -> Build Read Model
 #### ES
 
 ## Naming conventions
+
+## Tests
+PhpUnit tests may be included in src/tests folder. deminy/counit is installed as dev dependecy if needed to allow some specific tests under Swoole.
+Run:
+```sh
+./vendor/bin/phpunit --color --testdox tests
+```

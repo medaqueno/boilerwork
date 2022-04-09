@@ -35,8 +35,10 @@ class PostgreSQLClient
 
     public function __construct()
     {
-        $this->instance = PostgreSQLPool::getInstance();
-        $this->conn = $this->instance->getConn();
+        go(function () {
+            $this->instance = PostgreSQLPool::getInstance();
+            $this->conn = $this->instance->getConn();
+        });
     }
 
     /**

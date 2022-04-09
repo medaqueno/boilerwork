@@ -24,14 +24,15 @@
     },
     "require-dev": {
         "ext-decimal": "^1.1",
+        "deminy/counit": "^0.2.0",
         "openswoole/ide-helper": "~4.9",
         "php-decimal/php-decimal": "^1.1",
         "php-decimal/stubs": "^1.1",
         "php-ds/php-ds": "^1.4",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^1.4",
-        "ukko/phpredis-phpdoc": "5.0.1-beta8",
-        "vimeo/psalm": "^4.22"
+        "phpunit/phpunit": "^9.5",
+        "ukko/phpredis-phpdoc": "5.0.1-beta8"
     },
     "config": {
         "optimize-autoloader": true,

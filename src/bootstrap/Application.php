@@ -28,7 +28,8 @@ final class Application
 
     private function __construct()
     {
-        $this->environment = $_ENV['APP_ENV'] ?? Environments::DEVELOPMENT;
+        $environment = $_ENV['APP_ENV'] ?? 'dev';
+        $this->environment = $environment ?? Environments::DEVELOPMENT;
 
         // Init Dependency Injection Container
         $this->container = new Container;
