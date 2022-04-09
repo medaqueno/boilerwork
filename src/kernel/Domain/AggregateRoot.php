@@ -43,14 +43,14 @@ abstract class AggregateRoot implements RecordsEvents, IsEventSourced
         $this->version = ++$version;
     }
 
-    protected function recordThat(DomainEvent $event): void
+    protected function raise(DomainEvent $event): void
     {
         $this->increaseVersion();
 
         $this->latestRecordedEvents[] = $event;
         $this->apply($event);
 
-        eventsPublisher()->recordThat(event: $event);
+        eventsPublisher()->raise(event: $event);
     }
 
     /**

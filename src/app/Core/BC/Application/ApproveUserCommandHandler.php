@@ -25,6 +25,8 @@ final class ApproveUserCommandHandler implements CommandHandlerInterface
         // Reconstitute Aggregate
         $user = $this->userRepository->getAggregateHistoryFor(new Identity($command->id));
 
+        var_dump($user);
+
         $user->approveUser(userId: $command->id);
 
         $this->userRepository->append($user);

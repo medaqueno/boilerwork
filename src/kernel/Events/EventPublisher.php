@@ -31,7 +31,7 @@ final class EventPublisher
         }
     }
 
-    public function recordThat(DomainEvent $event): void
+    public function raise(DomainEvent $event): void
     {
         $this->events->push($event);
     }

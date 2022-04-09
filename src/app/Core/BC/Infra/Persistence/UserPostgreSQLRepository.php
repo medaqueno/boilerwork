@@ -42,7 +42,7 @@ final class UserPostgreSQLRepository implements UserRepository
             update aggregate with last version number
         End Transaction
      *
-     * extracted from CQRS Documents by Greg Young
+     * extracted from CQRS Documents by Greg Young - https://cqrs.wordpress.com/documents/building-event-storage/
      **/
     public function append(RecordsEvents $aggregate): void
     {

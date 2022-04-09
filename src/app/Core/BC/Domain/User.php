@@ -51,7 +51,7 @@ final class User extends AggregateRoot implements RecordsEvents, IsEventSourced
             aggregateId: new Identity($userId),
         );
 
-        $user->recordThat(
+        $user->raise(
             new UserHasRegistered(
                 userId: (new Identity($userId))->toPrimitive(),
                 email: (new UserEmail($email))->toPrimitive(),
@@ -80,7 +80,7 @@ final class User extends AggregateRoot implements RecordsEvents, IsEventSourced
             ->eq(UserStatus::USER_STATUS_INITIAL, 'User should be in initial status to be approved', 'user.invalidStatusCondition')
             ->verifyNow();
 
-        $this->recordThat(
+        $this->raise(
             new UserHasBeenApproved(
                 userId: (new Identity($userId))->toPrimitive(),
             )
