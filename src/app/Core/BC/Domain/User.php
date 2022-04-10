@@ -34,7 +34,6 @@ final class User extends AggregateRoot implements RecordsEvents, IsEventSourced
     ): self {
 
         // Check Invariants
-
         // TODO: Check email uniqueness in persistence
         $emailUniqueness = app()->container()->get(EmailUniqueness::class);
         // TODO: Check username uniqueness in persistence
