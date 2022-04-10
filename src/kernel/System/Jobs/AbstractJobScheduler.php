@@ -80,9 +80,9 @@ abstract class AbstractJobScheduler
             // Task is in time but has not been executed yet
             if ($jobToExecute !== 'executed') {
 
-                go(function () use ($jobToExecute) {
-                    $job = app()->container()->get($jobToExecute);
+                $job = app()->container()->get($jobToExecute);
 
+                go(function () use ($jobToExecute, $job) {
                     if ($job instanceof JobInterface) {
                         $job->handle();
                     } else {
@@ -92,7 +92,6 @@ abstract class AbstractJobScheduler
 
                         throw new \RuntimeException($message);
                     }
-
                     $this->jobsToBeExecuted[$jobToExecute] = 'executed';
                 });
             }

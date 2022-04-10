@@ -49,7 +49,7 @@ final class Container implements ContainerInterface
         $this->container->instance(UserRepository::class, $UserInMemoryRepository);
         */
 
-        $this->container->bind(UserRepository::class, UserPostgreSQLRepository::class);
+        $this->container->bind(UserRepository::class, UserRedisRepository::class);
     }
 
     public function get(string $id): mixed

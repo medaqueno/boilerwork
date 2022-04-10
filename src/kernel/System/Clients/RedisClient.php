@@ -5,10 +5,7 @@ declare(strict_types=1);
 
 namespace Kernel\System\Clients;
 
-use Kernel\Helpers\Singleton;
 use Redis;
-use Swoole\Database\RedisConfig;
-use Swoole\Database\RedisPool;
 
 /**
  * Open a pool of connections to Redis server, so we can use them when needed.
@@ -22,53 +19,21 @@ use Swoole\Database\RedisPool;
  **/
 final class RedisClient
 {
-    use Singleton;
+    public readonly Redis $conn;
 
-    private RedisPool $pool;
+    private readonly RedisPool $pool;
 
-    protected function __construct()
+    public function __construct()
     {
-        if (boolval($_ENV['REDIS_ENABLED']) === false) {
-            throw new \Exception("REDIS IS NOT ENABLED", 500);
-
-            return;
-        }
-
-        // \Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_TCP]); // Enabled Globally in Application init
-
-        $this->pool = new RedisPool((new RedisConfig)
-                ->withHost($_ENV['REDIS_HOST'])
-                ->withPort((int)$_ENV['REDIS_PORT'])
-                ->withAuth('')
-                // ->withDbIndex(0)
-                ->withTimeout((int)1),
-            $_ENV['REDIS_SIZE_CONN'] ? (int)$_ENV['REDIS_SIZE_CONN'] : 64
-        );
+        $this->pool = RedisPool::getInstance();
+        $this->conn = $this->pool->getConn();
     }
 
-    public function getConn(): Redis
+    /**
+     * Put connection back to the pool in order to be reused
+     **/
+    public function putConnection(Redis $conn): void
     {
-        return $this->pool->get();
+        $this->pool->putConn($conn);
     }
-
-    public function putConn(Redis $connection): void
-    {
-        $this->pool->put($connection);
-    }
-
-    /* public function save(mixed $object)
-    {
-        $this->client->hset('posts', (string) $object->id(), serialize($object));
-    }
-    public function remove(Post $aPost)
-    {
-        $this->client->hdel('posts', (string) $aPost->id());
-    }
-    public function get(PostId $anId)
-    {
-        if ($data = $this->client->hget('posts', (string) $anId)) {
-            return unserialize($data);
-        }
-        return null;
-    }*/
 }

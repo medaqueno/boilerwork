@@ -10,8 +10,9 @@ use PHPUnit\Framework\TestCase;
 final class UserTest extends TestCase
 {
     /**
-     * @test */
-    public function testRegisterUserIsAnUserInstance(): void
+     * @test
+     **/
+    public function testRegisterUserIsAUserInstance(): void
     {
         $user = User::register(
             userId: (Identity::create())->toPrimitive(),

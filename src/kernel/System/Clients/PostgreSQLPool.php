@@ -13,8 +13,6 @@ final class PostgreSQLPool
 {
     use Singleton;
 
-    private \Swoole\Coroutine\PostgreSQL $conn;
-
     protected \Swoole\Coroutine\Channel $pool;
 
     /**
@@ -30,7 +28,7 @@ final class PostgreSQLPool
 
         $size = $_ENV['POSTGRESQL_SIZE_CONN'] ?? 2;
 
-        $this->pool = new Channel($size);
+        $this->pool = new Channel((int)$size);
 
         for ($i = 0; $i < $size; $i++) {
 

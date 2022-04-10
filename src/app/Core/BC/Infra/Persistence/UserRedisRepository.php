@@ -11,49 +11,81 @@ use Kernel\Domain\AggregateHistory;
 use Kernel\Domain\RecordsEvents;
 use Kernel\Domain\ValueObjects\Identity;
 use Kernel\System\Clients\RedisClient;
-use Redis;
 
 final class UserRedisRepository implements UserRepository
 {
-    private Redis $redis;
-
-    public function __construct()
+    public function __construct(private RedisClient $client)
     {
-        $this->redisPool = RedisClient::getInstance();
-        $this->redis = $this->redisPool->getConn();
     }
 
-    /**
-     *  @inheritDoc
-     **/
     public function append(RecordsEvents $aggregate): void
     {
+        $aggregateId = $aggregate->getAggregateId();
         $events = $aggregate->getRecordedEvents();
 
-        foreach ($events as $event) {
-            // $this->redis->hMSet($aggregate::class . ':' . $event->getAggregateId(), $event->serialize());
-            // $this->redis->xAdd($event::class, $event->getAggregateId(), $event->serialize());
+        $currentPersistedAggregate = $this->client->conn->hGet('Aggregates', $aggregateId);
+
+        if (!$currentPersistedAggregate) {
+            $version = 0;
+
+            $this->client->conn->hSet(
+                'Aggregates',
+                $aggregateId,
+                json_encode(
+                    [
+                        'type' => User::class,
+                        'version' => $version,
+                    ]
+                )
+            );
+        } else {
+            $version = (json_decode($currentPersistedAggregate, true))['version'];
         }
 
-        $aggregate->clearRecordedEvents();
+        if ($version + count($events) !== $aggregate->currentVersion()) {
+            throw new \Kernel\Infra\Persistence\Exceptions\PersistenceException(sprintf("Expected version and aggregate version must be the same. Aggregate %s history may be corrupted.", $aggregateId));
+        }
 
-        $this->redisPool->putConn($this->redis);
+        foreach ($events as $event) {
+            ++$version;
+
+            $this->client->conn->hSet($aggregateId, (string)$version, json_encode($event->serialize()));
+        }
+
+        $this->client->conn->hSet(
+            'Aggregates',
+            $aggregateId,
+            json_encode(
+                [
+                    'type' => User::class,
+                    'version' => $version,
+                ]
+            )
+        );
+
+        $aggregate->clearRecordedEvents();
     }
 
     /**
      *  @inheritDoc
      **/
-    public function getAggregateHistoryFor(Identity $aggregateId): RecordsEvents
+    public function getAggregateHistoryFor(Identity $aggregateId): User
     {
+        $array = $this->client->conn->hGetAll($aggregateId->toPrimitive());
+        // Redis has not order by, so it returns from newer to older
+        $array = array_reverse($array, true);
+
+        if (count($array) === 0) {
+            throw new \Exception(sprintf('No aggregate has been found with aggregateId: %s', $aggregateId->toPrimitive()));
+        }
+
         return User::reconstituteFrom(
             new AggregateHistory(
                 $aggregateId,
-                array_filter( // Retrieve events by aggregateId. Same as select <fields> where aggregateId = <aggregateId>;
-                    $this->events,
-                    function (array $event) use ($aggregateId) {
-                        return $event['aggregateId'] === $aggregateId->toPrimitive();
-                    }
-                )
+                // Only extract Data column specific to a Domain Event
+                array_map(function ($event) {
+                    return json_decode($event, true);
+                }, $array)
             )
         );
     }
