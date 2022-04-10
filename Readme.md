@@ -81,7 +81,7 @@ Run:
 ./vendor/bin/phpunit --color --testdox tests
 ```
 
-A pre-commit git hook exists, and has been moved to git repository. Execute:
+A pre-commit git hook exists, and has been moved to git repository. Execute (only works if git > 2.9.0):
 ```sh
 git config --local core.hooksPath .githooks/
 ```
