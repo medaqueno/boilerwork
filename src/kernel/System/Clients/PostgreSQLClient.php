@@ -29,24 +29,32 @@ use Swoole\Coroutine\PostgreSQL;
  **/
 class PostgreSQLClient
 {
-    public readonly PostgreSQL $conn;
+    public readonly PostgreSQL $client;
 
-    private readonly PostgreSQLPool $instance;
+    // protected readonly PostgreSQLPool $pool;
 
     public function __construct()
     {
-        go(function () {
-            $this->instance = PostgreSQLPool::getInstance();
-            $this->conn = $this->instance->getConn();
-        });
+        // $this->pool = PostgreSQLPool::getInstance();
+        // $this->conn = $this->pool->getConn();
+
+        $this->client = new PostgreSQL();
+
+        $host = $_ENV['POSTGRESQL_HOST'] ?? 'postgres';
+        $port = $_ENV['POSTGRESQL_PORT'] ?? 5432;
+        $dbname = $_ENV['POSTGRESQL_DBNAME'] ?? 'test_event_sourcing';
+        $username = $_ENV['POSTGRESQL_USERNAME'] ?? 'postgres';
+        $password = $_ENV['POSTGRESQL_PASSWORD'] ?? 'postgres';
+
+        $this->client->connect(sprintf("host=%s;port=%s;dbname=%s;user=%s;password=%s", $host, (int)$port, $dbname, $username, $password));
     }
 
     /**
      * Put connection back to the pool in order to be reused
      **/
-    public function putConnection(PostgreSQL $conn): void
+    public function putConnection(PostgreSQL $client): void
     {
-        $this->instance->putConn($conn);
+        $this->pool->putConn($client);
     }
 
     /**
@@ -63,7 +71,7 @@ class PostgreSQLClient
             $result = $this->execute($queryName, $args);
         }
 
-        if ($this->conn->resultDiag !== null) {
+        if ($this->client->resultDiag !== null) {
             $this->checkError($result);
         }
 
@@ -72,9 +80,9 @@ class PostgreSQLClient
 
     private function query(string $query): mixed
     {
-        $result = $this->conn->query($query);
+        $result = $this->client->query($query);
 
-        if ($this->conn->resultDiag !== null) {
+        if ($this->client->resultDiag !== null) {
             $this->checkError($result);
         }
 
@@ -83,48 +91,49 @@ class PostgreSQLClient
 
     public function fetchAll($result): array
     {
-        $resp = [];
-        while ($row = $this->conn->fetchRow($result)) {
-            $resp[] = $row;
-        }
+        return $this->client->fetchAll($result);
+        // $resp = [];
+        // while ($row = $this->client->fetchRow($result)) {
+        //     $resp[] = $row;
+        // }
 
-        return $resp;
+        // return $resp;
     }
 
     private function prepare(string $query): string
     {
         $queryName = (string)(uniqid());
-        $this->conn->prepare($queryName, $query);
+        $this->client->prepare($queryName, $query);
 
         return $queryName;
     }
 
     private function execute(string $queryName, array $values)
     {
-        $resp = $this->conn->execute($queryName, $values);
+        $resp = $this->client->execute($queryName, $values);
 
         return $resp;
     }
 
     public function initTransaction(): void
     {
-        $this->conn->query('BEGIN');
+        $this->client->query('BEGIN');
     }
 
     public function endTransaction(): void
     {
-        $this->conn->query('COMMIT');
+        $this->client->query('COMMIT');
     }
 
     public function status()
     {
-        return $this->conn->status();
+        return $this->client->status();
     }
 
     private function checkError($result = null)
     {
-        $resultDiag = $this->conn->resultDiag;
-        $resultStatus = $this->conn->resultStatus;
+        $resultDiag = $this->client->resultDiag;
+        $resultStatus = $this->client->resultStatus;
 
         var_dump($resultDiag);
 

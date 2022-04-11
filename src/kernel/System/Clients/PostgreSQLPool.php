@@ -8,6 +8,9 @@ namespace Kernel\System\Clients;
 use Kernel\Helpers\Singleton;
 use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\PostgreSQL;
+use Swoole\Database\PDOConfig;
+use Swoole\Database\PDOPool;
+use Swoole\Database\PDOProxy;
 
 final class PostgreSQLPool
 {
@@ -26,16 +29,14 @@ final class PostgreSQLPool
         $username = $_ENV['POSTGRESQL_USERNAME'] ?? 'postgres';
         $password = $_ENV['POSTGRESQL_PASSWORD'] ?? 'postgres';
 
-        $size = $_ENV['POSTGRESQL_SIZE_CONN'] ?? 2;
+        $size = $_ENV['POSTGRESQL_SIZE_CONN'] ?? 64;
 
         $this->pool = new Channel((int)$size);
 
         for ($i = 0; $i < $size; $i++) {
-
             $postgresql = new PostgreSQL();
 
             $res = $postgresql->connect(sprintf("host=%s;port=%s;dbname=%s;user=%s;password=%s", $host, $port, $dbname, $username, $password));
-
             if ($res === false) {
                 error('failed to connect PostgreSQL server.');
 
@@ -45,7 +46,7 @@ final class PostgreSQLPool
             }
         }
 
-        echo "POSTGRESQL POOL CREATED: " . $this->pool->capacity . " connections opened\n";
+        // echo "POSTGRESQL POOL CREATED: " . $this->pool->capacity . " connections opened\n";
     }
 
     public function getConn(): PostgreSQL

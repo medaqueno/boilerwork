@@ -21,8 +21,6 @@ final class RedisClient
 {
     public readonly Redis $conn;
 
-    private readonly RedisPool $pool;
-
     public function __construct()
     {
         $this->pool = RedisPool::getInstance();

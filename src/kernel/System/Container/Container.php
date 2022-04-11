@@ -6,17 +6,11 @@ declare(strict_types=1);
 namespace Kernel\System\Container;
 
 use Psr\Container\ContainerInterface;
-// use League\Container\Container as ContainerImplementation;
-// use League\Container\ReflectionContainer;
-// use App\Shared\Providers\BindContainerProvider;
 use Illuminate\Container\Container as ContainerImplementation;
 use App\Core\BC\Domain\UserRepository;
-use Kernel\Infra\Persistence\EventStore;
 use App\Core\BC\Infra\Persistence\UserInMemoryRepository;
 use App\Core\BC\Infra\Persistence\UserPostgreSQLRepository;
-use Kernel\Infra\Persistence\InMemoryEventStore;
 use App\Core\BC\Infra\Persistence\UserRedisRepository;
-use Kernel\Infra\Persistence\RedisEventStore;
 
 /**
  * Dependency Injection Container
@@ -34,22 +28,12 @@ final class Container implements ContainerInterface
         $this->container = new ContainerImplementation;
 
         /*
-        // League Implementation
-        $this->container
-            // register the reflection container as a delegate to enable auto wiring
-            ->delegate(new ReflectionContainer())
-            // Add service Provider
-            ->addServiceProvider(new BindContainerProvider);*/
-
-        // Illuminate Implementation
-
-        /*
         // Hay que estudiar esta versión para añadir singletons al contenedor en cuanto a rendimiento y problemas de datos
         $UserInMemoryRepository = UserInMemoryRepository::getInstance();
         $this->container->instance(UserRepository::class, $UserInMemoryRepository);
         */
 
-        $this->container->bind(UserRepository::class, UserInMemoryRepository::class);
+        $this->container->bind(UserRepository::class, UserPostgreSQLRepository::class);
     }
 
     public function get(string $id): mixed

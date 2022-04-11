@@ -14,7 +14,7 @@ final class RedisPool
 {
     use Singleton;
 
-    protected SwooleRedisPool $pool;
+    public readonly SwooleRedisPool $pool;
 
     /**
      * PostgresqlPool constructor.
@@ -29,9 +29,10 @@ final class RedisPool
         $this->pool = new SwooleRedisPool((new RedisConfig)
                 ->withHost($host)
                 ->withPort((int)$port)
-                ->withAuth('')
-                // ->withDbIndex(0)
-                ->withTimeout((int)1),
+            // ->withAuth('')
+            // ->withDbIndex(0)
+            // ->withTimeout((int)1),
+            ,
             (int)$size
         );
     }

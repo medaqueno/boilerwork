@@ -7,6 +7,7 @@ namespace App\Shared\Providers;
 
 use App\Core\BC\Domain\UserRepository;
 use App\Core\BC\Infra\Persistence\UserInMemoryRepository;
+use App\Core\BC\Infra\Persistence\UserRedisRepository;
 use Kernel\Infra\Persistence\EventStore;
 use Kernel\Infra\Persistence\InMemoryEventStore;
 use League\Container\ServiceProvider\AbstractServiceProvider;
@@ -30,7 +31,7 @@ final class BindContainerProvider extends AbstractServiceProvider
     {
         // Interfaces
         $services = [
-            // UserRepository::class,
+            UserRepository::class,
         ];
 
         return in_array($id, $services);
@@ -47,7 +48,7 @@ final class BindContainerProvider extends AbstractServiceProvider
         // Example
         // $this->getContainer()->add(\App\Core\BC\UI\Controllers\Interface::class, \App\Core\BC\UI\Controllers\ConcreteClass::class);
 
-        // $this->getContainer()->add(UserRepository::class, UserRedisRepository::class);
+        $this->getContainer()->add(UserRepository::class, UserRedisRepository::class);
         // $this->getContainer()->add(EventStore::class, InMemoryEventStore::class);
         // $this->getContainer()->add(UserRepository::class, UserInMemoryRepository::class);
     }

@@ -14,7 +14,7 @@ use Kernel\System\Clients\RedisClient;
 
 final class UserRedisRepository implements UserRepository
 {
-    public function __construct(private RedisClient $client)
+    public function __construct(public readonly RedisClient $client)
     {
     }
 
@@ -66,6 +66,7 @@ final class UserRedisRepository implements UserRepository
         );
 
         $this->client->endTransaction();
+        $this->client->putConnection($this->client->conn);
 
         $aggregate->clearRecordedEvents();
     }
@@ -78,6 +79,7 @@ final class UserRedisRepository implements UserRepository
         $array = $this->client->conn->hGetAll($aggregateId->toPrimitive());
         // Redis has not order by, so it returns from newer to older
         $array = array_reverse($array, true);
+        $this->client->putConnection($this->client->conn);
 
         if (count($array) === 0) {
             throw new \Exception(sprintf('No aggregate has been found with aggregateId: %s', $aggregateId->toPrimitive()));

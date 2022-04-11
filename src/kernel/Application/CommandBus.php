@@ -33,9 +33,9 @@ final class CommandBus
      */
     public function handle(CommandInterface $command): void
     {
-        // go(function () use ($command, $args) {
-
         $commandHandler = app()->container()->get(get_class($command) . 'Handler');
+        // $class = get_class($command) . 'Handler';
+        // $commandHandler = new $class;
         // $commandName = $this->getCommandName($command); // Used for logging
 
         // Execute commandHandler
@@ -65,7 +65,6 @@ final class CommandBus
                 */
             throw $e;
         }
-        // });
     }
 
     private function getCommandName(CommandInterface $command): string
