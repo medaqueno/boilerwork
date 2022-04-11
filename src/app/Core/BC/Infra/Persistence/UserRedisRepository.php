@@ -25,10 +25,12 @@ final class UserRedisRepository implements UserRepository
 
         $currentPersistedAggregate = $this->client->conn->hGet('Aggregates', $aggregateId);
 
+        $transaction = $this->client->initTransaction();
+
         if (!$currentPersistedAggregate) {
             $version = 0;
 
-            $this->client->conn->hSet(
+            $transaction->hSet(
                 'Aggregates',
                 $aggregateId,
                 json_encode(
@@ -49,10 +51,10 @@ final class UserRedisRepository implements UserRepository
         foreach ($events as $event) {
             ++$version;
 
-            $this->client->conn->hSet($aggregateId, (string)$version, json_encode($event->serialize()));
+            $transaction->hSet($aggregateId, (string)$version, json_encode($event->serialize()));
         }
 
-        $this->client->conn->hSet(
+        $transaction->hSet(
             'Aggregates',
             $aggregateId,
             json_encode(
@@ -62,6 +64,8 @@ final class UserRedisRepository implements UserRepository
                 ]
             )
         );
+
+        $this->client->endTransaction();
 
         $aggregate->clearRecordedEvents();
     }

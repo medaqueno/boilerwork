@@ -29,11 +29,36 @@ final class RedisClient
         $this->conn = $this->pool->getConn();
     }
 
+    public function hGet($key, $hashKey): string
+    {
+        return $this->conn->hGet($key, $hashKey);
+    }
+
+    public function hGetAll($key): array
+    {
+        return $this->conn->hGetAll($key);
+    }
+
+    public function hSet($key, $hashKey, $value): int|bool
+    {
+        return $this->conn->hSet($key, $hashKey, $value);
+    }
+
     /**
      * Put connection back to the pool in order to be reused
      **/
     public function putConnection(Redis $conn): void
     {
         $this->pool->putConn($conn);
+    }
+
+    public function initTransaction(): Redis
+    {
+        return $this->conn->multi();
+    }
+
+    public function endTransaction()
+    {
+        return $this->conn->exec();
     }
 }
