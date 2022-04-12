@@ -29,32 +29,37 @@ use Swoole\Coroutine\PostgreSQL;
  **/
 class PostgreSQLClient
 {
-    public readonly PostgreSQL $client;
+    public readonly PostgreSQL $conn;
 
-    // protected readonly PostgreSQLPool $pool;
+    protected readonly PostgreSQLPool $pool;
 
     public function __construct()
     {
-        // $this->pool = PostgreSQLPool::getInstance();
-        // $this->conn = $this->pool->getConn();
-
-        $this->client = new PostgreSQL();
-
-        $host = $_ENV['POSTGRESQL_HOST'] ?? 'postgres';
-        $port = $_ENV['POSTGRESQL_PORT'] ?? 5432;
-        $dbname = $_ENV['POSTGRESQL_DBNAME'] ?? 'test_event_sourcing';
-        $username = $_ENV['POSTGRESQL_USERNAME'] ?? 'postgres';
-        $password = $_ENV['POSTGRESQL_PASSWORD'] ?? 'postgres';
-
-        $this->client->connect(sprintf("host=%s;port=%s;dbname=%s;user=%s;password=%s", $host, (int)$port, $dbname, $username, $password));
+        $this->pool = PostgreSQLPool::getInstance();
+        $this->getConnection();
+        // No pool
+        // $this->conn = new PostgreSQL();
+        // $host = $_ENV['POSTGRESQL_HOST'] ?? 'postgres';
+        // $port = $_ENV['POSTGRESQL_PORT'] ?? 5432;
+        // $dbname = $_ENV['POSTGRESQL_DBNAME'] ?? 'test_event_sourcing';
+        // $username = $_ENV['POSTGRESQL_USERNAME'] ?? 'postgres';
+        // $password = $_ENV['POSTGRESQL_PASSWORD'] ?? 'postgres';
+        // $this->conn->connect(sprintf("host=%s;port=%s;dbname=%s;user=%s;password=%s", $host, (int)$port, $dbname, $username, $password));
     }
 
     /**
+     * Retrieve connection in order to query DB
+     **/
+    public function getConnection(): void
+    {
+        $this->conn = $this->pool->getConn();
+    }
+    /**
      * Put connection back to the pool in order to be reused
      **/
-    public function putConnection(PostgreSQL $client): void
+    public function putConnection(PostgreSQL $conn): void
     {
-        $this->pool->putConn($client);
+        $this->pool->putConn($conn);
     }
 
     /**
@@ -71,7 +76,7 @@ class PostgreSQLClient
             $result = $this->execute($queryName, $args);
         }
 
-        if ($this->client->resultDiag !== null) {
+        if ($this->conn->resultDiag !== null) {
             $this->checkError($result);
         }
 
@@ -80,9 +85,9 @@ class PostgreSQLClient
 
     private function query(string $query): mixed
     {
-        $result = $this->client->query($query);
+        $result = $this->conn->query($query);
 
-        if ($this->client->resultDiag !== null) {
+        if ($this->conn->resultDiag !== null) {
             $this->checkError($result);
         }
 
@@ -91,9 +96,9 @@ class PostgreSQLClient
 
     public function fetchAll($result): array
     {
-        return $this->client->fetchAll($result);
+        return $this->conn->fetchAll($result);
         // $resp = [];
-        // while ($row = $this->client->fetchRow($result)) {
+        // while ($row = $this->conn->fetchRow($result)) {
         //     $resp[] = $row;
         // }
 
@@ -103,37 +108,35 @@ class PostgreSQLClient
     private function prepare(string $query): string
     {
         $queryName = (string)(uniqid());
-        $this->client->prepare($queryName, $query);
+        $this->conn->prepare($queryName, $query);
 
         return $queryName;
     }
 
     private function execute(string $queryName, array $values)
     {
-        $resp = $this->client->execute($queryName, $values);
-
-        return $resp;
+        return $this->conn->execute($queryName, $values);
     }
 
     public function initTransaction(): void
     {
-        $this->client->query('BEGIN');
+        $this->conn->query('BEGIN');
     }
 
     public function endTransaction(): void
     {
-        $this->client->query('COMMIT');
+        $this->conn->query('COMMIT');
     }
 
     public function status()
     {
-        return $this->client->status();
+        return $this->conn->status();
     }
 
     private function checkError($result = null)
     {
-        $resultDiag = $this->client->resultDiag;
-        $resultStatus = $this->client->resultStatus;
+        $resultDiag = $this->conn->resultDiag;
+        $resultStatus = $this->conn->resultStatus;
 
         var_dump($resultDiag);
 

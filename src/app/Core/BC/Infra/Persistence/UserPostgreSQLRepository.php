@@ -48,6 +48,7 @@ final class UserPostgreSQLRepository implements UserRepository
     {
         $aggregateId = $aggregate->getAggregateId();
         $events = $aggregate->getRecordedEvents();
+
         $this->client->initTransaction();
 
         $result = $this->client->run('SELECT "version" FROM "aggregates" WHERE "aggregate_id" = $1', [$aggregateId]);
@@ -92,7 +93,8 @@ final class UserPostgreSQLRepository implements UserRepository
         );
 
         $this->client->endTransaction();
-        // $this->client->putConnection($this->client->conn);
+
+        $this->client->putConnection($this->client->conn);
 
         $aggregate->clearRecordedEvents();
     }
@@ -105,7 +107,8 @@ final class UserPostgreSQLRepository implements UserRepository
         $query = $this->client->run('SELECT "data" FROM "events" WHERE "aggregate_id" = $1 ORDER BY "version"', [$aggregateId->toPrimitive()]);
 
         $array  = $this->client->fetchAll($query);
-        // $this->client->putConnection();
+
+        $this->client->putConnection($this->client->conn);
 
         if (count($array) === 0) {
             throw new \Exception(sprintf('No aggregate has been found with aggregateId: %s', $aggregateId->toPrimitive()));
