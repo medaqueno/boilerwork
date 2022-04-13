@@ -14,7 +14,7 @@ final class RedisPool
 {
     use Singleton;
 
-    public readonly SwooleRedisPool $pool;
+    protected readonly SwooleRedisPool $pool;
 
     /**
      * PostgresqlPool constructor.

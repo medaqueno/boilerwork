@@ -11,23 +11,37 @@ use Redis;
  * Open a pool of connections to Redis server, so we can use them when needed.
  *
  * @example []
-        $redisPool = RedisClient::getInstance();
-        $redis = $redisPool->getConn();
-        $redis->set('SetOneKey', 'some value set');
-        var_dump($redis->get('SetOneKey'));
-        $redisPool->putConn($redis);  // Connection must be released
+        $redisClient = new RedisClient();
+        $redisClient->getConnection();
+        $redisClient->hSet('SetOneKey', 'hashKey', json_encode(['foo' => 'bar']));
+        var_dump($redisClient->hGet('SetOneKey', 'hashKey'));
+        $redisClient->putConnection();  // Connection must be released
  **/
 final class RedisClient
 {
-    public readonly Redis $conn;
+    private Redis $conn;
+
+    private readonly RedisPool $pool;
 
     public function __construct()
     {
         $this->pool = RedisPool::getInstance();
+    }
+
+    public function getConnection(): void
+    {
         $this->conn = $this->pool->getConn();
     }
 
-    public function hGet($key, $hashKey): string
+    /**
+     * Put connection back to the pool in order to be reused
+     **/
+    public function putConnection(): void
+    {
+        $this->pool->putConn($this->conn);
+    }
+
+    public function hGet($key, $hashKey): string|bool
     {
         return $this->conn->hGet($key, $hashKey);
     }
@@ -40,14 +54,6 @@ final class RedisClient
     public function hSet($key, $hashKey, $value): int|bool
     {
         return $this->conn->hSet($key, $hashKey, $value);
-    }
-
-    /**
-     * Put connection back to the pool in order to be reused
-     **/
-    public function putConnection(Redis $conn): void
-    {
-        $this->pool->putConn($conn);
     }
 
     public function initTransaction(): Redis

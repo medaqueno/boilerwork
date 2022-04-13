@@ -15,7 +15,7 @@ use Kernel\System\Clients\PostgreSQLClient;
 final class UserPostgreSQLRepository implements UserRepository
 {
     public function __construct(
-        protected PostgreSQLClient $client
+        private readonly PostgreSQLClient $client
     ) {
     }
 

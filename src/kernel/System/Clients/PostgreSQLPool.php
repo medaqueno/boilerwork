@@ -13,7 +13,7 @@ final class PostgreSQLPool
 {
     use Singleton;
 
-    protected \Swoole\Coroutine\Channel $pool;
+    protected readonly \Swoole\Coroutine\Channel $pool;
 
     /**
      * PostgresqlPool constructor.

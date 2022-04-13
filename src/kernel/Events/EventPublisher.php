@@ -63,6 +63,9 @@ final class EventPublisher
 
             unset($class);
         }
+
+        // Clear events to assure events queue is emptied though non existing subscribers
+        $this->clearEvents();
     }
 
     public function clearEvents(): void

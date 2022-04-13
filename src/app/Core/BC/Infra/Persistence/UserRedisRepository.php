@@ -14,8 +14,9 @@ use Kernel\System\Clients\RedisClient;
 
 final class UserRedisRepository implements UserRepository
 {
-    public function __construct(public readonly RedisClient $client)
-    {
+    public function __construct(
+        private readonly RedisClient $client
+    ) {
     }
 
     public function append(RecordsEvents $aggregate): void
@@ -23,7 +24,9 @@ final class UserRedisRepository implements UserRepository
         $aggregateId = $aggregate->getAggregateId();
         $events = $aggregate->getRecordedEvents();
 
-        $currentPersistedAggregate = $this->client->conn->hGet('Aggregates', $aggregateId);
+        $this->client->getConnection();
+
+        $currentPersistedAggregate = $this->client->hGet('Aggregates', $aggregateId);
 
         $transaction = $this->client->initTransaction();
 
@@ -66,7 +69,7 @@ final class UserRedisRepository implements UserRepository
         );
 
         $this->client->endTransaction();
-        $this->client->putConnection($this->client->conn);
+        $this->client->putConnection();
 
         $aggregate->clearRecordedEvents();
     }
@@ -76,10 +79,12 @@ final class UserRedisRepository implements UserRepository
      **/
     public function getAggregateHistoryFor(Identity $aggregateId): User
     {
-        $array = $this->client->conn->hGetAll($aggregateId->toPrimitive());
+        $this->client->getConnection();
+        $array = $this->client->hGetAll($aggregateId->toPrimitive());
+        $this->client->putConnection();
+
         // Redis has not order by, so it returns from newer to older
         $array = array_reverse($array, true);
-        $this->client->putConnection($this->client->conn);
 
         if (count($array) === 0) {
             throw new \Exception(sprintf('No aggregate has been found with aggregateId: %s', $aggregateId->toPrimitive()));
