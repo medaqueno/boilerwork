@@ -35,16 +35,17 @@ final class User extends AggregateRoot implements RecordsEvents, IsEventSourced
 
         // Check Invariants
         // TODO: Check email uniqueness in persistence
-        $emailUniqueness = app()->container()->get(EmailUniqueness::class);
+        // $emailUniqueness = app()->container()->get(EmailUniqueness::class);
+        // $emailUniqueness = new EmailUniqueness;
         // TODO: Check username uniqueness in persistence
-        $usernameUniqueness = app()->container()->get(UsernameUniqueness::class);
+        // $usernameUniqueness = app()->container()->get(UsernameUniqueness::class);
 
-        Assert::lazy()->tryAll()
-            ->that($emailUniqueness->isSatisfiedBy(email: $email))
-            ->true('Email already exists', 'user.emailAlreadyExists')
-            ->that($usernameUniqueness->isSatisfiedBy(username: $username))
-            ->true('User Name already exists', 'user.usernameAlreadyExists')
-            ->verifyNow();
+        // Assert::lazy()->tryAll()
+        //     ->that($emailUniqueness->isSatisfiedBy(email: $email))
+        //     ->true('Email already exists', 'user.emailAlreadyExists')
+        //     ->that($usernameUniqueness->isSatisfiedBy(username: $username))
+        //     ->true('User Name already exists', 'user.usernameAlreadyExists')
+        //     ->verifyNow();
 
         $user = new static(
             aggregateId: new Identity($userId),

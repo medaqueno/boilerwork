@@ -34,7 +34,7 @@ final class Container implements ContainerInterface
         */
         // $UserPostgreSQLRepository = UserPostgreSQLRepository::getInstance();
         // $this->container->instance(UserRepository::class, $UserPostgreSQLRepository);
-        $this->container->bind(UserRepository::class, UserInMemoryRepository::class);
+        $this->container->bind(UserRepository::class, UserPostgreSQLRepository::class);
     }
 
     public function get(string $id): mixed
