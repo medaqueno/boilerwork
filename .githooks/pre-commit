@@ -5,7 +5,8 @@ git diff --cached --name-only | while read FILE; do
     echo "Running tests..."
     # cd "${0%/*}/../src"
     cd "${0%/*}/../../src"
-    ./vendor/bin/phpunit --color --testdox tests 1> /dev/null
+    docker exec swoole-basic ./vendor/bin/phpunit --color --testdox tests 1> /dev/null
+    # ./vendor/bin/phpunit --color --testdox tests 1> /dev/null
     if [ $? -ne 0 ]; then
       echo -e "\e[1;31m\tUnit tests failed ! Aborting commit.\e[0m" >&2
       exit 1;

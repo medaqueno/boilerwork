@@ -23,7 +23,7 @@ final class RedisPool
     {
         $host = $_ENV['REDIS_HOST'] ?? 'redis-master';
         $port = $_ENV['REDIS_PORT'] ?? 6379;
-        $password = $_ENV['REDIS_PASSWORD'];
+        $password = $_ENV['REDIS_PASSWORD'] ?? '';
         $size = $_ENV['REDIS_SIZE_CONN'] ?? 64;
 
         $this->pool = new SwooleRedisPool((new RedisConfig)
