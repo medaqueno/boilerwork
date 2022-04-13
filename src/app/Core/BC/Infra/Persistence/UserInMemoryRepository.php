@@ -16,21 +16,52 @@ final class UserInMemoryRepository implements UserRepository
     /**
      *  Store events in memory
      **/
-    private array $events = [];
+    private array $memory = [
+        'aggregates' => [],
+        'events' => [],
+    ];
 
     /**
      *  @inheritDoc
      **/
     public function append(RecordsEvents $aggregate): void
     {
+        $aggregateId = $aggregate->getAggregateId();
         $events = $aggregate->getRecordedEvents();
 
+        $currentPersistedAggregate = array_filter( // Retrieve events by aggregateId. Same as select <fields> where aggregateId = <aggregateId>;
+            $this->memory['aggregates'],
+            function ($event) use ($aggregateId) {
+                return $event[0] === $aggregateId;
+            }
+        );
+
+        if (!$currentPersistedAggregate) {
+            $version = 0;
+
+            $this->memory['aggregates'][] = [
+                $aggregateId,
+                User::class,
+                $version,
+            ];
+        } else {
+            $version = $currentPersistedAggregate[0][2];
+        }
+
         foreach ($events as $event) {
-            $this->events[] = [
+            $this->memory['events'][] = [
                 $event->getAggregateId(),
                 json_encode($event->serialize()),
-                $aggregate->currentVersion()
+                ++$version
             ];
+        }
+
+        foreach ($this->memory['aggregates'] as $key => $value) {
+            if ($value[0] === $aggregateId) {
+                $this->memory['aggregates'][$key][2] = $version;
+
+                break;
+            }
         }
 
         $aggregate->clearRecordedEvents();
@@ -44,11 +75,13 @@ final class UserInMemoryRepository implements UserRepository
         // Filter events by aggregateID And map them to be reconstituted
         $mappedEvents = array_map(
             function (array $event) {
+
                 return json_decode($event[1], true);
             },
             array_filter( // Retrieve events by aggregateId. Same as select <fields> where aggregateId = <aggregateId>;
-                $this->events,
+                $this->memory['events'],
                 function (array $event) use ($aggregateId) {
+
                     return $event[0] === $aggregateId->toPrimitive();
                 }
             )

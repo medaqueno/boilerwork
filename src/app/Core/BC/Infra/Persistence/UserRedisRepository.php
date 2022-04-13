@@ -21,6 +21,7 @@ final class UserRedisRepository implements UserRepository
 
     public function append(RecordsEvents $aggregate): void
     {
+
         $aggregateId = $aggregate->getAggregateId();
         $events = $aggregate->getRecordedEvents();
 
