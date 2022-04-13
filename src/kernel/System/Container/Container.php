@@ -32,7 +32,8 @@ final class Container implements ContainerInterface
         $UserInMemoryRepository = UserInMemoryRepository::getInstance();
         $this->container->instance(UserRepository::class, $UserInMemoryRepository);
         */
-
+        // $UserPostgreSQLRepository = UserPostgreSQLRepository::getInstance();
+        // $this->container->instance(UserRepository::class, $UserPostgreSQLRepository);
         $this->container->bind(UserRepository::class, UserPostgreSQLRepository::class);
     }
 

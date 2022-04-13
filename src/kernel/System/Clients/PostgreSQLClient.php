@@ -29,22 +29,13 @@ use Swoole\Coroutine\PostgreSQL;
  **/
 class PostgreSQLClient
 {
-    public readonly PostgreSQL $conn;
+    private PostgreSQL $conn;
 
-    protected readonly PostgreSQLPool $pool;
+    private readonly PostgreSQLPool $pool;
 
     public function __construct()
     {
         $this->pool = PostgreSQLPool::getInstance();
-        $this->getConnection();
-        // No pool
-        // $this->conn = new PostgreSQL();
-        // $host = $_ENV['POSTGRESQL_HOST'] ?? 'postgres';
-        // $port = $_ENV['POSTGRESQL_PORT'] ?? 5432;
-        // $dbname = $_ENV['POSTGRESQL_DBNAME'] ?? 'test_event_sourcing';
-        // $username = $_ENV['POSTGRESQL_USERNAME'] ?? 'postgres';
-        // $password = $_ENV['POSTGRESQL_PASSWORD'] ?? 'postgres';
-        // $this->conn->connect(sprintf("host=%s;port=%s;dbname=%s;user=%s;password=%s", $host, (int)$port, $dbname, $username, $password));
     }
 
     /**
@@ -57,9 +48,9 @@ class PostgreSQLClient
     /**
      * Put connection back to the pool in order to be reused
      **/
-    public function putConnection(PostgreSQL $conn): void
+    public function putConnection(): void
     {
-        $this->pool->putConn($conn);
+        $this->pool->putConn($this->conn);
     }
 
     /**
@@ -120,12 +111,14 @@ class PostgreSQLClient
 
     public function initTransaction(): void
     {
+        // $this->getConnection();
         $this->conn->query('BEGIN');
     }
 
     public function endTransaction(): void
     {
         $this->conn->query('COMMIT');
+        // $this->putConnection($this->conn);
     }
 
     public function status()
@@ -136,7 +129,7 @@ class PostgreSQLClient
     private function checkError($result = null)
     {
         $resultDiag = $this->conn->resultDiag;
-        $resultStatus = $this->conn->resultStatus;
+        // $resultStatus = $this->conn->resultStatus;
 
         var_dump($resultDiag);
 

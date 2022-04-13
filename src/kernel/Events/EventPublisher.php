@@ -45,8 +45,8 @@ final class EventPublisher
 
             $class = new $subscriber;
 
+            // Ds\Queue -> destructive iteration
             foreach ($this->events as $event) {
-
                 if ($class->isSubscribedTo() === $event::class) {
                     go(function () use ($class, $event) {
                         try {

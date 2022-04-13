@@ -104,9 +104,9 @@ final class HandleHttp
 
         $response->end($result);
 
-        // go(function () {
-        //     getMemoryStatus();
-        // });
+        go(function () {
+            getMemoryStatus();
+        });
     }
 
     private function handleRequest(SwooleRequest $swooleRequest): ResponseInterface

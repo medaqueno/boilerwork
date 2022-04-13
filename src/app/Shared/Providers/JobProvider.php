@@ -13,6 +13,6 @@ final class JobProvider extends AbstractJobScheduler
      * @inheritDoc
      */
     protected array $jobs = [
-        [\App\Core\BC\Infra\Jobs\ExampleJob::class, [self::INTERVAL_EVERY_MINUTE, null]],
+        // [\App\Core\BC\Infra\Jobs\ExampleJob::class, [self::INTERVAL_EVERY_MINUTE, null]],
     ];
 }

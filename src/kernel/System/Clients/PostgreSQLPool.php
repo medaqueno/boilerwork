@@ -8,9 +8,6 @@ namespace Kernel\System\Clients;
 use Kernel\Helpers\Singleton;
 use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\PostgreSQL;
-use Swoole\Database\PDOConfig;
-use Swoole\Database\PDOPool;
-use Swoole\Database\PDOProxy;
 
 final class PostgreSQLPool
 {
@@ -21,7 +18,7 @@ final class PostgreSQLPool
     /**
      * PostgresqlPool constructor.
      */
-    private function __construct()
+    public function __construct()
     {
         $host = $_ENV['POSTGRESQL_HOST'] ?? 'postgres';
         $port = $_ENV['POSTGRESQL_PORT'] ?? 5432;
@@ -29,7 +26,9 @@ final class PostgreSQLPool
         $username = $_ENV['POSTGRESQL_USERNAME'] ?? 'postgres';
         $password = $_ENV['POSTGRESQL_PASSWORD'] ?? 'postgres';
 
-        $size = $_ENV['POSTGRESQL_SIZE_CONN'] ?? 64;
+        // $size = ;
+        $size = (int)(($_ENV['POSTGRESQL_SIZE_CONN'] ?? 64) / swoole_cpu_num()); // Will open a pool per swoole worker
+
 
         $this->pool = new Channel((int)$size);
 
@@ -37,16 +36,19 @@ final class PostgreSQLPool
             $postgresql = new PostgreSQL();
 
             $res = $postgresql->connect(sprintf("host=%s;port=%s;dbname=%s;user=%s;password=%s", $host, $port, $dbname, $username, $password));
+
+
             if ($res === false) {
                 error('failed to connect PostgreSQL server.');
-
+                echo 'failed to connect PostgreSQL server.';
+                var_dump($res);
                 throw new \RuntimeException("failed to connect PostgreSQL server.");
             } else {
                 $this->putConn($postgresql);
             }
         }
 
-        // echo "POSTGRESQL POOL CREATED: " . $this->pool->capacity . " connections opened\n";
+        echo "POSTGRESQL POOL CREATED. " . $this->pool->capacity . " connections opened\n";
     }
 
     public function getConn(): PostgreSQL
