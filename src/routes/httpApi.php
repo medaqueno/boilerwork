@@ -3,11 +3,11 @@
 
 declare(strict_types=1);
 
-use App\Core\BC\UI\Controllers\ApproveUserController;
-use App\Core\BC\UI\Controllers\RegisterUserController;
+use App\Core\BC\UI\Ports\Http\ApproveUserPort;
+use App\Core\BC\UI\Ports\Http\RegisterUserPort;
 
 return [
-    ['POST', '/registerUser', RegisterUserController::class],
-    ['POST', '/approveUser', ApproveUserController::class],
-    // ['GET', '/invoke', RegisterUserController::class],
+    ['POST', '/registerUser', RegisterUserPort::class],
+    ['POST', '/approveUser', ApproveUserPort::class],
+    // ['GET', '/invoke', RegisterUserPort::class],
 ];

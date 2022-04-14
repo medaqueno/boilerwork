@@ -3,9 +3,9 @@
 
 declare(strict_types=1);
 
-use App\Core\BC\UI\Controllers\WebSocketController;
+use App\Core\BC\UI\Ports\WebSocketPort;
 
 return [
-    ['/customMethod/{var1}', [WebSocketController::class, 'customMethod']],
-    ['/invoke/{var1}/{var2}', WebSocketController::class],
+    ['/customMethod/{var1}', [WebSocketPort::class, 'customMethod']],
+    ['/invoke/{var1}/{var2}', WebSocketPort::class],
 ];

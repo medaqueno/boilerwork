@@ -9,7 +9,7 @@ use Kernel\Application\CommandBus;
 use Psr\Http\Message\ResponseInterface;
 use Kernel\System\Http\Request;
 
-abstract class AbstractController
+abstract class AbstractPort
 {
     abstract public function __invoke(Request $request, array $vars): ResponseInterface;
 

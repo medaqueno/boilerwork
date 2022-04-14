@@ -46,7 +46,7 @@ final class BindContainerProvider extends AbstractServiceProvider
     public function register(): void
     {
         // Example
-        // $this->getContainer()->add(\App\Core\BC\UI\Controllers\Interface::class, \App\Core\BC\UI\Controllers\ConcreteClass::class);
+        // $this->getContainer()->add(\App\Core\BC\UI\Ports\Interface::class, \App\Core\BC\UI\Ports\ConcreteClass::class);
 
         $this->getContainer()->add(UserRepository::class, UserRedisRepository::class);
         // $this->getContainer()->add(EventStore::class, InMemoryEventStore::class);
