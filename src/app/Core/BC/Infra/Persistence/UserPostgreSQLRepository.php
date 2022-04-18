@@ -10,12 +10,12 @@ use App\Core\BC\Domain\UserRepository;
 use Kernel\Domain\AggregateHistory;
 use Kernel\Domain\RecordsEvents;
 use Kernel\Domain\ValueObjects\Identity;
-use Kernel\System\Clients\PostgreSQLClient;
+use Kernel\System\Clients\PostgreSQLWritesClient;
 
 final class UserPostgreSQLRepository implements UserRepository
 {
     public function __construct(
-        private readonly PostgreSQLClient $client
+        private readonly PostgreSQLWritesClient $client
     ) {
     }
 

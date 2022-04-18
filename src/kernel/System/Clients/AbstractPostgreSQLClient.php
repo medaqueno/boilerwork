@@ -28,16 +28,11 @@ use Swoole\Coroutine\PostgreSQL;
         $pgClient->putConnection();
  *
  **/
-class PostgreSQLClient
+class AbstractPostgreSQLClient
 {
     private PostgreSQL $conn;
 
-    private readonly PostgreSQLPool $pool;
-
-    public function __construct()
-    {
-        $this->pool = PostgreSQLPool::getInstance();
-    }
+    protected readonly AbstractPostgreSQLPool $pool;
 
     /**
      * Retrieve connection in order to query DB

@@ -7,36 +7,27 @@ namespace Kernel\Application;
 
 final class CommandBus
 {
-    private float $time;
+    // private float $time;
 
     public function __construct()
     {
-        $this->time = microtime(true);
+        // $this->time = microtime(true);
     }
-
-    /**
-     * Handle Commands Asynchronously as a Job
-     */
-    /*
-    public function async(CommandInterface $command, ?string $jobClass = GenericJob::class)
-    {
-        // try {
-        //     $jobClass::dispatch($command);
-        // } catch (\Throwable $th) {
-        //     throw new JobDispatchingException($jobClass, $th);
-        // }
-    }
-    */
 
     /**
      * Dispatch the command
      */
     public function handle(CommandInterface $command): void
     {
+        // With DI
         $commandHandler = app()->container()->get(get_class($command) . 'Handler');
+
+        // Without DI, should add ..$args
         // $class = get_class($command) . 'Handler';
         // $commandHandler = new $class;
-        // $commandName = $this->getCommandName($command); // Used for logging
+
+        // Used for logging
+        // $commandName = $this->getCommandName($command);
 
         // Execute commandHandler
         try {
