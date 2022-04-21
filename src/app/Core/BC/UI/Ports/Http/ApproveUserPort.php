@@ -7,10 +7,10 @@ namespace App\Core\BC\UI\Ports\Http;
 
 use App\Core\BC\Application\ApproveUserCommand;
 use Kernel\System\Http\Request;
-use Kernel\UI\AbstractPort;
+use Kernel\UI\AbstractHTTPPort;
 use Psr\Http\Message\ResponseInterface;
 
-final class ApproveUserPort extends AbstractPort
+final class ApproveUserPort extends AbstractHTTPPort
 {
     public function __invoke(Request $request, array $vars): ResponseInterface
     {

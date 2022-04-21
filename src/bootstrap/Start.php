@@ -4,8 +4,10 @@
 declare(strict_types=1);
 
 use App\Shared\Providers\JobProvider;
+use App\Shared\Providers\MqttProvider;
 use Bootstrap\Application;
 use Kernel\System\Jobs\JobScheduler;
+use Kernel\System\MQTT\MQTTScheduler;
 use Kernel\System\Server\RunServer;
 use Swoole\Runtime;
 
@@ -40,6 +42,9 @@ Application::getInstance();
 // Job Scheduling
 $jobScheduler = new JobScheduler(new JobProvider());
 
+// MQTT Scheduling, Queues, Pub/Sub
+$MQTTScheduler = new MQTTScheduler(new MqttProvider());
+
 /**
  *  Start Server and Handlers.
  *  Pass needed server class as parameter
@@ -53,6 +58,7 @@ $server = new RunServer(
         // 'enable_preemptive_scheduler' => 1,
         // 'dispatch_mode' => 3, // in preemptive mode, the main process will select delivery according to the worker's free and busy state, and will only deliver to the worker in idle state
         // 'max_conn' => CONFIGURE IF NEEDED AS DOCS RECOMMENDS,
+        'open_mqtt_protocol' => true,
         'open_http2_protocol' => true,
         'debug_mode' => boolval($_ENV['APP_DEBUG']),
         'log_level' => boolval($_ENV['APP_DEBUG']) ? 0 : 5,
@@ -61,6 +67,7 @@ $server = new RunServer(
         'log_date_format' => '%Y-%m-%dT%H:%M:%S%z',
     ],
     processes: [
-        $jobScheduler
+        $jobScheduler,
+        $MQTTScheduler
     ],
 );

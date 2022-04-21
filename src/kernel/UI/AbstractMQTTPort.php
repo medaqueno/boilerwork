@@ -6,12 +6,11 @@ declare(strict_types=1);
 namespace Kernel\UI;
 
 use Kernel\Application\CommandBus;
-use Psr\Http\Message\ResponseInterface;
-use Kernel\System\Http\Request;
+use PhpAmqpLib\Message\AMQPMessage;
 
-abstract class AbstractPort
+abstract class AbstractMQTTPort
 {
-    abstract public function __invoke(Request $request, array $vars): ResponseInterface;
+    abstract public function __invoke(AMQPMessage $msg): void;
 
     final public function command(): CommandBus
     {

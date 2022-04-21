@@ -11,6 +11,7 @@ use App\Core\BC\Domain\UserRepository;
 use App\Core\BC\Infra\Persistence\UserInMemoryRepository;
 use App\Core\BC\Infra\Persistence\UserPostgreSQLRepository;
 use App\Core\BC\Infra\Persistence\UserRedisRepository;
+use Kernel\System\Clients\MQTTPool;
 
 /**
  * Dependency Injection Container
@@ -34,6 +35,11 @@ final class Container implements ContainerInterface
         */
 
         $this->container->bind(UserRepository::class, UserPostgreSQLRepository::class);
+
+        // Start MQTT Connection Pool to be used by services
+        $this->container->bind(MQTTPool::class, function () {
+            return MQTTPool::getInstance();
+        });
     }
 
     public function get(string $id): mixed
