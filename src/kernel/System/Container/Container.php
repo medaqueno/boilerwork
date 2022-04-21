@@ -31,12 +31,6 @@ final class Container implements ContainerInterface
     {
         $this->container = new ContainerImplementation;
 
-        /*
-        // Hay que estudiar esta versión para añadir singletons al contenedor en cuanto a rendimiento y problemas de datos
-        $UserInMemoryRepository = UserInMemoryRepository::getInstance();
-        $this->container->instance(UserRepository::class, $UserInMemoryRepository);
-        */
-
         $this->container->bind(UserRepository::class, UserPostgreSQLRepository::class);
 
         // Start PostgreSQL Connection Pools Read and Writes to be used by services

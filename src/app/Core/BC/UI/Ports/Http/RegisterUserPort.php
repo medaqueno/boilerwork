@@ -6,7 +6,6 @@ declare(strict_types=1);
 namespace App\Core\BC\UI\Ports\Http;
 
 use App\Core\BC\Application\RegisterUserCommand;
-use Kernel\Domain\ValueObjects\Identity;
 use Kernel\System\Http\Request;
 use Kernel\UI\AbstractHTTPPort;
 use Psr\Http\Message\ResponseInterface;
@@ -17,7 +16,7 @@ final class RegisterUserPort extends AbstractHTTPPort
     {
         $this->command()->handle(
             new RegisterUserCommand(
-                id: (Identity::create())->toPrimitive(),
+                id: $request->input('id'),
                 email: $request->input('email'),
                 username: $request->input('username')
             ),

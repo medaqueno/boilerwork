@@ -70,11 +70,11 @@ final class UserPostgreSQLRepository implements UserRepository
                     ]
                 );
             } else {
-                $version = $currentPersistedAggregate[0][0];
+                $version = $currentPersistedAggregate[0]['version'];
             }
 
             if ($version + count($events) !== $aggregate->currentVersion()) {
-                throw new \Kernel\Infra\Persistence\Exceptions\PersistenceException(sprintf("Expected version and aggregate version must be the same. Aggregate %s history may be corrupted.", $aggregateId));
+                throw new \Kernel\Infra\Persistence\Exceptions\PersistenceException(sprintf("Expected version and aggregate version must be the same. Aggregate %s history may be corrupted.", $aggregateId), 409);
             }
 
             foreach ($events as $event) {
@@ -118,7 +118,7 @@ final class UserPostgreSQLRepository implements UserRepository
         $this->client->putConnection();
 
         if (count($array) === 0) {
-            throw new \Exception(sprintf('No aggregate has been found with aggregateId: %s', $aggregateId->toPrimitive()));
+            throw new \Exception(sprintf('No aggregate has been found with aggregateId: %s', $aggregateId->toPrimitive()), 404);
         }
 
         return User::reconstituteFrom(
@@ -126,7 +126,7 @@ final class UserPostgreSQLRepository implements UserRepository
                 $aggregateId,
                 // Only extract Data column specific to a Domain Event
                 array_map(function (array $event) {
-                    return json_decode($event[0], true);
+                    return json_decode($event['data'], true);
                 }, $array)
             )
         );

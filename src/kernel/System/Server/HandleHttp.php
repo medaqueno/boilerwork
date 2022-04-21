@@ -85,7 +85,7 @@ final class HandleHttp
                     "error" =>
                     [
                         "code" => "serverError",
-                        "message" => "Unexpected server error. Request may not be fullfilled.",
+                        "message" => $e->getMessage(),
                         "errors" => []
                     ]
                 ];

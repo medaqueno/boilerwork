@@ -88,7 +88,7 @@ final class UserRedisRepository implements UserRepository
         $array = array_reverse($array, true);
 
         if (count($array) === 0) {
-            throw new \Exception(sprintf('No aggregate has been found with aggregateId: %s', $aggregateId->toPrimitive()));
+            throw new \Exception(sprintf('No aggregate has been found with aggregateId: %s', $aggregateId->toPrimitive()), 404);
         }
 
         return User::reconstituteFrom(
