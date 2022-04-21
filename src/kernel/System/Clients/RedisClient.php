@@ -25,7 +25,7 @@ final class RedisClient
 
     public function __construct()
     {
-        $this->pool = RedisPool::getInstance();
+        $this->pool = app()->container()->get(RedisPool::class);
     }
 
     public function getConnection(): void

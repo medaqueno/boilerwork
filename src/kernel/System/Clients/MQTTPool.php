@@ -72,8 +72,8 @@ class MQTTPool
                     }
                 }
 
-                // echo "MQTT POOL UPSTREAM CREATED. " . $this->upstreamPool->capacity . " connections opened\n";
-                // echo "MQTT POOL DOWNSTREAM CREATED. " . $this->downstreamPool->capacity . " connections opened\n";
+                echo "MQTT POOL UPSTREAM CREATED. " . $this->upstreamPool->capacity . " connections opened\n";
+                echo "MQTT POOL DOWNSTREAM CREATED. " . $this->downstreamPool->capacity . " connections opened\n";
 
                 if ($this->upstreamPool->capacity === 0  && $this->downstreamPool->capacity === 0) {
                     $this->status = 0;

@@ -12,6 +12,9 @@ use App\Core\BC\Infra\Persistence\UserInMemoryRepository;
 use App\Core\BC\Infra\Persistence\UserPostgreSQLRepository;
 use App\Core\BC\Infra\Persistence\UserRedisRepository;
 use Kernel\System\Clients\MQTTPool;
+use Kernel\System\Clients\PostgreSQLReadsPool;
+use Kernel\System\Clients\PostgreSQLWritesPool;
+use Kernel\System\Clients\RedisPool;
 
 /**
  * Dependency Injection Container
@@ -35,6 +38,20 @@ final class Container implements ContainerInterface
         */
 
         $this->container->bind(UserRepository::class, UserPostgreSQLRepository::class);
+
+        // Start PostgreSQL Connection Pools Read and Writes to be used by services
+        $this->container->bind(PostgreSQLReadsPool::class, function () {
+            return PostgreSQLReadsPool::getInstance();
+        });
+
+        $this->container->bind(PostgreSQLWritesPool::class, function () {
+            return PostgreSQLWritesPool::getInstance();
+        });
+
+        // Start Redis Connection Pool to be used by services
+        $this->container->bind(RedisPool::class, function () {
+            return RedisPool::getInstance();
+        });
 
         // Start MQTT Connection Pool to be used by services
         $this->container->bind(MQTTPool::class, function () {
