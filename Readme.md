@@ -49,7 +49,8 @@ The objective of this repository is to provide a project start point applying so
 - Opentelemetry (pending)
 - Database Migrations (pending)
 - Middleware (pending, maybe will not be included)
-- Adapter to RabbitMQ: Pub/Sub, Queues. (pending)
+- Adapter to RabbitMQ: Pub/Sub, Queues
+- Scheduler to subscribe using a provider to messaging. Queues/exchanges -> Classes/subscribers
 - Examples: Commands, Queries, persist In Memory, tests.
 
 ### Basic Request Lifecycle
