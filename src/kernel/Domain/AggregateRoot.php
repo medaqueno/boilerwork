@@ -7,7 +7,7 @@ namespace Kernel\Domain;
 
 use Kernel\Domain\ValueObjects\Identity;
 
-abstract class AggregateRoot implements RecordsEvents, IsEventSourced
+abstract class AggregateRoot implements TrackEvents, IsEventSourced
 {
     use ApplyEvent;
 
@@ -17,21 +17,34 @@ abstract class AggregateRoot implements RecordsEvents, IsEventSourced
 
     private array $latestRecordedEvents = [];
 
+    /*
+     * TODO: Put separated as it is an interface implementation...
+      Maybe this one should be only in this abstract class. Not need to be implemented
+    */
     final public function getAggregateId(): string
     {
         return $this->aggregateId->toPrimitive();
     }
 
+    /*
+     * TODO: Put separated as it is an interface implementation
+    */
     final public function getRecordedEvents(): array
     {
         return $this->latestRecordedEvents;
     }
 
+    /*
+     * TODO: Put separated as it is an interface implementation
+    */
     final public function clearRecordedEvents(): void
     {
         $this->latestRecordedEvents = [];
     }
 
+    /*
+     * TODO: Put separated as it is an interface implementation
+    */
     final public function currentVersion(): int
     {
         return $this->version;
@@ -53,10 +66,13 @@ abstract class AggregateRoot implements RecordsEvents, IsEventSourced
         eventsPublisher()->raise(event: $event);
     }
 
+    /*
+     * TODO: Put separated as it is an interface implementation
+    */
     /**
      * Apply DomainEvents to Aggregate to reconstitute its current state
      **/
-    public static function reconstituteFrom(AggregateHistory $aggregateHistory): RecordsEvents
+    public static function reconstituteFrom(AggregateHistory $aggregateHistory): TrackEvents
     {
         $aggregate = new static(
             aggregateId: $aggregateHistory->getAggregateId()

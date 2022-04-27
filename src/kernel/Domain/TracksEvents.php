@@ -9,7 +9,7 @@ namespace Kernel\Domain;
  * An object that records the events that happened to it since the last time it was cleared, or since it was
  * restored from persistence.
  */
-interface RecordsEvents
+interface TrackEvents
 {
     /**
      * Get all the Domain Events that were recorded since the last time it was cleared, or since it was
@@ -21,8 +21,6 @@ interface RecordsEvents
      * Clears the record of new Domain Events. This doesn't clear the history of the object.
      */
     public function clearRecordedEvents(): void;
-
-    public function getAggregateId(): string;
 
     public function currentVersion(): int;
 }

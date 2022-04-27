@@ -9,7 +9,14 @@ use Kernel\Domain\DomainEvent;
 
 interface EventSubscriberInterface
 {
+    /**
+     * Perform Actions with Received Event
+     *
+     * @param DomainEvent $event
+     * @return void
+     */
     public function handle(DomainEvent $event): void;
 
-    public function isSubscribedTo(): string;
+    /** @return string Fully Qualified Class Name */
+    // public function isSubscribedTo(): string;
 }

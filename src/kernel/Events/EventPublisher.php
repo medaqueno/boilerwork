@@ -47,18 +47,16 @@ final class EventPublisher
 
             // Ds\Queue -> destructive iteration
             foreach ($this->events as $event) {
-                if ($class->isSubscribedTo() === $event::class) {
-                    go(function () use ($class, $event) {
-                        try {
-                            $class->handle($event);
-                            // (app()->container()->get($class))->handle($event);
-                        } catch (RuntimeException $e) {
-                            error($e->getMessage(), RuntimeException::class);
-                        } catch (Throwable $e) {
-                            error($e->getMessage());
-                        }
-                    });
-                }
+                go(function () use ($class, $event) {
+                    try {
+                        $class->handle($event);
+                        // (app()->container()->get($class))->handle($event);
+                    } catch (RuntimeException $e) {
+                        error($e->getMessage(), RuntimeException::class);
+                    } catch (Throwable $e) {
+                        error($e->getMessage());
+                    }
+                });
             }
 
             unset($class);

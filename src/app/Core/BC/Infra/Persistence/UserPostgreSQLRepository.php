@@ -8,7 +8,7 @@ namespace App\Core\BC\Infra\Persistence;
 use App\Core\BC\Domain\User;
 use App\Core\BC\Domain\UserRepository;
 use Kernel\Domain\AggregateHistory;
-use Kernel\Domain\RecordsEvents;
+use Kernel\Domain\TrackEvents;
 use Kernel\Domain\ValueObjects\Identity;
 use Kernel\System\Clients\PostgreSQLWritesClient;
 
@@ -45,63 +45,63 @@ final class UserPostgreSQLRepository implements UserRepository
      *
      * extracted from CQRS Documents by Greg Young - https://cqrs.wordpress.com/documents/building-event-storage/
      **/
-    public function append(RecordsEvents $aggregate): void
+    public function append(TrackEvents $aggregate): void
     {
-        go(function () use ($aggregate) {
+        // go(function () use ($aggregate) {
 
-            $aggregateId = $aggregate->getAggregateId();
-            $events = $aggregate->getRecordedEvents();
+        $aggregateId = $aggregate->getAggregateId();
+        $events = $aggregate->getRecordedEvents();
 
-            $this->client->getConnection();
-            $this->client->initTransaction();
+        $this->client->getConnection();
+        $this->client->initTransaction();
 
-            $result = $this->client->run('SELECT "version" FROM "aggregates" WHERE "aggregate_id" = $1', [$aggregateId]);
-            $currentPersistedAggregate =  $this->client->fetchAll($result);
+        $result = $this->client->run('SELECT "version" FROM "aggregates" WHERE "aggregate_id" = $1', [$aggregateId]);
+        $currentPersistedAggregate =  $this->client->fetchAll($result);
 
-            if (!$currentPersistedAggregate) {
-                $version = 0;
-
-                $this->client->run(
-                    'INSERT INTO "aggregates" ("aggregate_id", "type", "version") VALUES($1, $2, $3)',
-                    [
-                        $aggregateId,
-                        User::class,
-                        $version // Shall be updated after persisting events
-                    ]
-                );
-            } else {
-                $version = $currentPersistedAggregate[0]['version'];
-            }
-
-            if ($version + count($events) !== $aggregate->currentVersion()) {
-                throw new \Kernel\Infra\Persistence\Exceptions\PersistenceException(sprintf("Expected version and aggregate version must be the same. Aggregate %s history may be corrupted.", $aggregateId), 409);
-            }
-
-            foreach ($events as $event) {
-                $this->client->run(
-                    'INSERT INTO "events" ("aggregate_id", "data", "version") VALUES($1, $2, $3)',
-                    [
-                        $event->getAggregateId(),
-                        json_encode($event->serialize()),
-                        ++$version
-                    ]
-                );
-            }
+        if (!$currentPersistedAggregate) {
+            $version = 0;
 
             $this->client->run(
-                'UPDATE "aggregates" SET "version" = $1 WHERE "aggregate_id" = $2',
+                'INSERT INTO "aggregates" ("aggregate_id", "type", "version") VALUES($1, $2, $3)',
                 [
-                    $version,
-                    $aggregateId
-                ],
+                    $aggregateId,
+                    User::class,
+                    $version // Shall be updated after persisting events
+                ]
             );
+        } else {
+            $version = $currentPersistedAggregate[0]['version'];
+        }
 
-            $this->client->endTransaction();
+        if ($version + count($events) !== $aggregate->currentVersion()) {
+            throw new \Kernel\Infra\Persistence\Exceptions\PersistenceException(sprintf("Expected version and aggregate version must be the same. Aggregate %s history may be corrupted.", $aggregateId), 409);
+        }
 
-            $this->client->putConnection();
+        foreach ($events as $event) {
+            $this->client->run(
+                'INSERT INTO "events" ("aggregate_id", "data", "version") VALUES($1, $2, $3)',
+                [
+                    $event->getAggregateId(),
+                    json_encode($event->serialize()),
+                    ++$version
+                ]
+            );
+        }
 
-            $aggregate->clearRecordedEvents();
-        });
+        $this->client->run(
+            'UPDATE "aggregates" SET "version" = $1 WHERE "aggregate_id" = $2',
+            [
+                $version,
+                $aggregateId
+            ],
+        );
+
+        $this->client->endTransaction();
+
+        $this->client->putConnection();
+
+        $aggregate->clearRecordedEvents();
+        // });
     }
 
     /**

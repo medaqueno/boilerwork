@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace Kernel\Infra\Persistence;
 
-use Kernel\Domain\RecordsEvents;
+use Kernel\Domain\TrackEvents;
 use Kernel\Domain\ValueObjects\Identity;
 
 interface EventStore
@@ -14,10 +14,10 @@ interface EventStore
      *  Add Events to Persistence
      *
      **/
-    public function append(RecordsEvents $events): void;
+    public function append(TrackEvents $events): void;
 
     /**
      *  Get Event Stream in persistence where id = X
      **/
-    public function getAggregateHistoryFor(Identity $id): RecordsEvents;
+    public function getAggregateHistoryFor(Identity $id): TrackEvents;
 }

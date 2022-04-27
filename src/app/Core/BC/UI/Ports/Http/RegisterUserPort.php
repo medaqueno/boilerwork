@@ -14,7 +14,8 @@ final class RegisterUserPort extends AbstractHTTPPort
 {
     public function __invoke(Request $request, array $vars): ResponseInterface
     {
-        $this->command()->handle(
+        // We need synchronous execution, because of business invariants that cross Aggregate Boundaries: Email/Username Uniqueness across aggregates
+        $this->command()->syncHandle(
             new RegisterUserCommand(
                 id: $request->input('id'),
                 email: $request->input('email'),
@@ -22,6 +23,6 @@ final class RegisterUserPort extends AbstractHTTPPort
             ),
         );
 
-        return responseEmpty();
+        return responseEmpty(201);
     }
 }

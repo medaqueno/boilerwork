@@ -7,18 +7,16 @@ namespace App\Core\BC\Domain;
 
 use App\Core\BC\Domain\Events\UserHasBeenApproved;
 use App\Core\BC\Domain\Events\UserHasRegistered;
-use App\Core\BC\Domain\Services\EmailUniqueness;
-use App\Core\BC\Domain\Services\UsernameUniqueness;
 use App\Core\BC\Domain\ValueObjects\UserEmail;
 use App\Core\BC\Domain\ValueObjects\UserName;
 use App\Core\BC\Domain\ValueObjects\UserStatus;
 use Kernel\Domain\Assert;
 use Kernel\Domain\AggregateRoot;
 use Kernel\Domain\IsEventSourced;
-use Kernel\Domain\RecordsEvents;
+use Kernel\Domain\TrackEvents;
 use Kernel\Domain\ValueObjects\Identity;
 
-final class User extends AggregateRoot implements RecordsEvents, IsEventSourced
+final class User extends AggregateRoot implements TrackEvents, IsEventSourced
 {
     protected UserStatus $status;
 
@@ -33,18 +31,7 @@ final class User extends AggregateRoot implements RecordsEvents, IsEventSourced
         string $username
     ): self {
 
-        // Check Invariants
-        // TODO: Check email uniqueness in persistence
-        $emailUniqueness = app()->container()->get(EmailUniqueness::class);
-        // TODO: Check username uniqueness in persistence
-        $usernameUniqueness = app()->container()->get(UsernameUniqueness::class);
-
-        Assert::lazy()->tryAll()
-            ->that($emailUniqueness->isSatisfiedBy(email: $email))
-            ->true('Email already exists', 'user.emailAlreadyExists')
-            ->that($usernameUniqueness->isSatisfiedBy(username: $username))
-            ->true('User Name already exists', 'user.usernameAlreadyExists')
-            ->verifyNow();
+        // Check Aggregate Boundary Invariants if proceeds
 
         $user = new static(
             aggregateId: new Identity($userId),
@@ -72,7 +59,8 @@ final class User extends AggregateRoot implements RecordsEvents, IsEventSourced
         string $userId,
     ): void {
 
-        // Check Invariants
+        // Check Aggregate Boundary Invariants if proceeds
+        //
         // Check if current status is ok to be promoted
         Assert::lazy()->tryAll()
             ->that($this->status->toPrimitive())

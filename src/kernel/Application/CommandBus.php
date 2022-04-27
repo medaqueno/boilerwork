@@ -14,27 +14,41 @@ final class CommandBus
         // $this->time = microtime(true);
     }
 
+    public function syncHandle(CommandInterface $command)
+    {
+        $commandHandler = app()->container()->get(get_class($command) . 'Handler');
+
+        // Execute commandHandler
+        try {
+            call_user_func([$commandHandler, 'handle'], $command);
+        } catch (\Exception $e) {
+
+            throw $e;
+        }
+    }
+
     /**
      * Dispatch the command
      */
     public function handle(CommandInterface $command): void
     {
-        // With DI
-        $commandHandler = app()->container()->get(get_class($command) . 'Handler');
+        go(function () use ($command) {
+            // With DI
+            $commandHandler = app()->container()->get(get_class($command) . 'Handler');
 
-        // Without DI, should add ..$args
-        // $class = get_class($command) . 'Handler';
-        // $commandHandler = new $class;
+            // Without DI, should add ..$args
+            // $class = get_class($command) . 'Handler';
+            // $commandHandler = new $class;
 
-        // Used for logging
-        // $commandName = $this->getCommandName($command);
+            // Used for logging
+            // $commandName = $this->getCommandName($command);
 
-        // Execute commandHandler
-        try {
-            call_user_func([$commandHandler, 'handle'], $command);
+            // Execute commandHandler
+            try {
+                call_user_func([$commandHandler, 'handle'], $command);
 
-            // Log all mutations in data made with commands
-            /*
+                // Log all mutations in data made with commands
+                /*
                 logger(json_encode(
                     [
                         'commandName' => $commandName,
@@ -43,8 +57,8 @@ final class CommandBus
                     ]
                 ));
                 */
-        } catch (\Exception $e) {
-            /*
+            } catch (\Exception $e) {
+                /*
                 logger(json_encode(
                     [
                         'commandName' => $commandName,
@@ -54,8 +68,9 @@ final class CommandBus
                     ]
                 ));
                 */
-            throw $e;
-        }
+                throw $e;
+            }
+        });
     }
 
     private function getCommandName(CommandInterface $command): string
