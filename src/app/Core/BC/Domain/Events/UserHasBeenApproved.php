@@ -10,6 +10,8 @@ use Kernel\Domain\DomainEvent;
 
 final class UserHasBeenApproved extends AbstractEvent implements DomainEvent
 {
+    protected bool $isPublic = false;
+
     public function __construct(
         public readonly string $userId,
     ) {

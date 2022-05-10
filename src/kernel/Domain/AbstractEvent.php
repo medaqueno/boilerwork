@@ -9,6 +9,8 @@ use DateTimeImmutable;
 
 abstract class AbstractEvent implements DomainEvent
 {
+    protected bool $isPublic = false;
+
     public function wrapSerialize(array $data): array
     {
         return [
@@ -18,5 +20,10 @@ abstract class AbstractEvent implements DomainEvent
             'ocurredOn' => (new DateTimeImmutable())->format(DateTimeImmutable::ATOM),
             'data' => $data,
         ];
+    }
+
+    public function isPublic(): bool
+    {
+        return $this->isPublic;
     }
 }

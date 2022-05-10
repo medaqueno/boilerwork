@@ -10,6 +10,8 @@ use Kernel\Domain\DomainEvent;
 
 final class UserHasRegistered extends AbstractEvent implements DomainEvent
 {
+    protected bool $isPublic = true;
+
     public function __construct(
         public readonly string $userId,
         public readonly string $email,

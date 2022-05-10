@@ -12,4 +12,6 @@ interface DomainEvent
     public function serialize(): array;
 
     public static function unserialize(array $event): self;
+
+    public function isPublic(): bool;
 }
