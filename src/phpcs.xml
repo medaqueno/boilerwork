@@ -3,7 +3,9 @@
     <description>Boilerworks Coding Standard</description>
 
     <!-- inherit rules from: -->
-    <rule ref="PSR12"/>
+    <rule ref="PSR12">
+        <exclude name="Generic.Files.LineLength"/>
+    </rule>
 
     <arg value="-colors"/>
     <arg value="-parallel=4"/>
