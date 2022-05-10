@@ -32,7 +32,7 @@ final class Application
         $this->environment = $environment ?? Environments::DEVELOPMENT;
 
         // Init Dependency Injection Container
-        $this->container = new Container;
+        $this->container = new Container();
 
         new EventsSubscribeProvider(EventPublisher::getInstance());
     }

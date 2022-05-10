@@ -42,8 +42,7 @@ final class EventPublisher
     public function releaseEvents(): void
     {
         foreach ($this->subscribers as $subscriber) {
-
-            $class = new $subscriber;
+            $class = new $subscriber();
 
             // Ds\Queue -> destructive iteration
             foreach ($this->events as $event) {

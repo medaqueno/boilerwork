@@ -25,13 +25,13 @@ final class RunServer
             [$this, 'onStart']
         );
 
-        $handleTcpUdp = new HandleTcpUdp;
+        $handleTcpUdp = new HandleTcpUdp();
         $this->server->on(
             "receive",
             [$handleTcpUdp, 'onReceive']
         );
 
-        $handleWorkers = new HandleWorkers;
+        $handleWorkers = new HandleWorkers();
         $this->server->on(
             "WorkerStart",
             [$handleWorkers, 'onWorkerStart']
@@ -41,7 +41,7 @@ final class RunServer
             [$handleWorkers, 'onWorkerStop']
         );
 
-        $handleTasks = new HandleTasks;
+        $handleTasks = new HandleTasks();
         $this->server->on(
             "task",
             [$handleTasks, 'onTask']
@@ -51,7 +51,7 @@ final class RunServer
         // comment out and allow it (take care of control the right requests to each server)
         $handleWebSocket = null;
         if ($this->server instanceof \Swoole\WebSocket\Server) {
-            $handleWebSocket = new HandleWebSocket;
+            $handleWebSocket = new HandleWebSocket();
             $this->server->on(
                 "Open",
                 [$handleWebSocket, 'onOpen']
@@ -69,7 +69,7 @@ final class RunServer
         }
 
         if ($this->server instanceof \Swoole\Http\Server) {
-            $handleHttp = new HandleHttp;
+            $handleHttp = new HandleHttp();
             $this->server->on(
                 "request",
                 function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) use ($handleHttp, $handleWebSocket) {

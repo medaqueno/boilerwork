@@ -30,6 +30,7 @@
         "php-decimal/stubs": "^1.1",
         "php-ds/php-ds": "^1.4",
         "php-parallel-lint/php-parallel-lint": "^1.3",
+        "phpmd/phpmd": "^2.12",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^1.4",
         "phpunit/phpunit": "^9.5",
@@ -55,8 +56,19 @@
         ]
     },
     "scripts": {
+        "phpcs": [
+            "vendor/bin/phpcs --standard=phpcs.xml"
+        ],
         "stan": [
             "vendor/bin/phpstan analyse . --ansi --no-interaction --memory-limit=-1"
+        ],
+        "phpmd": [
+            "vendor/bin/phpmd ./app ansi phpmd.xml"
+        ],
+        "analyse": [
+            "@phpmd",
+            "@stan",
+            "@phpcs"
         ]
     },
     "minimum-stability": "stable",

@@ -22,7 +22,6 @@ final class CommandBus
         try {
             call_user_func([$commandHandler, 'handle'], $command);
         } catch (\Exception $e) {
-
             throw $e;
         }
     }

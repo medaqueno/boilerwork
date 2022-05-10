@@ -38,7 +38,6 @@ final class MQTTScheduler implements IsProcessInterface
                     $channel = $connection->channel();
 
                     foreach ($this->subscriptionProvider->getSubscriptions() as $item) {
-
                         if ($item['exchange'] !== null) {
                             // Use Exchanges
                             //

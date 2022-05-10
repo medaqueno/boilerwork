@@ -53,7 +53,7 @@ class WebSocketClient
                 if ($frame == false) {
                     logger("WS Error : {$this->getErrMsg()}");
                     break;
-                } else if ($frame == '') {
+                } elseif ($frame == '') {
                     logger("Disconnect from WS");
                     $this->close();
                     break;

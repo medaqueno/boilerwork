@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace Kernel\Infra\Persistence\Exceptions;
 
-use \Swoole\Exception;
+use Swoole\Exception;
 
 class PersistenceException extends Exception
 {

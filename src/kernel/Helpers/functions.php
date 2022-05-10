@@ -89,7 +89,6 @@ function getMemoryStatus(): void
     if ($fh) {
         $memTotal = 0;
         while ($line = fgets($fh)) {
-
             $pieces = array();
 
             if (preg_match('/^MemTotal:\s+(\d+)\skB$/', $line, $pieces)) {

@@ -64,7 +64,6 @@ final class HandleHttp
             $response->setStatusCode($result->getStatusCode(), $result->getReasonPhrase());
             $result = $result->getBody()->__toString();
         } catch (\Throwable $e) {
-
             error($e);
 
             if ($e instanceof CustomAssertionFailedException || $e instanceof \Assert\InvalidArgumentException) {
@@ -147,7 +146,6 @@ final class HandleHttp
                 ];
                 break;
             case \FastRoute\Dispatcher::FOUND:
-
                 if (is_array($handler)) {
                     // Custom method in class
                     $className = $handler[0];

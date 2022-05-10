@@ -29,7 +29,7 @@ final class Container implements ContainerInterface
 
     public function __construct()
     {
-        $this->container = new ContainerImplementation;
+        $this->container = new ContainerImplementation();
 
         $this->container->bind(UserRepository::class, UserPostgreSQLRepository::class);
 

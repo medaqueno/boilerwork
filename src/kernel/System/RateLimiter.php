@@ -6,8 +6,8 @@ declare(strict_types=1);
 namespace Kernel\System;
 
 use Kernel\Helpers\Singleton;
-use \Swoole\Table;
-use \Swoole\Timer;
+use Swoole\Table;
+use Swoole\Timer;
 
 final class RateLimiter
 {

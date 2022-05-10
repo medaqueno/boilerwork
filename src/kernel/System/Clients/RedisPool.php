@@ -26,13 +26,14 @@ final class RedisPool
         $password = $_ENV['REDIS_PASSWORD'] ?? '';
         $size = $_ENV['REDIS_SIZE_CONN'] ?? 64;
 
-        $this->pool = new SwooleRedisPool((new RedisConfig)
+        $this->pool = new SwooleRedisPool(
+            (new RedisConfig())
                 ->withHost($host)
-                ->withPort((int)$port)
+                ->withPort((int)$port),
             // ->withAuth('')
             // ->withDbIndex(0)
             // ->withTimeout((int)1),
-            ,
+
             (int)$size
         );
     }

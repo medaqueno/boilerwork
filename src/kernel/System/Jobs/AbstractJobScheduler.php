@@ -76,10 +76,8 @@ abstract class AbstractJobScheduler
 
         // Execute tasks in tasksToBeExecuted array
         foreach ($this->jobsToBeExecuted as $jobToExecute) {
-
             // Task is in time but has not been executed yet
             if ($jobToExecute !== 'executed') {
-
                 $job = app()->container()->get($jobToExecute);
 
                 go(function () use ($jobToExecute, $job) {
