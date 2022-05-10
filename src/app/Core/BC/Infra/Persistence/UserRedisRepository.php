@@ -8,7 +8,7 @@ namespace App\Core\BC\Infra\Persistence;
 use App\Core\BC\Domain\User;
 use App\Core\BC\Domain\UserRepository;
 use Kernel\Domain\AggregateHistory;
-use Kernel\Domain\TrackEvents;
+use Kernel\Domain\TracksEvents;
 use Kernel\Domain\ValueObjects\Identity;
 use Kernel\System\Clients\RedisClient;
 
@@ -19,9 +19,8 @@ final class UserRedisRepository implements UserRepository
     ) {
     }
 
-    public function append(TrackEvents $aggregate): void
+    public function append(TracksEvents $aggregate): void
     {
-
         $aggregateId = $aggregate->getAggregateId();
         $events = $aggregate->getRecordedEvents();
 

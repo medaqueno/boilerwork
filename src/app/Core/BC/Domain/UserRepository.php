@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace App\Core\BC\Domain;
 
-use Kernel\Domain\TrackEvents;
+use Kernel\Domain\TracksEvents;
 use Kernel\Domain\ValueObjects\Identity;
 use Kernel\Infra\Persistence\EventStore;
 
@@ -14,7 +14,7 @@ interface UserRepository extends EventStore
     /**
      *  {@inheritDoc}
      **/
-    public function append(TrackEvents $events): void;
+    public function append(TracksEvents $events): void;
 
     /**
      *  {@inheritDoc}

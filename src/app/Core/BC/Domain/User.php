@@ -13,10 +13,10 @@ use App\Core\BC\Domain\ValueObjects\UserStatus;
 use Kernel\Domain\Assert;
 use Kernel\Domain\AggregateRoot;
 use Kernel\Domain\IsEventSourced;
-use Kernel\Domain\TrackEvents;
+use Kernel\Domain\TracksEvents;
 use Kernel\Domain\ValueObjects\Identity;
 
-final class User extends AggregateRoot implements TrackEvents, IsEventSourced
+final class User extends AggregateRoot implements TracksEvents, IsEventSourced
 {
     protected UserStatus $status;
 
@@ -64,7 +64,11 @@ final class User extends AggregateRoot implements TrackEvents, IsEventSourced
         // Check if current status is ok to be promoted
         Assert::lazy()->tryAll()
             ->that($this->status->toPrimitive())
-            ->eq(UserStatus::USER_STATUS_INITIAL, 'User should be in initial status to be approved', 'user.invalidStatusCondition')
+            ->eq(
+                UserStatus::USER_STATUS_INITIAL,
+                'User should be in initial status to be approved',
+                'user.invalidStatusCondition'
+            )
             ->verifyNow();
 
         $this->raise(

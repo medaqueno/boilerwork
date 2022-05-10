@@ -8,7 +8,7 @@ namespace App\Core\BC\Infra\Persistence;
 use App\Core\BC\Domain\User;
 use App\Core\BC\Domain\UserRepository;
 use Kernel\Domain\AggregateHistory;
-use Kernel\Domain\TrackEvents;
+use Kernel\Domain\TracksEvents;
 use Kernel\Domain\ValueObjects\Identity;
 use Kernel\System\Clients\PostgreSQLWritesClient;
 
@@ -45,7 +45,7 @@ final class UserPostgreSQLRepository implements UserRepository
      *
      * extracted from CQRS Documents by Greg Young - https://cqrs.wordpress.com/documents/building-event-storage/
      **/
-    public function append(TrackEvents $aggregate): void
+    public function append(TracksEvents $aggregate): void
     {
         // go(function () use ($aggregate) {
 

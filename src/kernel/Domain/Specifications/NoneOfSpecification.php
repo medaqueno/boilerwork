@@ -7,7 +7,9 @@ namespace Kernel\Domain\Specifications;
 
 class NoneOfSpecification extends Specification
 {
-    public function __construct(private readonly Specification ...$specifications)
+    private readonly array $specifications;
+
+    public function __construct(array ...$specifications)
     {
     }
 

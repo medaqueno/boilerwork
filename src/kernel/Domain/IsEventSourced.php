@@ -10,5 +10,5 @@ namespace Kernel\Domain;
  */
 interface IsEventSourced
 {
-    public static function reconstituteFrom(AggregateHistory $aggregateHistory): TrackEvents;
+    public static function reconstituteFrom(AggregateHistory $aggregateHistory): TracksEvents;
 }

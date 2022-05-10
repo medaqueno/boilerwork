@@ -46,7 +46,6 @@ final class UserTest extends TestCase
             foreach ($user->getRecordedEvents() as $item) {
                 if ($item instanceof \App\Core\BC\Domain\Events\UserHasBeenApproved) {
                     return true;
-                    break;
                 }
             }
             return false;

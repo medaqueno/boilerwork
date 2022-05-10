@@ -14,9 +14,9 @@ use Kernel\Domain\Assert;
 class UserStatus extends ValueObject
 {
     // Possible values
-    const USER_STATUS_INITIAL = 1;
+    public const USER_STATUS_INITIAL = 1;
 
-    const USER_STATUS_APPROVED = 2;
+    public const USER_STATUS_APPROVED = 2;
 
     public function __construct(
         public readonly int $value = self::USER_STATUS_INITIAL

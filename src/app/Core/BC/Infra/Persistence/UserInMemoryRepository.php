@@ -8,7 +8,7 @@ namespace App\Core\BC\Infra\Persistence;
 use App\Core\BC\Domain\User;
 use App\Core\BC\Domain\UserRepository;
 use Kernel\Domain\AggregateHistory;
-use Kernel\Domain\TrackEvents;
+use Kernel\Domain\TracksEvents;
 use Kernel\Domain\ValueObjects\Identity;
 
 final class UserInMemoryRepository implements UserRepository
@@ -24,12 +24,13 @@ final class UserInMemoryRepository implements UserRepository
     /**
      *  @inheritDoc
      **/
-    public function append(TrackEvents $aggregate): void
+    public function append(TracksEvents $aggregate): void
     {
         $aggregateId = $aggregate->getAggregateId();
         $events = $aggregate->getRecordedEvents();
 
-        $currentPersistedAggregate = array_filter( // Retrieve events by aggregateId. Same as select <fields> where aggregateId = <aggregateId>;
+        // Retrieve events by aggregateId. Same as select <fields> where aggregateId = <aggregateId>;
+        $currentPersistedAggregate = array_filter(
             $this->memory['aggregates'],
             function ($event) use ($aggregateId) {
                 return $event[0] === $aggregateId;

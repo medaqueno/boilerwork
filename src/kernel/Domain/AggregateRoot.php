@@ -7,7 +7,7 @@ namespace Kernel\Domain;
 
 use Kernel\Domain\ValueObjects\Identity;
 
-abstract class AggregateRoot implements TrackEvents, IsEventSourced
+abstract class AggregateRoot implements TracksEvents, IsEventSourced
 {
     use ApplyEvent;
 
@@ -72,7 +72,7 @@ abstract class AggregateRoot implements TrackEvents, IsEventSourced
     /**
      * Apply DomainEvents to Aggregate to reconstitute its current state
      **/
-    public static function reconstituteFrom(AggregateHistory $aggregateHistory): TrackEvents
+    public static function reconstituteFrom(AggregateHistory $aggregateHistory): TracksEvents
     {
         $aggregate = new static(
             aggregateId: $aggregateHistory->getAggregateId()
