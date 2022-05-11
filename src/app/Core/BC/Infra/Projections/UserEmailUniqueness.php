@@ -12,10 +12,6 @@ use RuntimeException;
 
 final class UserEmailUniqueness implements EventSubscriberInterface
 {
-    public function __construct()
-    {
-    }
-
     public function handle(DomainEvent $event): void
     {
         if ($event instanceof UserHasRegistered === false) {
@@ -25,5 +21,10 @@ final class UserEmailUniqueness implements EventSubscriberInterface
         // Simulate heavy load
         // sleep(3);
         echo "\nHANDLE EVENT WITH SLEEP IN " . __CLASS__ . " : " . $event::class .  ". A COMMAND SHOULD BE TRIGGERED TO DO ANYTHING\n";
+    }
+
+    public function isSubscribedTo(): string
+    {
+        return UserHasRegistered::class;
     }
 }

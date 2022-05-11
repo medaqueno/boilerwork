@@ -18,20 +18,11 @@ class MessagingClient implements MessagingInterface
 
     public function __construct()
     {
-        $this->pool = app()->container()->get(MQTTPool::class);
+        $this->pool = MQTTPool::getInstance();
     }
 
     /**
-     * Example Use:
-     * $messagingClient = new MessagingClient();
-     *
-     * // Using Exchange. Queue may be omitted, because queues are binded in Broker Admin manually or by subscribers
-     * $messagingClient->publish(message: 'this is an example message', queue: 'test-mqtt/withExchange', exchange: 'exchangeTest');
-     * or better:
-     * $messagingClient->publish(message: 'this is an example message', queue: null, exchange: 'exchangeTest');
-     *
-     * // Using only queues
-     * $messagingClient->publish(message: 'this is an example message', queue: 'test-mqtt/onlyQueue');
+     * @inheritDoc
      **/
     public function publish(string $message, ?string $queue = null, ?string $exchange = null): void
     {

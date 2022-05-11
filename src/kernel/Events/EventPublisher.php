@@ -9,12 +9,15 @@ use Ds\Queue;
 use Ds\Vector;
 use Kernel\Domain\DomainEvent;
 use Kernel\Helpers\Singleton;
+use Kernel\System\Clients\MessagingClient;
 use RuntimeException;
 use Throwable;
 
 final class EventPublisher
 {
     use Singleton;
+
+    // private MessagingClient $messagingClient;
 
     private function __construct(
         private Vector $subscribers = new Vector(),
@@ -46,16 +49,28 @@ final class EventPublisher
 
             // Ds\Queue -> destructive iteration
             foreach ($this->events as $event) {
-                go(function () use ($class, $event) {
-                    try {
-                        $class->handle($event);
-                        // (app()->container()->get($class))->handle($event);
-                    } catch (RuntimeException $e) {
-                        error($e->getMessage(), RuntimeException::class);
-                    } catch (Throwable $e) {
-                        error($e->getMessage());
-                    }
-                });
+                if ($class->isSubscribedTo() === $event::class) {
+                    go(function () use ($class, $event) {
+                        try {
+                            if ($event->isPublic()) {
+
+                                $messagingClient = new MessagingClient();
+
+                                $messagingClient->publish(
+                                    message: json_encode($event->serialize()),
+                                    queue: $event->getQueue(),
+                                    exchange: $event->getExchange()
+                                );
+                            }
+                            $class->handle($event);
+                            // (app()->container()->get($class))->handle($event);
+                        } catch (RuntimeException $e) {
+                            error($e->getMessage(), RuntimeException::class);
+                        } catch (Throwable $e) {
+                            error($e->getMessage());
+                        }
+                    });
+                }
             }
 
             unset($class);

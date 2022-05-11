@@ -12,6 +12,10 @@ final class UserHasBeenApproved extends AbstractEvent implements DomainEvent
 {
     protected bool $isPublic = false;
 
+    protected ?string $queue = 'user-has-been-approved';
+
+    protected ?string $exchange;
+
     public function __construct(
         public readonly string $userId,
     ) {

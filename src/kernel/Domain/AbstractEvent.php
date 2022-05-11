@@ -11,6 +11,10 @@ abstract class AbstractEvent implements DomainEvent
 {
     protected bool $isPublic = false;
 
+    protected ?string $queue;
+
+    protected ?string $exchange;
+
     public function wrapSerialize(array $data): array
     {
         return [
@@ -25,5 +29,15 @@ abstract class AbstractEvent implements DomainEvent
     public function isPublic(): bool
     {
         return $this->isPublic;
+    }
+
+    public function getQueue(): ?string
+    {
+        return $this->queue;
+    }
+
+    public function getExchange(): ?string
+    {
+        return $this->exchange;
     }
 }

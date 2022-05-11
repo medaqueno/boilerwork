@@ -18,5 +18,5 @@ interface EventSubscriberInterface
     public function handle(DomainEvent $event): void;
 
     /** @return string Fully Qualified Class Name */
-    // public function isSubscribedTo(): string;
+    public function isSubscribedTo(): string;
 }
