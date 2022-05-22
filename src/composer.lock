@@ -658,16 +658,16 @@
         },
         {
             "name": "medaqueno/boilerwork-kernel",
-            "version": "0.1.5",
+            "version": "0.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/medaqueno/boilerwork-kernel.git",
-                "reference": "5fcb1ee83a81ece97b5219abf509cadad4cbce29"
+                "reference": "5ec816d379cde8270086bd7017b508ee6ae1a381"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/medaqueno/boilerwork-kernel/zipball/5fcb1ee83a81ece97b5219abf509cadad4cbce29",
-                "reference": "5fcb1ee83a81ece97b5219abf509cadad4cbce29",
+                "url": "https://api.github.com/repos/medaqueno/boilerwork-kernel/zipball/5ec816d379cde8270086bd7017b508ee6ae1a381",
+                "reference": "5ec816d379cde8270086bd7017b508ee6ae1a381",
                 "shasum": ""
             },
             "require": {
@@ -709,9 +709,9 @@
             "description": "Boilerwork Kernel",
             "support": {
                 "issues": "https://github.com/medaqueno/boilerwork-kernel/issues",
-                "source": "https://github.com/medaqueno/boilerwork-kernel/tree/0.1.5"
+                "source": "https://github.com/medaqueno/boilerwork-kernel/tree/0.1.6"
             },
-            "time": "2022-05-22T14:57:15+00:00"
+            "time": "2022-05-22T15:36:55+00:00"
         },
         {
             "name": "nikic/fast-route",

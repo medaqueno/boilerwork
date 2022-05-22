@@ -10,7 +10,7 @@ use Boilerwork\Domain\DomainEvent;
 
 final class UserHasRegistered extends AbstractEvent implements DomainEvent
 {
-    protected bool $isPublic = false;
+    protected bool $isPublic = true;
 
     protected ?string $queue = 'test-message/onlyQueue';
 

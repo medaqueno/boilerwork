@@ -12,9 +12,9 @@ final class ReceiveMessagePort extends AbstractMessagePort
 {
     public function __invoke(AMQPMessage $msg): void
     {
-        echo "AQUI ESTAMOS EN " . __CLASS__ . "\n";
-        var_dump($msg->getRoutingKey());
-        var_dump($msg->getExchange());
-        var_dump($msg->getBody());
+        // echo "AQUI ESTAMOS EN " . __CLASS__ . "\n";
+        // var_dump($msg->getRoutingKey());
+        // var_dump($msg->getExchange());
+        // var_dump($msg->getBody());
     }
 }
