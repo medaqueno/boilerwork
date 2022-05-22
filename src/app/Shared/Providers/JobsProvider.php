@@ -5,9 +5,9 @@ declare(strict_types=1);
 
 namespace App\Shared\Providers;
 
-use Kernel\System\Jobs\AbstractJobScheduler;
+use Boilerwork\System\Jobs\AbstractJobScheduler;
 
-final class JobProvider extends AbstractJobScheduler
+final class JobsProvider extends AbstractJobScheduler
 {
     /**
      * @inheritDoc

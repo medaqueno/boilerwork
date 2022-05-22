@@ -6,11 +6,10 @@ declare(strict_types=1);
 namespace Bootstrap;
 
 use App\Shared\Providers\EventsSubscribeProvider;
-use Kernel\Events\EventPublisher;
-use Kernel\Helpers\Environments;
-use Kernel\Helpers\Singleton;
-use Kernel\System\Container\Container;
-use Psr\Container\ContainerInterface;
+use Boilerwork\Helpers\Environments;
+use Boilerwork\Helpers\Singleton;
+use App\Shared\Providers\ContainerBindingsProvider;
+use define;
 
 /**
  * Load basic dependencies and configs in the App
@@ -24,26 +23,44 @@ final class Application
 
     private string $environment;
 
-    private ContainerInterface $container;
-
-    private function __construct()
+    public function __construct()
     {
-        $environment = $_ENV['APP_ENV'] ?? 'dev';
-        $this->environment = $environment ?? Environments::DEVELOPMENT;
+        // Init Environments ?
+        $this->environment = $_ENV['APP_ENV'] ?? Environments::DEVELOPMENT;
 
-        // Init Dependency Injection Container
-        $this->container = new Container();
+        $this->initPaths();
+        $this->initTimeZone();
+        $this->initErrorReportingLevel();
 
-        new EventsSubscribeProvider(EventPublisher::getInstance());
+        // Init Basic Providers
+        new ContainerBindingsProvider();
+        new EventsSubscribeProvider();
+
+        logger('hola');
+    }
+
+    private function initPaths(): void
+    {
+        define('APP_PATH', __DIR__ . '/../app');
+        define('BASE_PATH', __DIR__ . '/..');
+    }
+
+    /**
+     * Set Timezone
+     **/
+    private function initTimeZone(): void
+    {
+        date_default_timezone_set($_ENV['APP_TIMEZONE']);
+    }
+
+    private function initErrorReportingLevel(): void
+    {
+        error_reporting(E_ALL);
+        ini_set('display_errors', ($_ENV['APP_DEBUG'] === 'true') ?? false);
     }
 
     public function getEnvironment(): string
     {
         return $this->environment;
-    }
-
-    public function container(): ContainerInterface
-    {
-        return $this->container;
     }
 }

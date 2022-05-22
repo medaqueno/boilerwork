@@ -5,9 +5,9 @@ declare(strict_types=1);
 
 namespace App\Core\BC\Domain;
 
-use Kernel\Domain\TracksEvents;
-use Kernel\Domain\ValueObjects\Identity;
-use Kernel\Infra\Persistence\EventStore;
+use Boilerwork\Domain\TracksEvents;
+use Boilerwork\Domain\ValueObjects\Identity;
+use Boilerwork\Infra\Persistence\EventStore;
 
 interface UserRepository extends EventStore
 {

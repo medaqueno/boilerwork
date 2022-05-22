@@ -6,8 +6,9 @@ declare(strict_types=1);
 namespace App\Core\BC\UI\Ports\Http;
 
 use App\Core\BC\Application\ApproveUserCommand;
-use Kernel\System\Http\Request;
-use Kernel\UI\AbstractHTTPPort;
+use Boilerwork\System\Http\Request;
+use Boilerwork\System\Http\Response;
+use Boilerwork\UI\AbstractHTTPPort;
 use Psr\Http\Message\ResponseInterface;
 
 final class ApproveUserPort extends AbstractHTTPPort
@@ -20,6 +21,6 @@ final class ApproveUserPort extends AbstractHTTPPort
             ),
         );
 
-        return responseEmpty();
+        return Response::empty(201);
     }
 }

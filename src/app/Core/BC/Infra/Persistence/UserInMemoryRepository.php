@@ -7,9 +7,9 @@ namespace App\Core\BC\Infra\Persistence;
 
 use App\Core\BC\Domain\User;
 use App\Core\BC\Domain\UserRepository;
-use Kernel\Domain\AggregateHistory;
-use Kernel\Domain\TracksEvents;
-use Kernel\Domain\ValueObjects\Identity;
+use Boilerwork\Domain\AggregateHistory;
+use Boilerwork\Domain\TracksEvents;
+use Boilerwork\Domain\ValueObjects\Identity;
 
 final class UserInMemoryRepository implements UserRepository
 {

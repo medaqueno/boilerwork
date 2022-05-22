@@ -10,11 +10,11 @@ use App\Core\BC\Domain\Events\UserHasRegistered;
 use App\Core\BC\Domain\ValueObjects\UserEmail;
 use App\Core\BC\Domain\ValueObjects\UserName;
 use App\Core\BC\Domain\ValueObjects\UserStatus;
-use Kernel\Domain\Assert;
-use Kernel\Domain\AggregateRoot;
-use Kernel\Domain\IsEventSourced;
-use Kernel\Domain\TracksEvents;
-use Kernel\Domain\ValueObjects\Identity;
+use Boilerwork\Domain\Assert;
+use Boilerwork\Domain\AggregateRoot;
+use Boilerwork\Domain\IsEventSourced;
+use Boilerwork\Domain\TracksEvents;
+use Boilerwork\Domain\ValueObjects\Identity;
 
 final class User extends AggregateRoot implements TracksEvents, IsEventSourced
 {

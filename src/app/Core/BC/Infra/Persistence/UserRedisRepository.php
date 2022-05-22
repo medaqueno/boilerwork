@@ -7,10 +7,10 @@ namespace App\Core\BC\Infra\Persistence;
 
 use App\Core\BC\Domain\User;
 use App\Core\BC\Domain\UserRepository;
-use Kernel\Domain\AggregateHistory;
-use Kernel\Domain\TracksEvents;
-use Kernel\Domain\ValueObjects\Identity;
-use Kernel\System\Clients\RedisClient;
+use Boilerwork\Domain\AggregateHistory;
+use Boilerwork\Domain\TracksEvents;
+use Boilerwork\Domain\ValueObjects\Identity;
+use Boilerwork\System\Clients\RedisClient;
 
 final class UserRedisRepository implements UserRepository
 {
@@ -48,7 +48,7 @@ final class UserRedisRepository implements UserRepository
         }
 
         if ($version + count($events) !== $aggregate->currentVersion()) {
-            throw new \Kernel\Infra\Persistence\Exceptions\PersistenceException(sprintf("Expected version and aggregate version must be the same. Aggregate %s history may be corrupted.", $aggregateId));
+            throw new \Boilerwork\Infra\Persistence\Exceptions\PersistenceException(sprintf("Expected version and aggregate version must be the same. Aggregate %s history may be corrupted.", $aggregateId));
         }
 
         foreach ($events as $event) {

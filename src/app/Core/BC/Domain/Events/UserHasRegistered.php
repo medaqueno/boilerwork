@@ -5,12 +5,12 @@ declare(strict_types=1);
 
 namespace App\Core\BC\Domain\Events;
 
-use Kernel\Domain\AbstractEvent;
-use Kernel\Domain\DomainEvent;
+use Boilerwork\Domain\AbstractEvent;
+use Boilerwork\Domain\DomainEvent;
 
 final class UserHasRegistered extends AbstractEvent implements DomainEvent
 {
-    protected bool $isPublic = true;
+    protected bool $isPublic = false;
 
     protected ?string $queue = 'test-mqtt/onlyQueue';
 

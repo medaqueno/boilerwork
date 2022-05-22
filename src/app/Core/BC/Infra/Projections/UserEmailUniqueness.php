@@ -6,8 +6,8 @@ declare(strict_types=1);
 namespace App\Core\BC\Infra\Projections;
 
 use App\Core\BC\Domain\Events\UserHasRegistered;
-use Kernel\Domain\DomainEvent;
-use Kernel\Events\EventSubscriberInterface;
+use Boilerwork\Domain\DomainEvent;
+use Boilerwork\Events\EventSubscriberInterface;
 use RuntimeException;
 
 final class UserEmailUniqueness implements EventSubscriberInterface
@@ -20,7 +20,7 @@ final class UserEmailUniqueness implements EventSubscriberInterface
 
         // Simulate heavy load
         // sleep(3);
-        echo "\nHANDLE EVENT WITH SLEEP IN " . __CLASS__ . " : " . $event::class .  ". A COMMAND SHOULD BE TRIGGERED TO DO ANYTHING\n";
+        echo "\nHANDLE INTERNAL EVENT WITH SLEEP IN " . __CLASS__ . " : " . $event::class .  ". A COMMAND SHOULD BE TRIGGERED TO DO ANYTHING\n";
     }
 
     public function isSubscribedTo(): string

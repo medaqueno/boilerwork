@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace App\Core\BC\Infra\Jobs;
 
-use Kernel\System\Jobs\JobInterface;
+use Boilerwork\System\Jobs\JobInterface;
 
 final class ExampleJob implements JobInterface
 {

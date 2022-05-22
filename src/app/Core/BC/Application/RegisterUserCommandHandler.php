@@ -7,9 +7,9 @@ namespace App\Core\BC\Application;
 
 use App\Core\BC\Domain\User;
 use App\Core\BC\Domain\UserRepository;
-use Kernel\Application\CommandHandlerInterface;
-use Kernel\Application\CommandInterface;
-use Kernel\Domain\ValueObjects\Identity;
+use Boilerwork\Application\CommandHandlerInterface;
+use Boilerwork\Application\CommandInterface;
+use Boilerwork\Domain\ValueObjects\Identity;
 
 /**
  * @see App\Core\BC\Application\RegisterUserCommand
@@ -25,9 +25,9 @@ final class RegisterUserCommandHandler implements CommandHandlerInterface
         // Check Cross Boundaries business invariants
 
         // TODO: Check email uniqueness in persistence
-        // $emailUniqueness = app()->container()->get(EmailUniqueness::class);
+        // $emailUniqueness = container()->get(EmailUniqueness::class);
         // // TODO: Check username uniqueness in persistence
-        // $usernameUniqueness = app()->container()->get(UsernameUniqueness::class);
+        // $usernameUniqueness = container()->get(UsernameUniqueness::class);
         // Assert::lazy()->tryAll()
         //     ->that($emailUniqueness->isSatisfiedBy(email: $email))
         //     ->true('Email already exists', 'user.emailAlreadyExists')

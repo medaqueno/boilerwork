@@ -4,7 +4,7 @@
 declare(strict_types=1);
 
 use App\Core\BC\Domain\User;
-use Kernel\Domain\ValueObjects\Identity;
+use Boilerwork\Domain\ValueObjects\Identity;
 use PHPUnit\Framework\TestCase;
 // use Deminy\Counit\TestCase;
 
@@ -57,7 +57,7 @@ final class UserTest extends TestCase
      **/
     public function testDoNotApproveUserInInvalidState(): void
     {
-        $this->expectException(\Kernel\Domain\CustomAssertionFailedException::class);
+        $this->expectException(\Boilerwork\Domain\CustomAssertionFailedException::class);
         $this->expectErrorMessageMatches('/\buser.invalidStatusCondition\b/');
 
         $id = (Identity::create())->toPrimitive();

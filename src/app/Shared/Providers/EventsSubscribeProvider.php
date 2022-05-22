@@ -5,8 +5,6 @@ declare(strict_types=1);
 
 namespace App\Shared\Providers;
 
-use Kernel\Events\EventPublisher;
-
 final class EventsSubscribeProvider
 {
     private array $subscribers = [
@@ -14,10 +12,10 @@ final class EventsSubscribeProvider
         \App\Core\BC\Infra\Projections\UserEmailUniqueness::class,
     ];
 
-    public function __construct(private EventPublisher $eventPublisher)
+    public function __construct()
     {
         foreach ($this->subscribers as $aSubscriber) {
-            $eventPublisher->subscribe($aSubscriber);
+            eventsPublisher()->subscribe($aSubscriber);
         }
     }
 }

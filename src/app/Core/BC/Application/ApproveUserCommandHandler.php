@@ -6,9 +6,9 @@ declare(strict_types=1);
 namespace App\Core\BC\Application;
 
 use App\Core\BC\Domain\UserRepository;
-use Kernel\Application\CommandHandlerInterface;
-use Kernel\Application\CommandInterface;
-use Kernel\Domain\ValueObjects\Identity;
+use Boilerwork\Application\CommandHandlerInterface;
+use Boilerwork\Application\CommandInterface;
+use Boilerwork\Domain\ValueObjects\Identity;
 
 /**
  * @see App\Core\BC\Application\ApproveUserCommand

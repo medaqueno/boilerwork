@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace App\Core\BC\UI\Ports\Mqtt;
 
-use Kernel\UI\AbstractMQTTPort;
+use Boilerwork\UI\AbstractMQTTPort;
 use PhpAmqpLib\Message\AMQPMessage;
 
 final class ReceiveMqttPort extends AbstractMQTTPort

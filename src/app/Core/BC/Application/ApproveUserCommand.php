@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace App\Core\BC\Application;
 
-use Kernel\Application\CommandInterface;
+use Boilerwork\Application\CommandInterface;
 
 /**
  * @see \App\Core\BC\Application\ApproveUserCommandHandler
