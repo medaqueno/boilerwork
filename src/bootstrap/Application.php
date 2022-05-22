@@ -19,8 +19,6 @@ final class Application
 {
     use Singleton;
 
-    public const VERSION = '0.1.0';
-
     private string $environment;
 
     public function __construct()
@@ -35,8 +33,6 @@ final class Application
         // Init Basic Providers
         new ContainerBindingsProvider();
         new EventsSubscribeProvider();
-
-        logger('hola');
     }
 
     private function initPaths(): void
