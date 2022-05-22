@@ -12,7 +12,7 @@ final class UserHasRegistered extends AbstractEvent implements DomainEvent
 {
     protected bool $isPublic = false;
 
-    protected ?string $queue = 'test-mqtt/onlyQueue';
+    protected ?string $queue = 'test-message/onlyQueue';
 
     protected ?string $exchange = null;
 

@@ -12,7 +12,7 @@ final class ContainerBindingsProvider
         [\Boilerwork\System\Clients\PostgreSQLWritesPool::class, 'singleton', null], // Start PostgreSQL Connection Pools Read and Writes to be used by services
         [\Boilerwork\System\Clients\PostgreSQLWritesPool::class, 'singleton', null], // Start PostgreSQL Connection Pools Read and Writes to be used by services
         [\Boilerwork\System\Clients\RedisPool::class, 'singleton', null],   // Start Redis Connection Pool to be used by services
-        [\Boilerwork\System\Clients\MQTTPool::class, 'singleton', null], // Start MQTT Connection Pool to be used by services
+        [\Boilerwork\System\Clients\MessagePool::class, 'singleton', null], // Start Message Connection Pool to be used by services
     ];
 
     public function __construct()

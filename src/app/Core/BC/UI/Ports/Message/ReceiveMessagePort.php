@@ -3,12 +3,12 @@
 
 declare(strict_types=1);
 
-namespace App\Core\BC\UI\Ports\Mqtt;
+namespace App\Core\BC\UI\Ports\Message;
 
-use Boilerwork\UI\AbstractMQTTPort;
+use Boilerwork\UI\AbstractMessagePort;
 use PhpAmqpLib\Message\AMQPMessage;
 
-final class ReceiveMqttPort extends AbstractMQTTPort
+final class ReceiveMessagePort extends AbstractMessagePort
 {
     public function __invoke(AMQPMessage $msg): void
     {

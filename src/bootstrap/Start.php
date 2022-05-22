@@ -4,11 +4,11 @@
 declare(strict_types=1);
 
 use App\Shared\Providers\JobsProvider;
-use App\Shared\Providers\MqttProvider;
+use App\Shared\Providers\MessageProvider;
 use Boilerwork\System\Container\Container;
 use Bootstrap\Application;
 use Boilerwork\System\Jobs\JobScheduler;
-use Boilerwork\System\MQTT\MQTTScheduler;
+use Boilerwork\System\Message\MessageScheduler;
 use Boilerwork\System\Server\RunServer;
 use Swoole\Runtime;
 
@@ -31,8 +31,8 @@ Container::getInstance();
 // Job Scheduling
 $jobScheduler = new JobScheduler(new JobsProvider());
 
-// MQTT Scheduling, Queues, Pub/Sub
-$MQTTScheduler = new MQTTScheduler(new MqttProvider());
+// Message Scheduling, Queues, Pub/Sub
+$MessageScheduler = new MessageScheduler(new MessageProvider());
 
 /**
  *  Start Server and Handlers.
@@ -57,6 +57,6 @@ $server = new RunServer(
     ],
     processes: [
         $jobScheduler,
-        $MQTTScheduler
+        $MessageScheduler
     ],
 );
