@@ -1,5 +1,5 @@
 {
-    "name": "medaqueno/boilerwork-base",
+    "name": "medaqueno/boilerwork",
     "description": "PHP Swoole Boilerplate applying some basic patterns",
     "authors": [
         {
@@ -46,9 +46,6 @@
         ]
     },
     "scripts": {
-        "post-root-package-install": [
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
-        ],
         "phpcs": [
             "vendor/bin/phpcs --standard=phpcs.xml"
         ],
