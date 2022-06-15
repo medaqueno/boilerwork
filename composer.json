@@ -1,5 +1,5 @@
 {
-    "name": "medaqueno/boilerwork-example",
+    "name": "medaqueno/boilerwork-base",
     "description": "PHP Swoole Boilerplate applying some basic patterns",
     "authors": [
         {
