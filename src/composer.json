@@ -61,6 +61,6 @@
             "@phpcs"
         ]
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
