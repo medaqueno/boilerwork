@@ -1,4 +1,4 @@
-FROM openswoole/swoole:4.11-php8.1
+FROM openswoole/swoole:4.11.1-php8.1
 
 RUN apt-get update && apt-get install vim -y && \
     apt-get install openssl -y && \
@@ -23,7 +23,7 @@ RUN set -ex \
 
 RUN apt-get autoremove -y && apt-get clean && apt-get purge && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
-COPY ./rootfilesystem/ /
+COPY ./docker/rootfilesystem/ /
 COPY ./src/ /var/www
 
 RUN ["chmod", "+x", "/customized-entrypoint.sh"]

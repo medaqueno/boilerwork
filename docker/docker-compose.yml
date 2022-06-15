@@ -10,36 +10,21 @@
 version: "3"
 
 services:
-  swoole-basic:
-    container_name: swoole-basic
-    build: .
+  boilerwork-basic:
+    container_name: boilerwork-basic
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
     ports:
-      - 3102:9501
+      - 4000:9501
     environment:
       AUTORELOAD_PROGRAMS: "swoole"
       AUTORELOAD_ANY_FILES: 0
     volumes:
-      - ./src:/var/www
+      - ../src:/var/www
     networks:
-      public:
-  # redis-local:
-  #   container_name: redis-local
-  #   image: redis:5.0.6-alpine3.10
-  #   restart: always
-  #   ports:
-  #     - 6380:6379
-  #   networks:
-  #     public:
-  # environment:
-  # - ALLOW_EMPTY_PASSWORD=yes
-  # - SYSLOG-ENABLED=yes
-  # command: redis-server --save 20 1 --loglevel warning
-  # command: redis-server /usr/local/etc/redis/redis.conf --loglevel warning
-  # volumes:
-  #   - ./tmp/redis/data:/data
-  #   - ./tmp/redis/log:/var/log/redis
-  #   - ./rootfilesystem/redis/config/redis.conf:/usr/local/etc/redis/redis.conf
+      - app-network
 
 networks:
-  public:
-    name: pangea-net
+  app-network:
+    driver: "bridge"

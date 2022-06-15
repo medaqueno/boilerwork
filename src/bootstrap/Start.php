@@ -28,12 +28,6 @@ Runtime::enableCoroutine(true, \SWOOLE_HOOK_ALL);
 Application::getInstance();
 Container::getInstance();
 
-// Job Scheduling
-$jobScheduler = new JobScheduler(new JobsProvider());
-
-// Message Scheduling, Queues, Pub/Sub
-$MessageScheduler = new MessageScheduler(new MessageProvider());
-
 /**
  *  Start Server and Handlers.
  *  Pass needed server class as parameter
@@ -56,7 +50,7 @@ $server = new RunServer(
         'log_date_format' => '%Y-%m-%dT%H:%M:%S%z',
     ],
     processes: [
-        $jobScheduler,
-        $MessageScheduler
+        (new JobScheduler(new JobsProvider())), // Job Scheduling
+        //(new MessageScheduler(new MessageProvider())) // Uncomment to enable Message Broker comms
     ],
 );
