@@ -12,6 +12,9 @@
 *.log
 **/*.log
 **/tmp
+.vscode
+docs
+.githooks
 
 **/storage/*.key
 .phpunit.result.cache

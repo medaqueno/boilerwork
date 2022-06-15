@@ -21,7 +21,7 @@ services:
       AUTORELOAD_PROGRAMS: "swoole"
       AUTORELOAD_ANY_FILES: 0
     volumes:
-      - ../src:/var/www
+      - ..:/var/www
     networks:
       - app-network
 

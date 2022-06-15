@@ -24,7 +24,8 @@ RUN set -ex \
 RUN apt-get autoremove -y && apt-get clean && apt-get purge && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 COPY ./docker/rootfilesystem/ /
-COPY ./src/ /var/www
+COPY ./ /var/www
+# COPY ./env.example /var/www/.env
 
 RUN ["chmod", "+x", "/customized-entrypoint.sh"]
 
