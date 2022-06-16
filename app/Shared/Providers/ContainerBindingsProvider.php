@@ -8,10 +8,10 @@ namespace App\Shared\Providers;
 final class ContainerBindingsProvider
 {
     private array $services = [
-        [\App\Core\BC\Domain\UserRepository::class, 'bind', \App\Core\BC\Infra\Persistence\UserPostgreSQLRepository::class],
+        // Add Pools to Dependency container by default
         [\Boilerwork\System\Clients\PostgreSQLWritesPool::class, 'singleton', null], // Start PostgreSQL Connection Pools Read and Writes to be used by services
         [\Boilerwork\System\Clients\PostgreSQLReadsPool::class, 'singleton', null], // Start PostgreSQL Connection Pools Read and Writes to be used by services
-        [\Boilerwork\System\Clients\RedisPool::class, 'singleton', null],   // Start Redis Connection Pool to be used by services
+        //  [\Boilerwork\System\Clients\RedisPool::class, 'singleton', null],   // Start Redis Connection Pool to be used by services
         [\Boilerwork\System\Clients\MessagePool::class, 'singleton', null], // Start Message Connection Pool to be used by services
     ];
 

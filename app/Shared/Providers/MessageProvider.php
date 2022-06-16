@@ -11,8 +11,6 @@ final class MessageProvider
 {
     private array $subscriptions = [
         // ['queueName', 'exchangeNullable', ConsumerClass::class],
-        ['queue' => 'test-message/withExchange', 'exchange' => 'exchangeTest', 'target' => ReceiveMessagePort::class],
-        ['queue' => 'test-message/onlyQueue', 'exchange' => null, 'target' => ReceiveMessagePort::class],
     ];
 
     public function getSubscriptions(): array

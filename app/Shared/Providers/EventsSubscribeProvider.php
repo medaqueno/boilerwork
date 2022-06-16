@@ -9,7 +9,6 @@ final class EventsSubscribeProvider
 {
     private array $subscribers = [
         // \App\Core\BC\Infra\Messaging\ExampleSubscriber::class,
-        \App\Core\BC\Infra\Projections\UserEmailUniqueness::class,
     ];
 
     public function __construct()
