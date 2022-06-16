@@ -17,9 +17,7 @@ RUN set -ex \
     && docker-php-ext-enable redis \
     && docker-php-ext-install pcntl \
     # PHP Data Structures Extension.  Added in .ini. https://www.php.net/manual/es/book.ds.php
-    && pecl install ds \
-    # PHP Decimal Extension. Added in .ini. https://php-decimal.io/
-    && pecl install decimal
+    && pecl install ds
 
 RUN apt-get autoremove -y && apt-get clean && apt-get purge && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
