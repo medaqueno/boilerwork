@@ -14,7 +14,11 @@ En la carpeta donde se vaya a desarrollar el proyecto, instalamos todos los arch
 composer create-project medaqueno/boilerwork <ruta-a-carpeta>
 ```
 
-Posteriormente en el interior de la carpeta `docker` que se habrá creado ejecutamos:
+En el interior de la carpeta `docker` que se habrá creado encontraremos el archivo docker-compose.yml en el que están señalados por defecto los puertos **4000** para la **aplicación** y **5432** para **PostgreSQL** (Lectura y escritura, misma base de datos para desarrollo local) 
+
+Personalizar estos puertos para el proyecto elegido en caso de estar ya en uso si se requiere.
+
+Finalmente en el interior de la carpeta `docker` ejecutamos:
 
 ``` bash
 # Recomendado para ver la salida del contenedor directamente en el terminal.

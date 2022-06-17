@@ -10,7 +10,7 @@ cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/conf.d/php.ini
 
 # No vendor directory, no dependecies. Install them.
 [ ! -d "/var/www/vendor" ] && composer install || echo "vendor directory already exists"
-[ ! -f "/var/www/.env" ] && cp .env.example .env || echo ".env already exists"
+[ ! -f "/var/www/.env" ] && cp .env.local .env || echo ".env already exists"
 
 [ ! -d "/var/www/logs" ] && mkdir logs
 
