@@ -13,26 +13,24 @@ use App\Core\BC\Domain\ValueObjects\UserStatus;
 use Boilerwork\Domain\Assert;
 use Boilerwork\Domain\AggregateRoot;
 use Boilerwork\Domain\IsEventSourced;
+use Boilerwork\Domain\IsEventSourcedTrait;
 use Boilerwork\Domain\TracksEvents;
+use Boilerwork\Domain\TracksEventsTrait;
 use Boilerwork\Domain\ValueObjects\Identity;
 
 final class User extends AggregateRoot implements TracksEvents, IsEventSourced
 {
-    protected UserStatus $status;
+    use TracksEventsTrait, IsEventSourcedTrait;
 
-    protected function __construct(
-        protected readonly Identity $aggregateId,
-    ) {
-    }
+    private UserStatus $status;
+    private UserEmail $email;
+    private UserName $username;
 
     public static function register(
         string $userId,
         string $email,
         string $username
     ): self {
-
-        // Check Aggregate Boundary Invariants if proceeds
-
         $user = new static(
             aggregateId: new Identity($userId),
         );
@@ -59,9 +57,8 @@ final class User extends AggregateRoot implements TracksEvents, IsEventSourced
         string $userId,
     ): void {
 
-        // Check Aggregate Boundary Invariants if proceeds
-        //
-        // Check if current status is ok to be promoted
+        // Check Aggregate Boundary Invariants:
+        // Check if current status is OK to be promoted
         Assert::lazy()->tryAll()
             ->that($this->status->toPrimitive())
             ->eq(
@@ -81,5 +78,10 @@ final class User extends AggregateRoot implements TracksEvents, IsEventSourced
     protected function applyUserHasBeenApproved(UserHasBeenApproved $event): void
     {
         $this->status = new UserStatus(UserStatus::USER_STATUS_APPROVED);
+    }
+
+    private function __construct(
+        protected readonly Identity $aggregateId,
+    ) {
     }
 }

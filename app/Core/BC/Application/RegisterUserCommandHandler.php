@@ -16,25 +16,13 @@ use Boilerwork\Domain\ValueObjects\Identity;
  **/
 final class RegisterUserCommandHandler implements CommandHandlerInterface
 {
-    public function __construct(private UserRepository $userRepository)
-    {
+    public function __construct(
+        private UserRepository $userRepository
+    ) {
     }
 
     public function handle(CommandInterface $command): void
     {
-        // Check Cross Boundaries business invariants
-
-        // TODO: Check email uniqueness in persistence
-        // $emailUniqueness = container()->get(EmailUniqueness::class);
-        // // TODO: Check username uniqueness in persistence
-        // $usernameUniqueness = container()->get(UsernameUniqueness::class);
-        // Assert::lazy()->tryAll()
-        //     ->that($emailUniqueness->isSatisfiedBy(email: $email))
-        //     ->true('Email already exists', 'user.emailAlreadyExists')
-        //     ->that($usernameUniqueness->isSatisfiedBy(username: $username))
-        //     ->true('User Name already exists', 'user.usernameAlreadyExists')
-        //     ->verifyNow();
-
         $user = User::register(
             userId: (Identity::create())->toPrimitive(),
             // userId: $command->id,
@@ -45,9 +33,5 @@ final class RegisterUserCommandHandler implements CommandHandlerInterface
         $this->userRepository->append($user);
 
         eventsPublisher()->releaseEvents();
-    }
-
-    private function checkCrossBoundariesInvariants(): void
-    {
     }
 }

@@ -5,19 +5,11 @@ declare(strict_types=1);
 
 namespace App\Core\BC\Domain;
 
-use Boilerwork\Domain\TracksEvents;
+use Boilerwork\Domain\IsEventSourced;
 use Boilerwork\Domain\ValueObjects\Identity;
 use Boilerwork\Infra\Persistence\EventStore;
 
 interface UserRepository extends EventStore
 {
-    /**
-     *  {@inheritDoc}
-     **/
-    public function append(TracksEvents $events): void;
-
-    /**
-     *  {@inheritDoc}
-     **/
-    public function getAggregateHistoryFor(Identity $id): User;
+    public function reconstituteHistoryFor(Identity $id): User|IsEventSourced; // Return union types to accomplish interface and IDE typehinting
 }

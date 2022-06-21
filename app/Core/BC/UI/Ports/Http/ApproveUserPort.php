@@ -21,6 +21,6 @@ final class ApproveUserPort extends AbstractHTTPPort
             ),
         );
 
-        return Response::empty(201);
+        return Response::empty(200);
     }
 }
