@@ -227,7 +227,11 @@ final class UserHasRegistered extends AbstractEvent implements DomainEvent
 {
     protected bool $isPublic = true;
 
-    protected ?string $queue = 'test-message/onlyQueue'; // Será un queue o topic de Kafka o Rabbit.
+     protected bool $isPublic = true;
+
+    protected ?string $topic = 'example/topicName';
+
+    protected ?string $queue = null;
 
     public function __construct(
         public readonly string $userId,
@@ -272,6 +276,12 @@ El evento al emitirse se aplica al agregado modificando su estado de facto. Con 
 ``` php
 final class User extends AggregateRoot implements TracksEvents, IsEventSourced
 {
+    use TracksEventsTrait, IsEventSourcedTrait;
+
+    private UserStatus $status;
+    private UserEmail $email;
+    private UserName $username;
+
     protected function __construct(
         protected readonly Identity $aggregateId,
     ) {
@@ -307,6 +317,8 @@ final class User extends AggregateRoot implements TracksEvents, IsEventSourced
         $this->status = new UserStatus(UserStatus::USER_STATUS_INITIAL);
     }
 ```
+
+> Como en este caso queremos que User utilice eventos y sea persistido mediante *EventSourcing*, añadimos los dos interfaces: **TracksEvents**, **IsEventSourced** y los traits que implementan (**TracksEventsTrait**, **IsEventSourcedTrait**) los métodos necesarios para cumplir con ellos.
 
 Como se puede observar, cada atributo es en realidad un ValueObject. La razón de que sea así y no primitivas es que cada ValueObject contiene sus propias reglas de negocio y validación y asegura que el dato siempre sea correcto. Desacoplando y centralizando esa responsabilidad en sí mismos.
 A continuación el ValueObject UserName como ejemplo:
@@ -379,7 +391,7 @@ Ya tenemos el agregado **$user** en memoria en el estado final deseado. Desde es
 
 ### 12. Persistencia. Creación de contratos/interfaces.
 Creamos un contrato/interfaz de este dominio para indicar qué operaciones estarán permitidas. En este ejemplo vamos a utilizar EventSourcing, solo necesitamos dos operaciones: Insertar (Eventos) y recuperar el historial de Eventos (lo que nos permitirá reconstruir el último estado más actualizado de $user en otras transacciones diferentes).
-Extendemos el interfaz EventStore que nos indica lo necesario para realizar EventSourcing.
+Como ya existe un interfaz EventStore que indica estos dos métodos, solo sobreescribimos *reconstituteHistoryFor* para añadir mediante Union Type el agregado concreto que se va a devolver, de forma que los IDEs interpreten correctamente el type hinting.
 
 **app/Core/Users/Domain/UserRepository.php**
 ```php
@@ -390,21 +402,14 @@ declare(strict_types=1);
 
 namespace App\Core\BC\Domain;
 
-use Boilerwork\Domain\TracksEvents;
+use Boilerwork\Domain\IsEventSourced;
 use Boilerwork\Domain\ValueObjects\Identity;
 use Boilerwork\Infra\Persistence\EventStore;
 
 interface UserRepository extends EventStore
 {
-    /**
-     *  {@inheritDoc}
-     **/
-    public function append(TracksEvents $events): void;
-
-    /**
-     *  {@inheritDoc}
-     **/
-    public function getAggregateHistoryFor(Identity $id): User; // sobreescribimos getAggregateHistoryFor para concretar que devuelve el tipo User.
+   // sobreescribimos getAggregateHistoryFor para concretar que devuelve el tipo User.
+   public function reconstituteHistoryFor(Identity $id): User|IsEventSourced; // Return union types to accomplish interface and IDE typehinting
 }
 ```
 
@@ -430,56 +435,22 @@ final class RegisterUserCommandHandler implements CommandHandlerInterface
 }
 ```
 ### 14. Implementación del interfaz. Creación del repositorio.
-Necesitamos implementar el interfaz, para la persistencia que hayamos elegido, por ejemplo, guardar en PostgreSQL. La base de desarrollo, tiene ya preparada esta implementación del patrón *EventSourcing* y que será siempre igual para todos los agregados y dominios teniendo en cuenta *versionados* y posibles *race conditions*. 
-Extracto de la implementación:
+Necesitamos implementar el interfaz, para la persistencia que hayamos elegido, por ejemplo, guardar en PostgreSQL. La base de desarrollo, tiene ya preparada esta implementación del patrón *EventSourcing* para PostgreSQL (Boilerwork\Infra\Persistence\PostgreSQLEventStore) y que será siempre igual para todos los agregados y dominios teniendo en cuenta *versionados* y posibles *race conditions*. 
 
 **app/Core/Users/Infra/Persistence/UserPostgreSQLRepository.php**
 ```php
-final class UserPostgreSQLRepository implements UserRepository
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Core\BC\Infra\Persistence;
+
+use App\Core\BC\Domain\UserRepository;
+use Boilerwork\Infra\Persistence\PostgreSQLEventStore;
+
+final class UserPostgreSQLRepository extends PostgreSQLEventStore implements UserRepository
 {
-    public function __construct(
-        private readonly PostgreSQLWritesClient $client
-    ) {
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @internal
-     * 1. First checks to see if an aggregate exists with the unique identifier it is to use, if there is not one it will create it and consider the current version to be zero.
-     * 2. It will then attempt to do an optimistic concurrency test on the data coming in if the expected version does not match the actual version it will raise a concurrency exception.
-     * 3. Providing the versions are the same, it will then loop through the events being saved and insert them into the events table, incrementing the version number by one for each event.
-     * 4. Finally it will update the Aggregates table to the new current version number for the aggregate. It is important to note that these operations are in a transaction as it is required to insure that optimistic concurrency amongst other things works in a distributed environment.
-     *
-     * Pseudo code:
-     *
-        Begin
-            version = SELECT version from aggregates where AggregateId = ‘’
-            if version is null
-                Insert into aggregates
-                version = 0
-            end
-            if expectedversion != version
-                raise concurrency problem
-            foreach event
-                insert event with incremented version number
-            update aggregate with last version number
-        End Transaction
-     *
-     * extracted from CQRS Documents by Greg Young - https://cqrs.wordpress.com/documents/building-event-storage/
-     **/
-    public function append(TracksEvents $aggregate): void
-    {
-         // ...... Code
-    }
-
-    /**
-     *  @inheritDoc
-     **/
-    public function getAggregateHistoryFor(Identity $aggregateId): User
-    {
-        // ....... Code
-    }
 }
 ```
 > En un entorno más tradicional tipo CRUD, implementaríamos los create, read, update, delete. O nombres de operaciones concretas que contienen por ejemplo las queries necesarias. (Existen los siguientes en la base: PostgreSQLReadsClient, PostgreSQLWritesClient y RedisClient)
