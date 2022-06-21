@@ -79,6 +79,7 @@ ALTER SEQUENCE public.aggregates_id_seq OWNED BY public.aggregates.id;
 CREATE TABLE public.events (
     id integer NOT NULL,
     aggregate_id uuid NOT NULL,
+    aggregate_type character varying,
     data jsonb,
     version integer NOT NULL
 );
@@ -171,4 +172,3 @@ ALTER TABLE ONLY public.events
 --
 -- PostgreSQL database dump complete
 --
-
