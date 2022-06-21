@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace App\Core\BC\Application;
 
 use App\Core\BC\Domain\UserRepository;
+use Assert\Assertion;
 use Boilerwork\Application\CommandHandlerInterface;
 use Boilerwork\Application\CommandInterface;
 use Boilerwork\Domain\ValueObjects\Identity;
@@ -21,6 +22,7 @@ final class ApproveUserCommandHandler implements CommandHandlerInterface
 
     public function handle(CommandInterface $command): void
     {
+        // Assertion::nullOrMax(23123, 42);
         // Only testing. Another command
         // Reconstitute Aggregate
         $user = $this->userRepository->reconstituteHistoryFor(new Identity($command->id));
