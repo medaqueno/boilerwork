@@ -14,7 +14,7 @@ final class ReceiveMessagePort extends AbstractMessagePort
     {
         // echo "AQUI ESTAMOS EN " . __CLASS__ . "\n";
         // var_dump($msg->getRoutingKey());
-        // var_dump($msg->getExchange());
+        // var_dump($msg->getQueue());
         // var_dump($msg->getBody());
     }
 }

@@ -12,9 +12,9 @@ final class UserHasRegistered extends AbstractEvent implements DomainEvent
 {
     protected bool $isPublic = true;
 
-    protected ?string $queue = 'test-message/onlyQueue';
+    protected ?string $topic = 'test-message/onlyQueue';
 
-    protected ?string $exchange = null;
+    protected ?string $queue = null;
 
     public function __construct(
         public readonly string $userId,
