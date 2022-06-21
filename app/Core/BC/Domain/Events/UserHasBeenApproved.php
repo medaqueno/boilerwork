@@ -1,0 +1,44 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Core\BC\Domain\Events;
+
+use Boilerwork\Domain\AbstractEvent;
+use Boilerwork\Domain\DomainEvent;
+
+final class UserHasBeenApproved extends AbstractEvent implements DomainEvent
+{
+    protected bool $isPublic = false;
+
+    protected ?string $topic = 'user-has-been-approved';
+
+    protected ?string $queue;
+
+    public function __construct(
+        public readonly string $userId,
+    ) {
+    }
+
+    public function getAggregateId(): string
+    {
+        return $this->userId;
+    }
+
+    public function serialize(): array
+    {
+        return $this->wrapSerialize(
+            data: [
+                'userId' => $this->userId,
+            ]
+        );
+    }
+
+    public static function unserialize(array $event): self
+    {
+        return (new static(
+            userId: $event['data']['userId'],
+        ));
+    }
+}
