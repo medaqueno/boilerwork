@@ -193,7 +193,7 @@ protected function __construct(
         string $username
     ): self {
 
-    // Aquí haríamos aserciones para comprobar que se cumplen las reglas de negocio si fuera necesario.
+        // Aquí haríamos aserciones para comprobar que se cumplen las reglas de negocio si fuera necesario.
 
         $user = new static(
             aggregateId: new Identity($userId),
@@ -226,8 +226,6 @@ use Boilerwork\Domain\DomainEvent;
 final class UserHasRegistered extends AbstractEvent implements DomainEvent
 {
     protected bool $isPublic = true;
-
-     protected bool $isPublic = true;
 
     protected ?string $topic = 'example/topicName';
 
