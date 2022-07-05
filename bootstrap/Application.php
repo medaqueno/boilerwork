@@ -5,7 +5,6 @@ declare(strict_types=1);
 
 namespace Bootstrap;
 
-use App\Shared\Providers\EventsSubscribeProvider;
 use Boilerwork\Helpers\Environments;
 use Boilerwork\Helpers\Singleton;
 use App\Shared\Providers\ContainerBindingsProvider;
@@ -32,7 +31,6 @@ final class Application
 
         // Init Basic Providers
         new ContainerBindingsProvider();
-        new EventsSubscribeProvider();
     }
 
     private function initPaths(): void

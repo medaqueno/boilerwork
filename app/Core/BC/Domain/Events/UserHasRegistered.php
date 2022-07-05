@@ -8,13 +8,9 @@ namespace App\Core\BC\Domain\Events;
 use Boilerwork\Domain\AbstractEvent;
 use Boilerwork\Domain\DomainEvent;
 
-final class UserHasRegistered extends AbstractEvent implements DomainEvent
+final class UserHasRegistered extends AbstractEvent
 {
-    protected bool $isPublic = true;
-
-    protected ?string $topic = 'test-message/onlyQueue';
-
-    protected ?string $queue = null;
+    protected string $topic = "testTopic1";
 
     public function __construct(
         public readonly string $userId,
