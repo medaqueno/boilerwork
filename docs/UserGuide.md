@@ -30,7 +30,7 @@ namespace App\Core\Users\UI\Ports\Http;
 use App\Core\BC\Application\RegisterUserCommand;
 use Boilerwork\System\Http\Request;
 use Boilerwork\System\Http\Response;
-use Boilerwork\UI\AbstractHTTPPort;
+use Boilerwork\System\Http\AbstractHTTPPort;
 use Psr\Http\Message\ResponseInterface;
 
 final class RegisterUserPort extends AbstractHTTPPort
@@ -94,7 +94,7 @@ namespace App\Core\Users\UI\Ports\Http;
 use App\Core\Users\Application\RegisterUserCommand;
 use Boilerwork\System\Http\Request;
 use Boilerwork\System\Http\Response;
-use Boilerwork\UI\AbstractHTTPPort;
+use Boilerwork\System\Http\AbstractHTTPPort;
 use Psr\Http\Message\ResponseInterface;
 
 final class RegisterUserPort extends AbstractHTTPPort
@@ -451,7 +451,7 @@ final class UserPostgreSQLRepository extends PostgreSQLEventStore implements Use
 {
 }
 ```
-> En un entorno más tradicional tipo CRUD, implementaríamos los create, read, update, delete. O nombres de operaciones concretas que contienen por ejemplo las queries necesarias. (Existen los siguientes en la base: PostgreSQLReadsClient, PostgreSQLWritesClient y RedisClient)
+> En un entorno más tradicional tipo CRUD, implementaríamos los create, read, update, delete. O nombres de operaciones concretas que contienen por ejemplo las queries necesarias. (Existen los siguientes en la base: PostgreSQLReadsClient, PostgreSQLWritesClient)
 
 ### 15. Bind Interfaz <-> Repositorio en el contenedor.
 Mediante inyección de dependencias hacemos un *binding* del interfaz **UserRepository** con **UserPostgreSQLRepository**. Todos estos bindings se realizan en:
@@ -468,8 +468,6 @@ final class ContainerBindingsProvider
 
         [\Boilerwork\System\Clients\PostgreSQLWritesPool::class, 'singleton', null], // Start PostgreSQL Connection Pools Read and Writes to be used by services
         [\Boilerwork\System\Clients\PostgreSQLReadsPool::class, 'singleton', null], // Start PostgreSQL Connection Pools Read and Writes to be used by services
-        [\Boilerwork\System\Clients\RedisPool::class, 'singleton', null],   // Start Redis Connection Pool to be used by services
-        [\Boilerwork\System\Clients\MessagePool::class, 'singleton', null], // Start Message Connection Pool to be used by services
     ];
 
    ......

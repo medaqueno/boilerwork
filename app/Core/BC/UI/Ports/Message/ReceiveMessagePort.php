@@ -5,16 +5,15 @@ declare(strict_types=1);
 
 namespace App\Core\BC\UI\Ports\Message;
 
-use Boilerwork\UI\AbstractMessagePort;
-use PhpAmqpLib\Message\AMQPMessage;
+use Boilerwork\System\Messaging\AbstractMessagePort;
+use Boilerwork\System\Messaging\Message;
 
 final class ReceiveMessagePort extends AbstractMessagePort
 {
-    public function __invoke(AMQPMessage $msg): void
+    public function __invoke(Message $message): void
     {
-        // echo "AQUI ESTAMOS EN " . __CLASS__ . "\n";
-        // var_dump($msg->getRoutingKey());
-        // var_dump($msg->getQueue());
-        // var_dump($msg->getBody());
+        echo "Message Received in" . __CLASS__ . "\n";
+
+        var_dump($message);
     }
 }

@@ -8,8 +8,9 @@ echo "##### This line is printed out from customized-entrypoint.sh ####"
 cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/conf.d/php.ini
 # cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 
-# No vendor directory, no dependecies. Install them.
+# No vendor directory, no dependencies. Install them.
 [ ! -d "/var/www/vendor" ] && composer install || echo "vendor directory already exists"
+# [[ ! $(composer validate --no-check-publish) =~ "is not valid" ]] || echo "composer.json and composer.lock are synced" # Pending implementation
 [ ! -f "/var/www/.env" ] && cp .env.local .env || echo ".env already exists"
 
 [ ! -d "/var/www/logs" ] && mkdir logs

@@ -12,26 +12,17 @@
     "type": "project",
     "require": {
         "php": "^8.1.0",
-        "medaqueno/boilerwork-kernel": "^0.3.0"
+        "medaqueno/boilerwork-kernel": "^0.4.1"
     },
     "require-dev": {
         "deminy/counit": "^0.2.0",
-        "openswoole/ide-helper": "~4.9",
         "php-ds/php-ds": "^1.4",
-        "phpmd/phpmd": "^2.12",
-        "phpstan/extension-installer": "^1.1",
-        "phpstan/phpstan": "^1.4",
-        "phpunit/phpunit": "^9.5",
-        "squizlabs/php_codesniffer": "^3.6",
-        "ukko/phpredis-phpdoc": "5.0.1-beta8"
+        "phpunit/phpunit": "^9.5"
     },
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true,
-        "allow-plugins": {
-            "phpstan/extension-installer": true
-        }
+        "sort-packages": true
     },
     "autoload": {
         "psr-4": {
@@ -42,22 +33,7 @@
             "bootstrap/functions.php"
         ]
     },
-    "scripts": {
-        "phpcs": [
-            "vendor/bin/phpcs --standard=phpcs.xml"
-        ],
-        "stan": [
-            "vendor/bin/phpstan analyse . --ansi --no-interaction --memory-limit=-1"
-        ],
-        "phpmd": [
-            "vendor/bin/phpmd ./app ansi phpmd.xml"
-        ],
-        "analyse": [
-            "@phpmd",
-            "@stan",
-            "@phpcs"
-        ]
-    },
+    "scripts": {},
     "minimum-stability": "dev",
     "prefer-stable": true
 }

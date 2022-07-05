@@ -10,6 +10,7 @@ The objective of this repository is to provide a project start point applying so
 2. [Descripción de la estructura de carpetas y archivos](./docs/FilesTypesDescription.md)
 3. [Pasos para comenzar con un endpoint](./docs/UserGuide.md)
 4. [Testing y Análisis](./docs/TestingAndAnalysis.md)
+5. [Guía de uso Kafka](./docs/KafkaGuide.md)
 
 
 ## Inspiration:
@@ -31,8 +32,8 @@ The objective of this repository is to provide a project start point applying so
 
 -   CQRS (Command Query Responsibility Segregation)
 -   Domain Driven Design
--   Event Driven (recommended)
--   Event Sourcing (optional, and recommended)
+-   Event Driven
+-   Event Sourcing (optional, but recommended)
 -   Value Objects
 -   Invariants validation/protection through assertion in Domain layer
 -   Repositories
@@ -55,12 +56,13 @@ The objective of this repository is to provide a project start point applying so
 -   PSR Request and Response Wrappers
 -   Projections (pending)
 -   Read models (pending)
--   Adapters to Persistence (pending): InMemory (completed), Redis (completed),, PostgreSQL (completed), Mongo, MySQL.
+-   Adapters to Persistence (pending): InMemory (completed), Redis (completed), PostgreSQL (completed), Mongo, MySQL.
 -   Transactions (completed where apply)
 -   Opentelemetry (pending)
 -   Database Migrations (pending)
 -   Middleware (pending, maybe will not be included)
--   Adapter to RabbitMQ: Pub/Sub, Queues
+-   Adapter to RabbitMQ: Pub/Sub, Queues (Should be revised)
+-   Adapter to Kafka: Pub/Sub, Queues
 -   Scheduler to subscribe using a provider to messaging. Queues/exchanges -> Classes/subscribers
 -   Examples: Commands, Queries, persist In Memory, tests.
 

@@ -8,7 +8,7 @@ use App\Shared\Providers\MessageProvider;
 use Boilerwork\System\Container\Container;
 use Bootstrap\Application;
 use Boilerwork\System\Jobs\JobScheduler;
-use Boilerwork\System\Message\MessageScheduler;
+use Boilerwork\System\Messaging\MessageScheduler;
 use Boilerwork\System\Server\RunServer;
 use Swoole\Runtime;
 
@@ -51,6 +51,6 @@ $server = new RunServer(
     ],
     processes: [
         (new JobScheduler(new JobsProvider())), // Job Scheduling
-        //(new MessageScheduler(new MessageProvider())) // Uncomment to enable Message Broker comms
+        (new MessageScheduler(new MessageProvider())) // Uncomment to enable Message Broker comms
     ],
 );

@@ -5,10 +5,13 @@ declare(strict_types=1);
 
 namespace App\Shared\Providers;
 
-final class MessageProvider
+use Boilerwork\System\Messaging\MessageProviderInterface;
+
+final class MessageProvider implements MessageProviderInterface
 {
+    // Topics should first created in Kafka or produced before subscribe to them.
     private array $subscriptions = [
-        // ['topic' => 'topicTest', 'queue' => 'queueOrPartitionNullable', 'target' => ReceiveMessagePort::class],
+        // ['topic' => 'testTopic1', 'target' => \App\Core\BC\UI\Ports\Message\ReceiveMessagePort::class],
     ];
 
     public function getSubscriptions(): array

@@ -6,9 +6,9 @@ declare(strict_types=1);
 namespace App\Core\BC\UI\Ports\Http;
 
 use App\Core\BC\Application\RegisterUserCommand;
+use Boilerwork\System\Http\AbstractHTTPPort;
 use Boilerwork\System\Http\Request;
 use Boilerwork\System\Http\Response;
-use Boilerwork\UI\AbstractHTTPPort;
 use Psr\Http\Message\ResponseInterface;
 
 final class RegisterUserPort extends AbstractHTTPPort
