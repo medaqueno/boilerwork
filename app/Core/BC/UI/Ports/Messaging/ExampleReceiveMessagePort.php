@@ -5,10 +5,10 @@ declare(strict_types=1);
 
 namespace App\Core\BC\UI\Ports\Messaging;
 
-use Boilerwork\System\Messaging\AbstractMessagePort;
+use Boilerwork\System\Messaging\AbstractMessageSubscriberPort;
 use Boilerwork\System\Messaging\Message;
 
-final class ExampleReceiveMessagePort extends AbstractMessagePort
+final class ExampleReceiveMessagePort extends AbstractMessageSubscriberPort
 {
     public function __invoke(Message $message): void
     {

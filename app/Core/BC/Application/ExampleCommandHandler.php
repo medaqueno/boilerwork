@@ -12,9 +12,9 @@ use Boilerwork\Application\CommandInterface;
 use Boilerwork\Domain\ValueObjects\Identity;
 
 /**
- * @see App\Core\BC\Application\RegisterUserCommand
+ * @see App\Core\BC\Application\ExampleCommand
  **/
-final class RegisterUserCommandHandler implements CommandHandlerInterface
+final class ExampleCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private UserRepository $userRepository

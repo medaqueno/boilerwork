@@ -13,8 +13,8 @@ final class ContainerBindingsProvider
         //
         // Default bindings
         [\Boilerwork\System\Messaging\MessagingClientInterface::class, 'bind', \Boilerwork\System\Messaging\Adapters\KafkaMessageClientAdapter::class],
-        [\Boilerwork\System\Clients\PostgreSQLWritesPool::class, 'singleton', null], // Start PostgreSQL Connection Pools Read and Writes to be used by services
-        [\Boilerwork\System\Clients\PostgreSQLReadsPool::class, 'singleton', null], // Start PostgreSQL Connection Pools Read and Writes to be used by services
+        [\Boilerwork\Infra\Persistence\Adapters\PostgreSQL\PostgreSQLWritesPool::class, 'singleton', null], // Start PostgreSQL Connection Pools Read and Writes to be used by services
+        [\Boilerwork\Infra\Persistence\Adapters\PostgreSQL\PostgreSQLReadsPool::class, 'singleton', null], // Start PostgreSQL Connection Pools Read and Writes to be used by services
     ];
 
     public function __construct()

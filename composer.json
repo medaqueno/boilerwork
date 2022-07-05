@@ -16,8 +16,10 @@
         "php-ds/php-ds": "^1.4"
     },
     "require-dev": {
+        "openswoole/ide-helper": "~4.9",
         "deminy/counit": "^0.2.0",
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.5",
+        "kwn/php-rdkafka-stubs": "^2.2"
     },
     "config": {
         "optimize-autoloader": true,

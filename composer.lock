@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b458c2ea579dd325ecbdef6b39b32095",
+    "content-hash": "eab236ad0a598e02e34939d1d40554fd",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2148,6 +2148,44 @@
             "time": "2022-03-03T08:28:38+00:00"
         },
         {
+            "name": "kwn/php-rdkafka-stubs",
+            "version": "v2.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kwn/php-rdkafka-stubs.git",
+                "reference": "68f59168246cff1b64bf750f6ef8624f6a2defeb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kwn/php-rdkafka-stubs/zipball/68f59168246cff1b64bf750f6ef8624f6a2defeb",
+                "reference": "68f59168246cff1b64bf750f6ef8624f6a2defeb",
+                "shasum": ""
+            },
+            "require": {
+                "ext-rdkafka": ">=4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.2.4"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Karol Wnuk",
+                    "email": "k.wnuk@ascetic.pl"
+                }
+            ],
+            "description": "Rdkafka extension stubs for your IDE",
+            "support": {
+                "issues": "https://github.com/kwn/php-rdkafka-stubs/issues",
+                "source": "https://github.com/kwn/php-rdkafka-stubs/tree/v2.2.0"
+            },
+            "time": "2021-12-03T21:08:51+00:00"
+        },
+        {
             "name": "myclabs/deep-copy",
             "version": "1.11.0",
             "source": {
@@ -2261,6 +2299,44 @@
                 "source": "https://github.com/nikic/PHP-Parser/tree/v4.14.0"
             },
             "time": "2022-05-31T20:59:12+00:00"
+        },
+        {
+            "name": "openswoole/ide-helper",
+            "version": "4.11.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/openswoole/ide-helper.git",
+                "reference": "80ec936d4341f505edef6054211379616e6a2529"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/openswoole/ide-helper/zipball/80ec936d4341f505edef6054211379616e6a2529",
+                "reference": "80ec936d4341f505edef6054211379616e6a2529",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.3"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Open Swoole Group",
+                    "email": "hello@openswoole.com"
+                }
+            ],
+            "description": "IDE help files for Open Swoole.",
+            "support": {
+                "issues": "https://github.com/openswoole/ide-helper/issues",
+                "source": "https://github.com/openswoole/ide-helper/tree/4.11.4"
+            },
+            "time": "2022-05-24T11:03:39+00:00"
         },
         {
             "name": "phar-io/manifest",

@@ -3,8 +3,8 @@
 
 declare(strict_types=1);
 
-use App\Core\BC\UI\Ports\Http\RegisterUserPort;
+use App\Core\BC\UI\Ports\Http\ExamplePort;
 
 return [
-    ['POST', '/registerUser', RegisterUserPort::class],
+    ['POST', '/registerUser', ExamplePort::class],
 ];

@@ -8,9 +8,9 @@ namespace App\Core\BC\Application;
 use Boilerwork\Application\CommandInterface;
 
 /**
- * @see \App\Core\BC\Application\RegisterUserCommandHandler
+ * @see \App\Core\BC\Application\ExampleCommandHandler
  */
-final class RegisterUserCommand implements CommandInterface
+final class ExampleCommand implements CommandInterface
 {
     public function __construct(
         public readonly string $id,

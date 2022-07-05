@@ -5,9 +5,9 @@ declare(strict_types=1);
 
 namespace App\Shared\Providers;
 
-use Boilerwork\System\Messaging\MessageProviderInterface;
+use Boilerwork\System\Messaging\MessagingProviderInterface;
 
-final class MessageProvider implements MessageProviderInterface
+final class MessagingProvider implements MessagingProviderInterface
 {
     // Topics should first created in Kafka or produced before subscribe to them.
     private array $subscriptions = [
