@@ -8,7 +8,7 @@ The objective of this repository is to provide a project start point applying so
 
 1. [Guía de instalación](./docs/InstallationGuide.md)
 2. [Descripción de la estructura de carpetas y archivos](./docs/FilesTypesDescription.md)
-3. [Pasos para comenzar con un endpoint](./docs/UserGuide.md)
+3. [Pasos para comenzar con un endpoint](./docs/UseGuide.md)
 4. [Testing y Análisis](./docs/TestingAndAnalysis.md)
 4. [Git Best Practices](./docs/GitBestPractices.md)
 5. [Guía de uso Kafka](./docs/KafkaGuide.md)
@@ -51,7 +51,6 @@ The objective of this repository is to provide a project start point applying so
 -   TCP/UDP Server
 -   Basic Logging
 -   Domain Event Publisher
--   Subscribe to internal Domain Events
 -   Dependency Injection Container
 -   Command Bus
 -   PSR Request and Response Wrappers
@@ -63,8 +62,8 @@ The objective of this repository is to provide a project start point applying so
 -   Database Migrations (pending)
 -   Middleware (pending, maybe will not be included)
 -   Adapter to RabbitMQ: Pub/Sub, Queues (Should be revised)
--   Adapter to Kafka: Pub/Sub, Queues
--   Scheduler to subscribe using a provider to messaging. Queues/exchanges -> Classes/subscribers
+-   Adapter to Kafka: Pub/Sub, Topics
+-   Scheduler to subscribe using a provider to messaging.
 -   Examples: Commands, Queries, persist In Memory, tests.
 
 ## Basic Request Lifecycle

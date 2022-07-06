@@ -470,7 +470,7 @@ final class ContainerBindingsProvider
 > Si queremos cambiar la implementación, modificamos el binding sin necesidad de editar la capa de dominio o aplicación.
 
 
-### 16. Publicación de lo eventos emitidos.
+### 16. Publicación de los eventos emitidos.
 Por último y una vez la persistencia ha sido completada correctamente, informamos al resto del sistema de los eventos que han ocurrido desde el handler.
 
 
