@@ -15,8 +15,7 @@ final class ExamplePort extends AbstractHTTPPort
 {
     public function __invoke(Request $request, array $vars): ResponseInterface
     {
-        // We need synchronous execution, because of business invariants that cross Aggregate Boundaries:
-        $this->command()->syncHandle(
+        $this->command()->handle(
             new ExampleCommand(
                 id: $request->input('id'),
                 email: $request->input('email'),

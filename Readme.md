@@ -10,6 +10,7 @@ The objective of this repository is to provide a project start point applying so
 2. [Descripción de la estructura de carpetas y archivos](./docs/FilesTypesDescription.md)
 3. [Pasos para comenzar con un endpoint](./docs/UserGuide.md)
 4. [Testing y Análisis](./docs/TestingAndAnalysis.md)
+4. [Git Best Practices](./docs/GitBestPractices.md)
 5. [Guía de uso Kafka](./docs/KafkaGuide.md)
 
 
