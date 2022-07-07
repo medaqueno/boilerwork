@@ -94,6 +94,8 @@ git config --global user.email "david.hasselhoff@knightrider.com"
     $ git push origin master
     ```
 
+> Semantic versioning: https://semver.org/
+
 #### Starting a hotfix
 1. Update master and create a new branch from it. Always from **master**.
     ```bash

@@ -60,7 +60,7 @@ The objective of this repository is to provide a project start point applying so
 -   Transactions (completed where apply)
 -   Opentelemetry (pending)
 -   Database Migrations (pending)
--   Middleware (pending, maybe will not be included)
+-   Middleware for HTTP Ports
 -   Adapter to RabbitMQ: Pub/Sub, Queues (Should be revised)
 -   Adapter to Kafka: Pub/Sub, Topics
 -   Scheduler to subscribe using a provider to messaging.

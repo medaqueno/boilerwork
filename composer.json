@@ -12,7 +12,7 @@
     "type": "project",
     "require": {
         "php": "^8.1.0",
-        "medaqueno/boilerwork-kernel": "^0.4.3",
+        "medaqueno/boilerwork-kernel": "^0.5",
         "php-ds/php-ds": "^1.4"
     },
     "require-dev": {

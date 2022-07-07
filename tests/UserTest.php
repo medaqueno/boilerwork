@@ -60,7 +60,7 @@ final class UserTest extends TestCase
     public function testDoNotApproveUserInInvalidState(): void
     {
         /*
-        $this->expectException(\Boilerwork\Domain\CustomAssertionFailedException::class);
+        $this->expectException(\Boilerwork\Domain\Exceptions\CustomAssertionFailedException::class);
         $this->expectErrorMessageMatches('/\buser.invalidStatusCondition\b/');
 
         $id = (Identity::create())->toPrimitive();

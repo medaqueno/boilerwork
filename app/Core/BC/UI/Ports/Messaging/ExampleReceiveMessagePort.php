@@ -13,8 +13,7 @@ final class ExampleReceiveMessagePort extends AbstractMessageSubscriberPort
     public function __invoke(Message $message): void
     {
         echo "Message Received in" . __CLASS__ . "\n";
-
-        var_dump($message);
+        // var_dump($message);
         var_dump($message->getParsedPayload());
     }
 }

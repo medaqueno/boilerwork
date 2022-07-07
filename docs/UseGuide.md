@@ -8,7 +8,9 @@
 - https://wkrzywiec.medium.com/ports-adapters-architecture-on-example-19cab9e93be7
 
 
+    ![DDD](https://res.cloudinary.com/practicaldev/image/fetch/s--Q9i0UONi--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/uwu96thjcto0vj3b3j2a.jpg)
 
+---
 ## Pasos para crear un endpoint que ejecute un comando (modificar el estado del sistema)
 
 ### 1. Crear Contexto
@@ -45,13 +47,24 @@ final class ExamplePort extends AbstractHTTPPort
 
 ### 3. Añadir una entrada en el router HTTP: 
 **routes/httpApi.php**
+
+Cada entrada del router contiene un array con:
+
+```
+['<HttpMethod>', '<relativeRoute>', ['<ArrayOfFullyQualifiedNameMiddlewareClasses>']]
+```
+
+
 ``` php
 use App\Core\BC\UI\Ports\Http\ExamplePort;
 
 return [
-    ['POST', '/registerUser', ExamplePort::class],
+    ['POST', '/registerUser', ExamplePort::class, []],
+    ['POST', '/registerUser', ExamplePort::class, [MiddlewareClass::class]],
 ];
 ```
+
+
 ### 4. Crear comando
 Crear el comando para la acción que queremos realizar incluyendo los atributos estrictamente necesarios para completarse en el constructor (siempre readonly, un comando es inmutable). Evitar en la medida de lo posible incluir atributos opcionales, y por supuesto nunca realizar acciones distintas dependiendo del contenido del request.
 

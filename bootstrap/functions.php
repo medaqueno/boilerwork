@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 use Boilerwork\Events\EventPublisher;
 use Boilerwork\Helpers\Logger;
+use Boilerwork\System\AuthInfo\AuthInfo;
 
 if (!function_exists('app')) {
     function app(): \Bootstrap\Application
@@ -17,6 +18,13 @@ if (!function_exists('container')) {
     function container()
     {
         return \Boilerwork\System\Container\Container::getInstance();
+    }
+}
+
+if (!function_exists('getAuthInfo')) {
+    function getAuthInfo(): AuthInfo
+    {
+        return container()->get('AuthInfo');
     }
 }
 
