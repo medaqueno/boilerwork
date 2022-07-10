@@ -42,8 +42,21 @@ services:
     networks:
       - app-network
 
+  redis-boiler:
+    image: redis:7.0.2-alpine3.16
+    container_name: redis-boiler
+    restart: always
+    ports:
+      - 6380:6379
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+
 volumes:
   postgres-data:
+    external: false
+  redis-data:
     external: false
 
 networks:

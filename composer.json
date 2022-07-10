@@ -19,7 +19,8 @@
         "openswoole/ide-helper": "~4.9",
         "deminy/counit": "^0.2.0",
         "phpunit/phpunit": "^9.5",
-        "kwn/php-rdkafka-stubs": "^2.2"
+        "kwn/php-rdkafka-stubs": "^2.2",
+        "ukko/phpredis-phpdoc": "5.0.1-beta8"
     },
     "config": {
         "optimize-autoloader": true,
