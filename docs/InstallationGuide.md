@@ -31,9 +31,10 @@ Requiere las siguientes dependencias instaladas en el host:
 
 **Personalizar datos para el proyecto**
 
-En el interior de la carpeta `docker` que se habrá creado encontraremos el archivo docker-compose.yml en el que están señalados por defecto los puertos **4000** para la **aplicación** y **5432** para **PostgreSQL** (Lectura y escritura, misma base de datos para desarrollo local) 
+En el interior de la carpeta `docker` que se habrá creado encontraremos el archivo docker-compose.yml en el que están señalados por defecto los puertos **4000** para la **aplicación**, **5432** para **PostgreSQL** (Lectura y escritura, misma base de datos para desarrollo local) y  **6379** para **Redis** .
 
 - Personalizar estos puertos para el proyecto elegido en caso de estar ya en uso si se requiere. 
+- Personalizar los nombres de los contenedores para el proyecto. 
 - **Actualizar el nombre de la aplicación** en el archivo .env generado.
 
 ``` bash
@@ -54,4 +55,4 @@ Este proceso levantará dos contenedores docker:
 1. Aplicación php.
 2. PostgreSQL.
     -Las credenciales para conectarse a la base de datos de desarrollo por defecto se encuentra en el archivo **.env** en la raíz del proyecto. El host es 127.0.0.1
-3. Existe una conexión por defecto al servidor online de desarrollo de Kafka en el archivo .env.local, con lo que se necesita conexión para un correcto funcionamiento.
+3. Existe una conexión por defecto al servidor online de desarrollo de Kafka en el archivo .env.local, con lo que se necesita conexión por VPN para un correcto funcionamiento.

@@ -10,11 +10,12 @@
 version: "3"
 
 services:
-  boilerwork-basic:
-    container_name: boilerwork-basic
+  app:
+    container_name: boiler-service-app
     build:
       context: ..
       dockerfile: ./docker/Dockerfile
+    restart: unless-stopped
     ports:
       - 4000:9501
     environment:
@@ -27,8 +28,8 @@ services:
 
   postgres:
     image: postgres:14.2
-    container_name: postgres
-    restart: always
+    container_name: boiler-postgres
+    restart: unless-stopped
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -42,12 +43,12 @@ services:
     networks:
       - app-network
 
-  redis-boiler:
+  redis:
     image: redis:7.0.2-alpine3.16
-    container_name: redis-boiler
-    restart: always
+    container_name: boiler-redis
+    restart: unless-stopped
     ports:
-      - 6380:6379
+      - 6379:6379
     volumes:
       - redis-data:/data
     networks:
