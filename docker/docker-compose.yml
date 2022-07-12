@@ -44,7 +44,7 @@ services:
 
   redis:
     image: redis:7.0.2-alpine3.16
-    container_name: boiler-redis
+    container_name: quadrant-redis
     restart: unless-stopped
     ports:
       - 6379:6379
