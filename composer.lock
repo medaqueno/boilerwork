@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bc59146a2adedf715e61dfa488afb02c",
+    "content-hash": "ad7db508b0d078b423299b7b64eeb687",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -658,16 +658,16 @@
         },
         {
             "name": "medaqueno/boilerwork-kernel",
-            "version": "0.6",
+            "version": "0.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/medaqueno/boilerwork-kernel.git",
-                "reference": "f936a1bdc98df9003553c0b21e1dda2f67d7fc7c"
+                "reference": "4f52e326fae385b3acdb1aaa7e9f6bad5e08588f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/medaqueno/boilerwork-kernel/zipball/f936a1bdc98df9003553c0b21e1dda2f67d7fc7c",
-                "reference": "f936a1bdc98df9003553c0b21e1dda2f67d7fc7c",
+                "url": "https://api.github.com/repos/medaqueno/boilerwork-kernel/zipball/4f52e326fae385b3acdb1aaa7e9f6bad5e08588f",
+                "reference": "4f52e326fae385b3acdb1aaa7e9f6bad5e08588f",
                 "shasum": ""
             },
             "require": {
@@ -714,9 +714,9 @@
             "description": "Boilerwork Kernel",
             "support": {
                 "issues": "https://github.com/medaqueno/boilerwork-kernel/issues",
-                "source": "https://github.com/medaqueno/boilerwork-kernel/tree/0.6"
+                "source": "https://github.com/medaqueno/boilerwork-kernel/tree/0.6.1"
             },
-            "time": "2022-07-10T17:31:13+00:00"
+            "time": "2022-07-12T16:44:26+00:00"
         },
         {
             "name": "nikic/fast-route",
