@@ -52,7 +52,9 @@ docker compose up --build
 ```
 
 Este proceso levantará dos contenedores docker:
-1. Aplicación php.
+1. Aplicación PHP/Swoole.
 2. PostgreSQL.
-    -Las credenciales para conectarse a la base de datos de desarrollo por defecto se encuentra en el archivo **.env** en la raíz del proyecto. El host es 127.0.0.1
+    - Las credenciales para conectarse a la base de datos de desarrollo por defecto se encuentra en el archivo **.env** en la raíz del proyecto. El host es 127.0.0.1
+    - Por defecto se ejecuta un dump existente en la carpeta migrations, que genera un esquema estandarizado orientado a Event Sourcing. En caso de no utilizarse Event Sourcing para la persistencia de los datos de escritura, se puede borrar ese esquema.
+    - Modificar en el .env los datos de conexión, tanto de lectura como escritura.
 3. Existe una conexión por defecto al servidor online de desarrollo de Kafka en el archivo .env.local, con lo que se necesita conexión por VPN para un correcto funcionamiento.

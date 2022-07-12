@@ -11,7 +11,7 @@ final class MessagingProvider implements MessagingProviderInterface
 {
     // Topics should first created in Kafka or produced before subscribe to them.
     private array $subscriptions = [
-        ['topic' => 'testTopic1', 'target' => \App\Core\BC\UI\Ports\Messaging\ExampleReceiveMessagePort::class],
+        // ['topic' => 'testTopic1', 'target' => \App\Core\BC\UI\Ports\Messaging\ExampleReceiveMessagePort::class],
     ];
 
     public function getSubscriptions(): array
