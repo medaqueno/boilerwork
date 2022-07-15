@@ -33,7 +33,7 @@
             "Bootstrap\\": "bootstrap/"
         },
         "files": [
-            "bootstrap/functions.php"
+            "vendor/medaqueno/boilerwork-kernel/src/Boilerwork/Helpers/functions.php"
         ]
     },
     "scripts": {},

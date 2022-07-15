@@ -29,6 +29,7 @@ The objective of this repository is to provide a project start point applying so
 -   Book Strategic Monoliths and Microservices: Driving Innovation Using Purposeful Architecture - Tomasz Jaskula
 -   Book A Philosophy of Software Design - John Ousterhout
 -   Hundreds of articles, posts, tweets, comments conversations... and experiences
+-   Good Practices: https://beberlei.de/2020/02/25/clean_code_object_calisthenics_rules_i_try_to_follow.html
 
 ## Patterns
 
