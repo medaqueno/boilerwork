@@ -41,6 +41,8 @@ En el interior de la carpeta `docker` que se habrá creado encontraremos el arch
 APP_NAME="MY_APP_NAME"
 ```
 
+- Se recomienda para el desarrollo del proyecto eliminar **composer.lock del archivo .gitignore** en la raíz, para que se añada al repositorio del proyecto.
+
 **Construir imagen e iniciar el proyecto**
 Finalmente, construimos/arrancamos la imagen:
 
