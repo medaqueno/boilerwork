@@ -147,10 +147,10 @@ ALTER TABLE ONLY public.events
 
 
 --
--- Name: aggretates_aggregate_id_pkey; Type: INDEX; Schema: public; Owner: -
+-- Name: aggregates_aggregate_id_pkey; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX aggretates_aggregate_id_pkey ON public.aggregates USING btree (aggregate_id);
+CREATE UNIQUE INDEX aggregates_aggregate_id_pkey ON public.aggregates USING btree (aggregate_id);
 
 
 --
