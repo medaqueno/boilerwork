@@ -6,12 +6,12 @@ declare(strict_types=1);
 namespace App\Core\BC\UI\Ports\Http;
 
 use App\Core\BC\Application\ExampleCommand;
-use Boilerwork\System\Http\AbstractHTTPPort;
+use Boilerwork\System\Http\AbstractHttpPort;
 use Boilerwork\System\Http\Request;
 use Boilerwork\System\Http\Response;
 use Psr\Http\Message\ResponseInterface;
 
-final class ExamplePort extends AbstractHTTPPort
+final class ExamplePort extends AbstractHttpPort
 {
     public function __invoke(Request $request, array $vars): ResponseInterface
     {
