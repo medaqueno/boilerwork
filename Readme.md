@@ -1,98 +1,95 @@
-# Boilerwork
+# Bounded Context: Clients
 
-(In development)
+  * [Index (This document)](#)
+  * [First Run](./docs/FirstRun.md)
+  * [Aggregates/Entities](./docs/AggregatesEntitiesVOs.md)
+  * [Actions and Background Processes](./docs/ActionsProcesses.md)
+  * [Projections/Views](./docs/ProjectionsViews.md)
+  * [Test Coverage](./docs/TestCoverage.md)
+  * [Permissions](./docs/Permissions.md)
+  
 
-The objective of this repository is to provide a project start point applying some basic patterns.
+## Purpose
 
-## Index
+Managing lifecyle of the different types of entities and aggregates related to users and business, and their capacity to perform actions.
 
-1. [Guía de instalación](./docs/InstallationGuide.md)
-2. [Descripción de la estructura de carpetas y archivos](./docs/FilesTypesDescription.md)
-3. [Pasos para comenzar con un endpoint](./docs/UseGuide.md)
-4. [Testing y Análisis](./docs/TestingAndAnalysis.md)
-4. [Git Best Practices](./docs/GitBestPractices.md)
-5. [Kafka Guide](./docs/KafkaGuide.md)
-5. [Redis Guide](./docs/RedisGuide.md)
+Achieving the main objective: simplicity, allowing horizontal growth of permissions and avoiding any kind of hierarchy, dependency or complex *sql-join-like* relationships between permissions that lead to wiping out any ease of maintenance and understanding. **Composition over inheritance** is always preferable in the backend side.
 
+## Objectives
 
-## Inspiration:
+The domain will meet these minimum requirements:
 
--   CQRS Documents by Greg Young - https://cqrs.files.wordpress.com/2010/11/cqrs_documents.pdf
--   https://wkrzywiec.medium.com/ports-adapters-architecture-on-example-19cab9e93be7
--   https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/
--   https://franiglesias.github.io/tag/good-practices/
--   https://matthiasnoback.nl
--   https://cqrs.wordpress.com/documents/cqrs-and-event-sourcing-synergy/ Lots of info in this site
--   https://lostechies.com/gabrielschenker/2015/05/25/ddd-the-aggregate/
--   https://lostechies.com/gabrielschenker/2015/06/06/event-sourcing-applied-the-aggregate/ and a bunch of articles in this site.
--   Book https://www.amazon.es/Domain-Driven-Design-English-Carlos-Buenosvinos-ebook/dp/B06ZYRPHMC
--   Book Strategic Monoliths and Microservices: Driving Innovation Using Purposeful Architecture - Tomasz Jaskula
--   Book A Philosophy of Software Design - John Ousterhout
--   Hundreds of articles, posts, tweets, comments conversations... and experiences
--   Good Practices: https://beberlei.de/2020/02/25/clean_code_object_calisthenics_rules_i_try_to_follow.html
+*   Create and manage Tenants.
+*   Add Branches to Tenants, and manage their data.
+*   Add Users to Branches, and manage their data.
+*   Grant and revoke permissions to former entities in order to allow them perform actions in the system.
+    
+## Terminology
 
-## Patterns
+**Tenant**
+- It is a Business or Organization.
+- It is uniquely identified by a country legal code (CIF, NIF, etc.)
+- It is the *billable* entity.
+- A tenant comprises `Branches`.
 
--   CQRS (Command Query Responsibility Segregation)
--   Domain Driven Design
--   Event Driven
--   Event Sourcing (optional, but recommended)
--   Value Objects
--   Invariants validation/protection through assertion in Domain layer
--   Repositories
--   Specification Pattern
+**Branch**
+- It is an arbitrary tenant division. This division can be administative, geographical, etc.
+- Must exist a minimum of one Branch per `Tenant`.
+- A Branch comprises `Users`.
+- Branch data may be hidden to other branches (Excepting to __Main branch__)
 
-## Features included
+**User**
+- Anyone who has credentials and is able to log in the platform.
+- A user can interact and perform actions in the platform.
+- A user may have many `Permissions`.
 
--   Swoole blazing fast performance and concurrency through Coroutines [Open Swoole](https://openswoole.com)
--   Dotenv
--   Job Scheduler
--   Websocket client
--   Websocket server
--   HTTP Server - Routing
--   TCP/UDP Server
--   Basic Logging
--   Domain Event Publisher
--   Scheduler to subscribe using a provider to messaging.
--   Dependency Injection Container
--   Command Bus
--   PSR Request and Response Wrappers
--   Projections (pending)
--   Read models (pending)
--   Adapters to Persistence (pending): InMemory (completed), Redis (completed), PostgreSQL (completed), Mongo, MySQL.
--   Transactions (completed where apply)
--   Opentelemetry (pending)
--   Database Migrations (pending)
--   Middleware for HTTP Ports
--   Adapter to RabbitMQ: Pub/Sub, Queues (Should be revised)
--   Adapter to Kafka: Pub/Sub, Topics
--   Examples: Commands, Queries, persist In Memory, tests.
+**Profile**
+- Profiles are only _cosmetic tags_ to make easier to UX describe user position.
+- It must not have any impact on actions allowance (`Permissions` are used for it).
+- Permissions and Profiles are __completely dissociated__.
+- May be served from a plain json or even "hardcoded" in frontend. Backend will not use them to control access to resources or endpoints.
 
-## Basic Request Lifecycle
+> __Profiles may not finally exist, depends on UX decision.__
 
-### Command. Write Operation
+**Permission**
+- It allows a given `User` to access specific resources or perform an action.
+- They are cumulative and can be granted to `Users` individually.
+- The platform must forbid actions by default.
+- Permissions always allow, they never forbid or exclude an action.
+- Permissions are checked both in frontend and backend as an authorization control.
+- It is recommended to use `Permissions` the most globally possible in order to be simple to use and not create a [big ball of snow impossible to maintain](https://media.giphy.com/media/kiBq3jR2ixgAxATx5h/giphy.gif). It will be always a better choice to create a permission that allows to access a section in frontend than create many individual permissions for the actions inside that section. ==Use them wisely==.
+- The name must be expressive and self descripting.
+-- Recommended Format: Can<Verb><Subject> : CanViewHotelsVertical, CanEditTenant, CanCreateTravel, CanCreateHotelBooking, etc.
 
-Client -> request endpoint (POST, PUT, PATCH) -> Routing -> UI Port -> build and trigger Command through Command Bus. -> Handle Command -> Init transaction -> Apply all business logic in Aggregate (invariants, use aggregate services, specifications, domain event creation, update aggregate state) -> persist aggregate events (or Aggregate/Entity if not using ES) -> end transaction -> release/publish domain events. -> Return nothing, void.
+## Conventions
 
-Async -> Projection builders subscribers, listen to event publishing -> build projection -> persist projection.
+**Identities**
 
-### Query. Read Operation
+All resources identities will be primarily generated by client and sent to the backend with the rest of data.
 
-Client -> request endpoint (GET) -> Routing -> UI Port -> Build Read Model -> Retrieve Projection in Read Model from Persistence -> Map retrieved data -> return Read Model
+Format accepted is Universally Unique IDentifier UUID v4.
+[Link](https://en.wikipedia.org/wiki/Universally_unique_identifier)
 
+**Date, DateTime and TimeZones**
 
-### Http Routing
+All input/output DateTime format will be ==ATOM or ISO-8601 extended== version.
 
-### Job Scheduler
+```
+2021-01-03T02:30:00+00:00
+```
 
-### Commands
+> The problem with the ISO8601 basic format is in the fact that the time zone designator part of the date/time string does not have a colon separating the hours and minutes. To understand why this is an issue, you must understand that ISO-8601 allows two formatting options for date and time and expects the entire string (i.e. the date, time, and time zone parts) to follow the same format.
 
-### Value Objects
+Date format (YYYY-MM-DD):
+```
+2021-01-03
+```
 
-### Aggregate
+**Countries**
 
-### Events (Internal Subscribers)
+All input/output Country format will be ==ISO 3166-1 Alpha2== version.
 
-### ES
+Link: https://www.iso.org/standard/72483.html
 
-## Naming conventions
+However, a Generic Country Value Object exist and can be created using ISO 3166-1 Alpha2 and ISO 3166-1 Alpha3. 
+Once created this VO holds both codes plus the corresponding English name of the Country

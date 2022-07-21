@@ -1,0 +1,21 @@
+**/node_modules
+**/.git
+**/.env
+**/.env.*
+# ENVS WITH ENVIRONMENT VARIABLES. NO SECRETS
+!**/.env.pre
+!**/.env.prod
+!**/.env.test
+!**/.env.dev
+**/.DS_Store
+**/vendor
+*.log
+**/*.log
+**/tmp
+.vscode
+docs
+.githooks
+
+**/storage/*.key
+.phpunit.result.cache
+volumes
