@@ -12,7 +12,60 @@
 
 ## Pasos para crear un endpoint que ejecute un comando (modificar el estado del sistema)
 
-### 1. Crear Contexto
+
+La estructura de carpetas es la siguiente:
+```
+.
+├─ project_service                                   => Root Project Folder
+├── docker                                           => Docker related configs
+├── docs                                             => Documention about project
+└── src                                              => Source Code
+    ├── app                                          => Application specific code. All Business logic lies here
+    │   ├── Core      
+    │   │   ├── BoundedContext                       => Bounded Context
+    │   │   │   ├── Application
+    │   │   │   │   ├── DomainName                   => Application layer 
+    │   │   │   │   │   ├── Jobs                     => Background Jobs
+    │   │   │   │   │   ├── Services                 => Helper services
+    │   │   │   │   │   ├── CommandFiles.php         => Commands
+    │   │   │   │   │   └── CommandHandlerFiles.php  => Command handlers
+    │   │   │   │   │
+    │   │   │   ├── Domain
+    │   │   │   │   ├── DomainName                   => Domain layer 
+    │   │   │   │   │   ├── Events                   => Events
+    │   │   │   │   │   ├── Services                 => Helper services
+    │   │   │   │   │   ├── ValueObjects             => Value objects relative to this domain
+    │   │   │   │   │   ├── Aggregate-Entity.php
+    │   │   │   │   │   └── Repository.php           => Repository Interface
+    │   │   │   │   │
+    │   │   │   ├── Infra                            => Infrastructure layer. Include Adapters to external services.
+    │   │   │   │   ├── Mappers                      => Mappers/Transformers data from/to external Services or UI
+    │   │   │   │   ├── Persistence                  => Repository implementations, SQL, NoSQL, InMemory, etc.
+    │   │   │   │   └── Projections                  => Projections store data in read models
+    │   │   │   │  
+    │   │   │   └── UI                               => User Interface Layer (Also named Delivery)
+    │   │   │       ├── Ports                        => Controllers that receive external data.
+    │   │   │       │   ├── Http
+    │   │   │       │   │   ├── DomainName
+    │   │   │       │   │   └── OtherDomainName
+    │   │   │       │   └── CLI
+    │   │   │       └── ViewModels                   => Retrieve data from Read Models
+    │   │   └── Shared                               => Shared files across Bounded Contexts and Domains
+    │   │  
+    │   └── Shared                                  => Shared files used by Application
+    │       └── Providers                           => ContainerBindings, Jobs, Messaging. 
+    │     
+    ├── bootstrap                    => Files that start up the application.
+    ├── logs                       
+    ├── migrations                   => Dumps and files that create persistence schemas and DBs
+    ├── public                       
+    ├── routes                       => HTTP and Websocket Endpoint Mapping routes
+    ├── tests                        => Test files. Should be structured in the same way that app/Core
+    └── vendor
+````
+
+
+### 1. Crear Contexto y Dominios
 
 Nombrar el directorio del contexto en el que vamos a trabajar en **app/Core/`<NombreDeContexto>`** del que colgarán las diferentes capas de la aplicación.
 
@@ -28,9 +81,9 @@ Crear el puerto de entrada HTTP como punto de partida de la operación que se va
 
 declare(strict_types=1);
 
-namespace App\Core\BC\UI\Ports\Http;
+namespace App\Core\BC\UI\Ports\Http\ExampleDomain;
 
-use App\Core\BC\Application\ExampleCommand;
+use App\Core\BC\Application\ExampleCommand\ExampleDomain;
 use Boilerwork\System\Http\AbstractHttpPort;
 use Boilerwork\System\Http\Request;
 use Boilerwork\System\Http\Response;
@@ -44,7 +97,7 @@ final class ExamplePort extends AbstractHttpPort
 }
 ```
 
-> El objeto _Request_ contiene todos los datos enviados por el cliente, y _$vars_ los valores de la url que puedan ser dinámicos (PATCH /item/`{ID}`/modify)
+> El objeto _Request_ contiene todos los datos enviados por el cliente, y _$vars_ los valores de la url que puedan ser dinámicos (PUT /item/`{ID}`/modify)
 
 ### 3. Añadir una entrada en el router HTTP:
 
@@ -53,15 +106,16 @@ final class ExamplePort extends AbstractHttpPort
 Cada entrada del router contiene un array con:
 
 ```
-['<HttpMethod>', '<relativeRoute>', ['<ArrayOfFullyQualifiedNameMiddlewareClasses>']]
+['<HttpMethod>', '<relativeRoute>', [<ArrayOfPermissionStrings>], ['<ArrayOfFullyQualifiedNameMiddlewareClasses>']]
 ```
 
 ```php
-use App\Core\BC\UI\Ports\Http\ExamplePort;
+use App\Core\BC\UI\Ports\Http\ExampleDomain\ExamplePort;
 
 return [
-    ['POST', '/registerUser', ExamplePort::class, []],
-    ['POST', '/registerUser', ExamplePort::class, [MiddlewareClass::class]],
+    // [METHOD', 'URI', 'TARGET_CLASS', [PERMISSIONS], [MIDDLEWARE]]
+
+    ['POST', '/example', ExamplePort::class, ['Public'], []],
 ];
 ```
 
@@ -69,7 +123,7 @@ return [
 
 Crear el comando para la acción que queremos realizar incluyendo los atributos estrictamente necesarios para completarse en el constructor (siempre readonly, un comando es inmutable). Evitar en la medida de lo posible incluir atributos opcionales, y por supuesto nunca realizar acciones distintas dependiendo del contenido del request.
 
-**app/Core/BC/Application/ExampleCommand.php**
+**app/Core/BC/Application/ExampleDomain/ExampleCommand.php**
 
 ```php
 #!/usr/bin/env php
@@ -77,16 +131,19 @@ Crear el comando para la acción que queremos realizar incluyendo los atributos 
 
 declare(strict_types=1);
 
-namespace App\Core\BC\Application;
+namespace App\Core\BC\Application\ExampleDomain;
 
 use Boilerwork\Application\CommandInterface;
 
+/**
+ * @see \App\Core\BC\Application\ExampleDomain\ExampleCommandHandler
+ */
 final class ExampleCommand implements CommandInterface
 {
     public function __construct(
         public readonly string $id,
-        public readonly string $email,
-        public readonly string $username,
+        public readonly string $name,
+        public readonly string $region,
     ) {
     }
 }
@@ -104,9 +161,9 @@ Instanciamos el comando recien creado en el Port y lo envíamos al _CommandBus_ 
 
 declare(strict_types=1);
 
-namespace App\Core\BC\UI\Ports\Http;
+namespace App\Core\BC\UI\Ports\Http\ExampleDomain;
 
-use App\Core\BC\Application\ExampleCommand;
+use App\Core\BC\Application\ExampleDomain\ExampleCommand;
 use Boilerwork\System\Http\AbstractHttpPort;
 use Boilerwork\System\Http\Request;
 use Boilerwork\System\Http\Response;
@@ -118,26 +175,26 @@ final class ExamplePort extends AbstractHttpPort
     {
         $this->command()->handle(
             new ExampleCommand(
-                id: $request->input('id'),
-                email: $request->input('email'),
-                username: $request->input('username')
+                exampleId: $request->input('id'),
+                name: $request->input('name'),
+                region: $request->input('region'),
             ),
         );
 
-        return Response::empty(201); // 201 HTTP Header Created
+        return Response::empty(202); // 202 Accepted (it is async)
     }
 }
 ```
 
 > Un comando NUNCA devuelve datos en caso de éxito. Si la operación fracasa, una excepción será lanzada en el sistema e incluirá las razones del error. Puede existir alguna excepción en la que un comando devuelva datos, pero debe estar muy justificada, ejemplo típico: Autenticación de segundo paso.
 
-> En caso de requerirse de forma justificada, se puede llegar a utilizar $this->command()->syncHandle para esperar a la respuesta síncrona del servidor.
+> En caso de requerirse, se puede utilizar $this->command()->syncHandle para esperar a la respuesta síncrona del servidor.
 
 ### 6. Crear CommandHandler
 
 Crear el _CommandHandler_ en la capa aplicación que se encargará de orquestar las acciones a realizar.
 
-**app/Core/BC/Application/ExampleCommandHandler.php**
+**app/Core/BC/Application/ExampleDomain/ExampleCommandHandler.php**
 
 ```php
 #!/usr/bin/env php
@@ -145,13 +202,13 @@ Crear el _CommandHandler_ en la capa aplicación que se encargará de orquestar 
 
 declare(strict_types=1);
 
-namespace App\Core\BC\Application;
+namespace App\Core\BC\Application\ExampleDomain;
 
 use Boilerwork\Application\CommandHandlerInterface;
 use Boilerwork\Application\CommandInterface;
 
 /**
- * @see App\Core\BC\Application\ExampleCommand
+ * @see App\Core\BC\Application\ExampleDomain\ExampleCommand
  **/
 final class ExampleCommandHandler implements CommandHandlerInterface
 {
@@ -162,36 +219,7 @@ final class ExampleCommandHandler implements CommandHandlerInterface
 }
 ```
 
-### 7. Añadir enlace para documentar.
-
-En el comando añadimos la documentación relacionándolo con el handler. Esto facilita la navegación entre archivos en los IDEs.
-
-```php
-#!/usr/bin/env php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Core\BC\Application;
-
-use Boilerwork\Application\CommandInterface;
-
-/**
- * @see \App\Core\BC\Application\ExampleCommandHandler
- */
-final class ExampleCommand implements CommandInterface
-{
-    public function __construct(
-        public readonly string $id,
-        public readonly string $email,
-        public readonly string $username,
-    ) {
-    }
-}
-
-```
-
-### 8. Crear Agregado
+### 7. Crear Agregado
 
 Creamos el agregado o entidad. Un agregado es el encargado de restaurar, mantener, modificar y validar su propio estado.
 Un agregado es una transacción, y todo aquello que se modifique en esa transacción, debe formar parte de él.
@@ -202,28 +230,40 @@ Un agregado es una transacción, y todo aquello que se modifique en esa transacc
 
 declare(strict_types=1);
 
-namespace App\Core\BC\Domain;
+namespace App\Core\BC\Domain\ExampleDomain;
 
-final class User extends AggregateRoot
+final class Example extends AggregateRoot
 {
-    protected function __construct(
-        protected readonly Identity $aggregateId,
-    ) {
-    }
+    private Name $name;
+    private Region $region;
 
-    public static function register(
-        string $userId,
-        string $email,
-        string $username
+    public static function create(
+        string $exampleId,
+        string $name,
+        string $region,
     ): self {
 
-    // Aquí haríamos aserciones para comprobar que se cumplen las reglas de negocio si fuera necesario.
+        // Aquí haríamos aserciones para comprobar que se cumplen las reglas de negocio del agregado si fuera necesario.
 
-        $user = new static(
-            aggregateId: new Identity($userId),
+        // Build Aggregate
+        $example = new static(
+            aggregateId: new Identity($exampleId),
         );
 
-        return $user;
+        $example->raise(
+            new ExampleWasCreated(
+                exampleId: (new Identity($exampleId))->toPrimitive(),
+                name: (new Name($name))->toPrimitive(),
+                region: (new Region($region))->toPrimitive(),
+            )
+        );
+
+        return $example;
+    }
+
+    private function __construct(
+        protected readonly Identity $aggregateId,
+    ) {
     }
 }
 
@@ -231,11 +271,11 @@ final class User extends AggregateRoot
 
 En este caso, la transacción a realizar es registrar un usuario. Este proceso crea una identidad nueva en el sistema, utilizamos un método estático para ello que devuelve una nueva instancia de sí mismo con la información recibida. No hacemos un new Agregado(), eso no sería explícito con la acción a realizar.
 
-### 9. Crear Evento
+### 8. Crear Evento
 
-Toda transacción finaliza en un evento que indica al sistema qué ha ocurrido. En este caso un usuario se ha registrado: UserHasRegistered. Creamos ese archivo de evento que por convención requiere una serie de métodos a incluir. El evento en la gran mayoría de los casos incluirá los mismos atributos que el comando. Ya que por lógica indica lo que ha ocurrido y con qué datos. Un evento al ser algo ocurrido en el "pasado" es inmutable.
+Toda transacción finaliza en un evento que indica al sistema qué ha ocurrido. En este caso un usuario se ha registrado: ExampleWasCreated. Creamos ese archivo de evento que por convención requiere una serie de métodos a incluir. El evento en la gran mayoría de los casos incluirá los mismos atributos que el comando. Ya que por lógica indica lo que ha ocurrido y con qué datos. Un evento al ser algo ocurrido en el "pasado" es inmutable.
 
-**app/Core/BC/Domain/Events/UserHasRegistered.php**
+**app/Core/BC/Domain/ExampleDomain/Events/ExampleWasCreated.php**
 
 ```php
 #!/usr/bin/env php
@@ -243,33 +283,33 @@ Toda transacción finaliza en un evento que indica al sistema qué ha ocurrido. 
 
 declare(strict_types=1);
 
-namespace App\Core\BC\Domain\Events;
+namespace App\Core\BC\Domain\ExampleDomain\Events;
 
 use Boilerwork\Domain\AbstractEvent;
 
-final class UserHasRegistered extends AbstractEvent
+final class ExampleWasCreated extends AbstractEvent
 {
-    protected string $topic = "testTopic1";
+     protected string $topic = "example-was-created"; // always kebap-case
 
     public function __construct(
-        public readonly string $userId,
-        public readonly string $email,
-        public readonly string $username,
+        public readonly string $exampleId,
+        public readonly string $name,
+        public readonly string $region,
     ) {
     }
 
     public function getAggregateId(): string
     {
-        return $this->userId;
+        return $this->exampleId;
     }
 
     public function serialize(): array
     {
         return $this->wrapSerialize(
             data: [
-                'userId' => $this->userId,
-                'email' => $this->email,
-                'username' => $this->username,
+                'exampleId' => $this->exampleId,
+                'name' => $this->name,
+                'region' => $this->region,
             ]
         );
     }
@@ -277,65 +317,82 @@ final class UserHasRegistered extends AbstractEvent
     public static function unserialize(array $event): self
     {
         return (new static(
-            userId: $event['data']['userId'],
-            email: $event['data']['email'],
-            username: $event['data']['username'],
+            exampleId: $event['data']['exampleId'],
+            name: $event['data']['name'],
+            region: $event['data']['region'],
         ));
     }
+    
 }
 ```
 
-> Los topics deben existir previamente en el broker de mensajes. Bien por haber sido creados directamente en él, o por haber sido ya producidos con anterioridad.
-
-### 10. Emitir evento en el agregado.
+### 9. Emitir evento en el agregado.
 
 Ya tenemos el evento, así que lo instanciamos en método correspondiente del agregado y levantamos para su publicación posterior.
 
 El evento al emitirse se aplica al agregado modificando su estado de facto. Con lo que además añadimos un método con la siguiente estructura por convención: apply`<NombreDelEvento>`
 
 ```php
-final class User extends AggregateRoot implements TracksEvents, IsEventSourced
-{
-    protected function __construct(
-        protected readonly Identity $aggregateId,
-    ) {
-    }
+use App\Core\BC\Domain\ExampleDomain\Events\ExampleWasCreated;
+use App\Core\BC\Domain\ExampleDomain\ValueObjects\Name;
+use App\Core\BC\Domain\ExampleDomain\ValueObjects\Region;
+use Boilerwork\Domain\AggregateRoot;
+use Boilerwork\Domain\Assert;
+use Boilerwork\Domain\IsEventSourced;
+use Boilerwork\Domain\IsEventSourcedTrait;
+use Boilerwork\Domain\TracksEvents;
+use Boilerwork\Domain\TracksEventsTrait;
+use Boilerwork\Domain\ValueObjects\Identity;
 
-    public static function register(
-        string $userId,
-        string $email,
-        string $username
+final class Example extends AggregateRoot implements TracksEvents, IsEventSourced
+{
+    use TracksEventsTrait, IsEventSourcedTrait;
+
+    private Name $name;
+    private Region $region;
+
+    public static function create(
+        string $exampleId,
+        string $name,
+        string $region,
     ): self {
 
-    	// Aquí haríamos aserciones para comprobar que se cumplen las reglas de negocio si fuera necesario.
+        // Aquí haríamos aserciones para comprobar que se cumplen las reglas de negocio del agregado si fuera necesario.
 
-        $user = new static(
-            aggregateId: new Identity($userId),
+        // Build Aggregate
+        $example = new static(
+            aggregateId: new Identity($exampleId),
         );
 
-        $user->raise(
-            new UserHasRegistered(
-                userId: (new Identity($userId))->toPrimitive(),
-                email: (new UserEmail($email))->toPrimitive(),
-                username: (new UserName($username))->toPrimitive(),
+        $example->raise(
+            new ExampleWasCreated(
+                exampleId: (new Identity($exampleId))->toPrimitive(),
+                name: (new Name($name))->toPrimitive(),
+                region: (new Region($region))->toPrimitive(),
             )
         );
 
-        return $user;
+        return $example;
     }
 
-    protected function applyUserHasRegistered(UserHasRegistered $event): void
+    // Este método se llama automáticamente después de ejecutar $example->raise()
+    protected function applyExampleWasCreated(ExampleWasCreated $event): void
     {
-        $this->email = new UserEmail($event->email);
-        $this->username = new UserName($event->username);
-        $this->status = new UserStatus(UserStatus::USER_STATUS_INITIAL);
+        $this->exampleId = new Identity($event->exampleId);
+        $this->name = new Name($event->name);
+        $this->region = new Region($event->region);
+    }
+
+    private function __construct(
+        protected readonly Identity $aggregateId,
+    ) {
     }
 ```
 
-Como se puede observar, cada atributo es en realidad un ValueObject. La razón de que sea así y no primitivas es que cada ValueObject contiene sus propias reglas de negocio y validación y asegura que el dato siempre sea correcto. Desacoplando y centralizando esa responsabilidad en sí mismos.
-A continuación el ValueObject UserName como ejemplo:
+Como se puede observar, cada atributo es en realidad un ValueObject. La razón de que sea así y no primitivas es que cada ValueObject contiene sus propias reglas de negocio y validación y asegura que el dato siempre sea válido y por extensión, el estado del sistema también lo será. Desacoplando y centralizando esa responsabilidad en sí mismos.
+A continuación el ValueObject Name como ejemplo:
 
-**app/Core/BC/Domain/ValueObjects/UserName.php**
+**app/Core/BC/Domain/ExampleDomain/ValueObjects/Name.php**
 
 ```php
 #!/usr/bin/env php
@@ -343,7 +400,7 @@ A continuación el ValueObject UserName como ejemplo:
 
 declare(strict_types=1);
 
-namespace App\Core\BC\Domain\ValueObjects;
+namespace App\Core\BC\Domain\ExampleDomain\ValueObjects;
 
 use Boilerwork\Domain\ValueObjects\ValueObject;
 use Boilerwork\Domain\Assert;
@@ -351,17 +408,17 @@ use Boilerwork\Domain\Assert;
 /**
  * @internal
  **/
-class UserName extends ValueObject
+final class Name extends ValueObject
 {
     public function __construct(
-        public readonly string $value
+        private string $value
     ) {
         // Ejecutamos las aserciones necesarias para asegurar la validez de su estado.
-        // los dos últimos atributos de cada comprobación son el "texto para humanos" y el código del error específico a devolver en la excepción de validación que se dispara
+        // los dos últimos atributos de cada comprobación son el "texto para humanos" y el código del error específico a devolver en la excepción de validación que se dispara que ayudará a su identificación en logs y respuestas.
         Assert::lazy()->tryAll()
             ->that($value)
-            ->string('Value must be a string', 'userName.invalidType')
-            ->betweenLength(4, 20, 'Value must be between 4 and 20 characters, both included', 'userName.invalidLength')
+            ->string('Value must be a string', 'exampleName.invalidType')
+            ->maxLength(32, 'Value must be 32 characters length', 'exampleName.invalidLength')
             ->verifyNow();
     }
 
@@ -378,40 +435,18 @@ class UserName extends ValueObject
         return $this->value;
     }
 }
+
 ```
 
-> Un ValueObject puede también contener métodos para devolver o validar las distintas partes que lo compongan, pero nunca para manipularlo, es inmutable. Si queremos que tenga otros valores instanciaremos un nuevo ValueObject.
+> Un ValueObject puede también contener métodos para devolver o validar las distintas partes que lo compongan, pero nunca para manipularlo después de haber sido creado, es inmutable. Si queremos que tenga otros valores instanciaremos un nuevo ValueObject.
+> Un Value Object puede normalizar un valor en su constructor, por ejemplo convirtiendo el valor recibido a mayúsculas.
 > También puede contener los posibles valores a modo de Enum/estáticos que permite en caso de requerirlo.
 
 > La documentación relativa a la librería de aserciones se encuentra en: https://github.com/beberlei/assert
 
-### 11. Invocar la acción recien creada en el CommandHandler
+### 10. Invocar la acción recien creada en el CommandHandler
 
 Ya tenemos los métodos listos en el agregado. Así que lo llamamos desde el handler.
-
-```php
-final class ExampleCommandHandler implements CommandHandlerInterface
-{
-    public function handle(CommandInterface $command): void
-    {
-      $user = User::register(
-            userId: $command->id,
-            // userId: (Identity::create())->toPrimitive(), // Se puede usar este ejemplo para generar identificadores al vuelo para facilitar las pruebas de esta demo
-            email: $command->email,
-            username: $command->username,
-        );
-    }
-}
-```
-
-Ya tenemos el agregado **$user** en memoria en el estado final deseado. Desde este momento todas las operaciones y lógica de negocio que garantiza la consistencia de los datos ha finalizado. A partir de aquí podemos realizar las sucesivas operaciones que queramos con $user: persistencia, envío a sistemas externos, etc.
-
-### 12. Persistencia. Creación de contratos/interfaces.
-
-Creamos un contrato/interfaz de este dominio para indicar qué operaciones estarán permitidas. En este ejemplo vamos a utilizar EventSourcing, solo necesitamos dos operaciones: Insertar (Eventos) y recuperar el historial de Eventos (lo que nos permitirá reconstruir el último estado más actualizado de $user en otras transacciones diferentes).
-Extendemos el interfaz EventStore que nos indica lo necesario para realizar EventSourcing.
-
-**app/Core/BC/Domain/UserRepository.php**
 
 ```php
 #!/usr/bin/env php
@@ -419,19 +454,55 @@ Extendemos el interfaz EventStore que nos indica lo necesario para realizar Even
 
 declare(strict_types=1);
 
-namespace App\Core\BC\Domain;
+namespace App\Core\BC\Application\ExampleDomain;
+
+use Boilerwork\Application\CommandHandlerInterface;
+use Boilerwork\Application\CommandInterface;
+
+/**
+ * @see App\Core\BC\Application\ExampleDomain\ExampleCommand
+ **/
+final class ExampleCommandHandler implements CommandHandlerInterface
+{
+    public function handle(CommandInterface $command): void
+    {
+        $example = Example::create(
+            exampleId: $command->exampleId,
+            name: $command->name,
+            region: $command->region,
+        );
+    }
+}
+```
+
+Ya tenemos el agregado **$example** en memoria en el estado final deseado. Desde este momento todas las operaciones y lógica de negocio que garantiza la consistencia de los datos ha finalizado. A partir de aquí podemos realizar las sucesivas operaciones que queramos con $example: persistencia, envío a sistemas externos, etc.
+
+### 11. Persistencia. Creación de contratos/interfaces.
+
+Creamos un contrato/interfaz de este dominio para indicar qué operaciones estarán permitidas. En este ejemplo vamos a utilizar EventSourcing, solo necesitamos dos operaciones: Insertar (Eventos) y recuperar el historial de Eventos (lo que nos permitirá reconstruir el último estado más actualizado de $example en otras transacciones diferentes).
+Extendemos el interfaz EventStore que nos indica lo necesario para realizar EventSourcing.
+
+**app/Core/BC/Domain/ExampleDomain/ExampleRepository.php**
+
+```php
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Core\BC\Domain\ExampleDomain;
 
 use Boilerwork\Domain\IsEventSourced;
 use Boilerwork\Domain\ValueObjects\Identity;
 use Boilerwork\Infra\Persistence\EventStore;
 
-interface UserRepository extends EventStore
+interface ExampleRepository extends EventStore 
 {
-    public function reconstituteHistoryFor(Identity $id): User|IsEventSourced; // Return union types to accomplish interface and IDE typehinting
+    public function reconstituteHistoryFor(Identity $id): Example|IsEventSourced; // Return union types to accomplish interface and IDE typehinting
 }
 ```
 
-### 13. Inyectar Contrato/Interfaz.
+### 12. Inyectar Contrato/Interfaz.
 
 Inyectamos el interfaz en el handler. Y añadimos la operación a realizar en este caso la inserción: Append.
 
@@ -439,29 +510,29 @@ Inyectamos el interfaz en el handler. Y añadimos la operación a realizar en es
 final class ExampleCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
-        private UserRepository $userRepository,
+        private ExampleRepository $exampleRepository
     ) {
     }
 
     public function handle(CommandInterface $command): void
     {
-      $user = User::register(
-            userId: $command->id,
-            email: $command->email,
-            username: $command->username,
+        $example = Example::create(
+            exampleId: $command->exampleId,
+            name: $command->name,
+            region: $command->region,
         );
 
-        $this->userRepository->append($user);
+        $this->exampleRepository->append($example);
     }
 }
 ```
 
-### 14. Implementación del interfaz. Creación del repositorio.
+### 13. Implementación del interfaz. Creación del repositorio.
 
-Necesitamos implementar el interfaz, para la persistencia que hayamos elegido, por ejemplo, guardar en PostgreSQL. La base de desarrollo, tiene ya preparada esta implementación del patrón _EventSourcing_ y que será siempre igual para todos los agregados y dominios teniendo en cuenta _versionados_ y posibles _race conditions_.
-Extracto de la implementación:
+Necesitamos implementar el interfaz, para la persistencia que hayamos elegido, por ejemplo, guardar en PostgreSQL. 
+La base de desarrollo, tiene ya preparada esta implementación del patrón _EventSourcing_ y que será siempre igual para todos los agregados y dominios teniendo ya en cuenta _versionados_ y posibles _race conditions_.
 
-**app/Core/BC/Infra/Persistence/UserPostgreSQLRepository.php**
+**app/Core/BC/Infra/Persistence/ExamplePostgreSQLRepository.php**
 
 ```php
 #!/usr/bin/env php
@@ -471,19 +542,19 @@ declare(strict_types=1);
 
 namespace App\Core\BC\Infra\Persistence;
 
-use App\Core\BC\Domain\UserRepository;
+use App\Core\BC\Domain\ExampleDomain\ExampleRepository;
 use Boilerwork\Infra\Persistence\Adapters\PostgreSQL\PostgreSQLEventStoreAdapter;
 
-final class UserPostgreSQLRepository extends PostgreSQLEventStoreAdapter implements UserRepository
+final class ExamplePostgreSQLRepository extends PostgreSQLEventStoreAdapter implements ExampleRepository
 {
 }
 ```
 
 > En un entorno más tradicional tipo CRUD, implementaríamos los create, read, update, delete. O nombres de operaciones concretas que contienen por ejemplo las queries necesarias. (Existen los siguientes en la base: PostgreSQLReadsClient, PostgreSQLWritesClient y RedisClient)
 
-### 15. Bind Interfaz <-> Repositorio en el contenedor.
+### 14. Bind Interfaz <-> Repositorio en el contenedor.
 
-Mediante inyección de dependencias hacemos un _binding_ del interfaz **UserRepository** con **UserPostgreSQLRepository**. Todos estos bindings se realizan en:
+Mediante inyección de dependencias hacemos un _binding_ del interfaz **ExampleRepository** con **ExamplePostgreSQLRepository**. Todos estos bindings se realizan en:
 
 **app/Shared/Providers/ContainerBindingsProvider.php**
 
@@ -495,12 +566,15 @@ declare(strict_types=1);
 
 namespace App\Shared\Providers;
 
+use App\Core\BC\Domain\ExampleDomain\ExampleRepository;
+use App\Core\BC\Infra\Persistence\ExamplePostgreSQLRepository;
+
 final class ContainerBindingsProvider
 {
     private array $services = [
-        [\App\Core\BC\Domain\UserRepository::class, 'bind', \App\Core\BC\Infra\Persistence\UserPostgreSQLRepository::class],
+        [ExampleRepository::class, 'bind', ExamplePostgreSQLRepository::class],
         //
-        // Default bindings
+        // Default system bindings
         [\Boilerwork\System\Messaging\MessagingClientInterface::class, 'bind', \Boilerwork\System\Messaging\Adapters\KafkaMessageClientAdapter::class],
         [\Boilerwork\Infra\Persistence\Adapters\PostgreSQL\PostgreSQLWritesPool::class, 'singleton', null], // Start PostgreSQL Connection Pools Read and Writes to be used by services
         [\Boilerwork\Infra\Persistence\Adapters\PostgreSQL\PostgreSQLReadsPool::class, 'singleton', null], // Start PostgreSQL Connection Pools Read and Writes to be used by services
@@ -511,7 +585,7 @@ final class ContainerBindingsProvider
 
 > Si queremos cambiar la implementación, modificamos el binding sin necesidad de editar la capa de dominio o aplicación.
 
-### 16. Publicación de los eventos emitidos.
+### 15. Publicación de los eventos emitidos.
 
 Por último y una vez la persistencia ha sido completada correctamente, informamos al resto del sistema de los eventos que han ocurrido desde el handler.
 
@@ -519,21 +593,21 @@ Por último y una vez la persistencia ha sido completada correctamente, informam
 final class ExampleCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
-        private UserRepository $userRepository,
+        private ExampleRepository $exampleRepository
     ) {
     }
 
     public function handle(CommandInterface $command): void
     {
-        $user = User::register(
-            userId: $command->id,
-            email: $command->email,
-            username: $command->username,
+        $example = Example::create(
+            exampleId: $command->exampleId,
+            name: $command->name,
+            region: $command->region,
         );
 
-        $this->userRepository->append($user);
-
-        eventsPublisher()->releaseEvents(); // Publica los eventos al Broker de Mensajes
+        $this->exampleRepository->append($example);
+        
+        eventsPublisher()->releaseEvents();
     }
 }
 ```

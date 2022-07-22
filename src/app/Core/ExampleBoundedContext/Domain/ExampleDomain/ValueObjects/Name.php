@@ -11,10 +11,10 @@ use Boilerwork\Domain\Assert;
 /**
  * @internal
  **/
-class Name extends ValueObject
+final class Name extends ValueObject
 {
     public function __construct(
-        public readonly string $value
+        private string $value
     ) {
         Assert::lazy()->tryAll()
             ->that($value)

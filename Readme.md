@@ -8,11 +8,12 @@ The objective of this repository is to provide a project start point applying so
 
 1. [Guía de instalación](./docs/InstallationGuide.md)
 2. [Descripción de la estructura de carpetas y archivos](./docs/FilesTypesDescription.md)
-3. [Pasos para comenzar con un endpoint](./docs/UseGuide.md)
-4. [Testing y Análisis](./docs/TestingAndAnalysis.md)
-4. [Git Best Practices](./docs/GitBestPractices.md)
-5. [Kafka Guide](./docs/KafkaGuide.md)
-5. [Redis Guide](./docs/RedisGuide.md)
+3. [Generating documentation for the project](./docs/GeneratingDocumentation.md)
+4. [Pasos para comenzar con un endpoint](./docs/UseGuide.md)
+5. [Testing y Análisis](./docs/TestingAndAnalysis.md)
+6. [Git Best Practices](./docs/GitBestPractices.md)
+7. [Kafka Guide](./docs/KafkaGuide.md)
+8. [Redis Guide](./docs/RedisGuide.md)
 
 
 ## Inspiration:

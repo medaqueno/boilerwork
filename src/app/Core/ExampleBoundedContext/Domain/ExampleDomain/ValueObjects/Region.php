@@ -11,16 +11,19 @@ use Boilerwork\Domain\Assert;
 /**
  * @internal
  **/
-class Region extends ValueObject
+final class Region extends ValueObject
 {
     public function __construct(
-        public readonly string $value
+        private string $value
     ) {
         Assert::lazy()->tryAll()
             ->that($value)
             ->string('Value must be a string', 'exampleRegion.invalidType')
             ->maxLength(2, 'Value must be 2 characters length', 'exampleRegion.invalidLength')
             ->verifyNow();
+
+        // Process values
+        $this->value = mb_strtoupper($value);
     }
 
     public function equals(ValueObject $object): bool

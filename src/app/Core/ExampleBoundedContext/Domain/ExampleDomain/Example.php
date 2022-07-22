@@ -55,7 +55,6 @@ final class Example extends AggregateRoot implements TracksEvents, IsEventSource
         $this->region = new Region($event->region);
     }
 
-
     private function __construct(
         protected readonly Identity $aggregateId,
     ) {
