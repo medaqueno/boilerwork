@@ -4,9 +4,9 @@
 ```
 .
 ├─ project_service                                   => Root Project Folder
-├── docker                                           => Docker related configs
-├── docs                                             => Documention about project
-└── src                                              => Source Code
+  ├── docker                                        => Docker related configs
+  ├── docs                                          => Documention about project
+  └── src                                           => Source Code
     ├── app                                          => Application specific code. All Business logic lies here
     │   ├── Core      
     │   │   ├── BoundedContext                       => Bounded Context
