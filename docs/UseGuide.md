@@ -13,58 +13,6 @@
 ## Pasos para crear un endpoint que ejecute un comando (modificar el estado del sistema)
 
 
-La estructura de carpetas es la siguiente:
-```
-.
-├─ project_service                                   => Root Project Folder
-├── docker                                           => Docker related configs
-├── docs                                             => Documention about project
-└── src                                              => Source Code
-    ├── app                                          => Application specific code. All Business logic lies here
-    │   ├── Core      
-    │   │   ├── BoundedContext                       => Bounded Context
-    │   │   │   ├── Application
-    │   │   │   │   ├── DomainName                   => Application layer 
-    │   │   │   │   │   ├── Jobs                     => Background Jobs
-    │   │   │   │   │   ├── Services                 => Helper services
-    │   │   │   │   │   ├── CommandFiles.php         => Commands
-    │   │   │   │   │   └── CommandHandlerFiles.php  => Command handlers
-    │   │   │   │   │
-    │   │   │   ├── Domain
-    │   │   │   │   ├── DomainName                   => Domain layer 
-    │   │   │   │   │   ├── Events                   => Events
-    │   │   │   │   │   ├── Services                 => Helper services
-    │   │   │   │   │   ├── ValueObjects             => Value objects relative to this domain
-    │   │   │   │   │   ├── Aggregate-Entity.php
-    │   │   │   │   │   └── Repository.php           => Repository Interface
-    │   │   │   │   │
-    │   │   │   ├── Infra                            => Infrastructure layer. Include Adapters to external services.
-    │   │   │   │   ├── Mappers                      => Mappers/Transformers data from/to external Services or UI
-    │   │   │   │   ├── Persistence                  => Repository implementations, SQL, NoSQL, InMemory, etc.
-    │   │   │   │   └── Projections                  => Projections store data in read models
-    │   │   │   │  
-    │   │   │   └── UI                               => User Interface Layer (Also named Delivery)
-    │   │   │       ├── Ports                        => Controllers that receive external data.
-    │   │   │       │   ├── Http
-    │   │   │       │   │   ├── DomainName
-    │   │   │       │   │   └── OtherDomainName
-    │   │   │       │   └── CLI
-    │   │   │       └── ViewModels                   => Retrieve data from Read Models
-    │   │   └── Shared                               => Shared files across Bounded Contexts and Domains
-    │   │  
-    │   └── Shared                                  => Shared files used by Application
-    │       └── Providers                           => ContainerBindings, Jobs, Messaging. 
-    │     
-    ├── bootstrap                    => Files that start up the application.
-    ├── logs                       
-    ├── migrations                   => Dumps and files that create persistence schemas and DBs
-    ├── public                       
-    ├── routes                       => HTTP and Websocket Endpoint Mapping routes
-    ├── tests                        => Test files. Should be structured in the same way that app/Core
-    └── vendor
-````
-
-
 ### 1. Crear Contexto y Dominios
 
 Nombrar el directorio del contexto en el que vamos a trabajar en **app/Core/`<NombreDeContexto>`** del que colgarán las diferentes capas de la aplicación.
